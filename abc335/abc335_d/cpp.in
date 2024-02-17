@@ -1,0 +1,6 @@
+2d vector NxN
+direction
+if next position is oob or occupied:
+    rotate 90 deg clockwise
+keep going until finish
+put takahashi in middle

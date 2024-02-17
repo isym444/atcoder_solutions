@@ -1,0 +1,14 @@
+6 7 5
+LULDR
+#######
+#...#.#
+##..X##
+#.#..X#
+#...#.#
+#######
+
+
+iterate through all points
+DFS from all those points -> no need dfs just run the one simulation
+if using dfs can complete LULDR instructions count++
+cout << count;
