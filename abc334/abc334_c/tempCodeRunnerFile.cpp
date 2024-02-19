@@ -1,2 +1,0 @@
-
-cout << cnt << endl;

@@ -47,6 +47,7 @@ using namespace std;
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
 #define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
 #define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
+#define setbits(decimalnumber) __builtin_popcount(decimalnumber);
 typedef pair<ll, ll> pl;
 
 #define pb push_back
@@ -251,6 +252,37 @@ ll lcm(ll a, ll b) {
     return std::abs(a * b) / std::gcd(a, b);
 }
 
+
+int stringToBinary(const std::string& s, char charAsOne) {
+    int x = 0;
+    for (int j = 0; j < s.length(); j++) {
+        x = 2 * x + (s[j] == charAsOne);
+    }
+    return x;
+}
+
+//returns index of first element greater than or equal to target
+ll findGreaterEqual(vector<ll> sortedVector, ll target){
+    auto it = lower_bound(sortedVector.begin(), sortedVector.end(), target);
+    return it-sortedVector.begin();
+}
+
+//returns index of first element less than or equal to target
+//if all elements are greater than target returns -1
+//if all elements are smaller than target, returns last element
+ll findLessEqual(vector<ll> sortedVector, ll target){
+    auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
+    if(it != sortedVector.begin()){
+        --it;
+        if(*it<=target){
+            return it-sortedVector.begin()+1;
+        }
+    }
+    else{
+        return -1;
+    }
+}
+
 struct loc
 {
     inline static ll x=0;
@@ -263,14 +295,87 @@ struct loc
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, const std::vector<std::string> &S) {
+long long solve(ll N, std::vector<std::string> &S) {
+    ll ans = 0;
+    cerr << S << endl;
+    vector<ll> rows(N,0);
+    vector<ll> columns(N,0);
+    foi(0,N){
+        ll rowCount=0;
+        ll columnCount=0;
+        foj(0,N){
+            rowCount+=S[i][j];
+            columnCount+=S[j][i];
+        }
+        row[i]=rowCount;
+        column[i]=columnCount;
+    }
+    foi(0,N){
+        foj(0,N){
+
+        }
+    }
+    /* if(true){
+        foj(0,N){
+            cerr << "Reached" << endl;
+            ll x=0;
+            ll y=0;
+            ll w=0;
+            ll z=0;
+            cerr << "x: " << x << " y: " << y << " w: " << w << " z: " << z << endl;
+            foi(j,N){
+                if(S[i][j]=='o') x++;
+                if(S[j][i]=='o') y++;
+                if(S[N-1-j][i]=='o') w++;
+                if(S[i][N-1-j]=='o') z++;
+            }
+            cerr << "hello"<<endl;
+            cerr << "x: " << x << " y: " << y << " w: " << w << " z: " << z << endl;
+            cerr << ans << endl;
+            ans+=(max((ll)0,x-1))*(max((ll)0,y-1));
+            cerr << ans << endl;
+            ans+=(max((ll)0,y-1))*(max((ll)0,z-1));
+            cerr << ans << endl;
+            ans+=(max((ll)0,z-1))*(max((ll)0,w-1));
+            cerr << ans << endl;
+            ans+=(max((ll)0,x-1))*(max((ll)0,w-1));
+            cerr << ans << endl;
+        }
+    } */
+    /* else{
+        foj(0,N){
+            ll x=0;
+            ll y=0;
+            ll w=0;
+            ll z=0;
+            foi(j,N-j){
+                if(S[i][j]=='o') x++;
+                if(S[j][i]=='o') y++;
+                if(S[N-1-j][i]=='o') w++;
+                if(S[i][N-1-j]=='o') z++;
+            }
+            cerr << "hello"<<endl;
+            cerr << "x: " << x << " y: " << y << " w: " << w << " z: " << z << endl;
+            cerr << ans << endl;
+            ans+=(max((ll)0,x-1))*(max((ll)0,y-1));
+            cerr << ans << endl;
+            ans+=(max((ll)0,y-1))*(max((ll)0,z-1));
+            cerr << ans << endl;
+            ans+=(max((ll)0,z-1))*(max((ll)0,w-1));
+            cerr << ans << endl;
+            ans+=(max((ll)0,x-1))*(max((ll)0,w-1));
+            cerr << ans << endl;
+        }
+    } */
+    return ans;
+
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
+    ll N;
     std::cin >> N;
     std::vector<std::string> S(N);
     REP (i, N) {

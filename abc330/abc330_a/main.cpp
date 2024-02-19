@@ -47,6 +47,7 @@ using namespace std;
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
 #define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
 #define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
+#define setbits(decimalnumber) __builtin_popcount(decimalnumber);
 typedef pair<ll, ll> pl;
 
 #define pb push_back
@@ -249,6 +250,37 @@ ll midpoint(ll L, ll R){
 
 ll lcm(ll a, ll b) {
     return std::abs(a * b) / std::gcd(a, b);
+}
+
+
+int stringToBinary(const std::string& s, char charAsOne) {
+    int x = 0;
+    for (int j = 0; j < s.length(); j++) {
+        x = 2 * x + (s[j] == charAsOne);
+    }
+    return x;
+}
+
+//returns index of first element greater than or equal to target
+ll findGreaterEqual(vector<ll> sortedVector, ll target){
+    auto it = lower_bound(sortedVector.begin(), sortedVector.end(), target);
+    return it-sortedVector.begin();
+}
+
+//returns index of first element less than or equal to target
+//if all elements are greater than target returns -1
+//if all elements are smaller than target, returns last element
+ll findLessEqual(vector<ll> sortedVector, ll target){
+    auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
+    if(it != sortedVector.begin()){
+        --it;
+        if(*it<=target){
+            return it-sortedVector.begin()+1;
+        }
+    }
+    else{
+        return -1;
+    }
 }
 
 struct loc

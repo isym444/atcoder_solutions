@@ -1,0 +1,3 @@
+sort
+prefix sum
+binary search over that using lower_bound (>= to specified value)
