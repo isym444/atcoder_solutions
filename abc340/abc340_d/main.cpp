@@ -14,6 +14,8 @@
 #include <set>
 #include <map>
 #include <bitset>
+#include <deque>
+#include <numeric>
 
 using namespace std;
 
@@ -30,19 +32,26 @@ using namespace std;
 #define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
-#define gcd __gcd
+//#define gcd __gcd
 #define mp make_pair
+//Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
-#define print(p) cout<<p<<endl;
+#define print(p) cout<<p<<endl
 #define fi first
 #define sec second
 #define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
 #define pra(a) {for(auto i: a) cout<<i<<endl;}
 #define prm(a) {for(auto i: a) pra(i) cout<<endl;}
 //#define itobin(x) bitset<32> bin(x)
-#define itobin(variable, x) std::bitset<32> variable(x)
-#define bintoi(x) x.to_ulong()
-#define binstoi(x) stoi(x, nullptr, 2)
+#define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
+#define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
+#define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
+#define setbits(decimalnumber) __builtin_popcount(decimalnumber)
+#define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
+#define string_pop_back(str) (str).pop_back()
+#define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
+
 typedef pair<ll, ll> pl;
 
 #define pb push_back
@@ -90,7 +99,25 @@ template<class P> ostream& operator << (ostream& out, queue<P> const& M){
         out << U.front() << " ", U.pop();
     return (out << "}");
 }
+template<typename CharT, typename Traits>
+ostream& operator << (std::basic_ostream<CharT, Traits> &out, vector<vector<ll>> const &matrix) {
+    for (auto &row : matrix) {
+        out << row << "\n";
+    }
+    return out;
+}
 
+void setIO(string name = "")
+{ // name is nonempty for USACO file I/O
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); // see Fast Input & Output
+    // alternatively, cin.tie(0)->sync_with_stdio(0);
+    if (sz(name))
+    {
+    freopen((name + ".in").c_str(), "r", stdin); // see Input & Output
+    freopen((name + ".out").c_str(), "w", stdout);
+    }
+}
 
 const int MAXA = 5000006;
 bool prime[MAXA];
@@ -111,155 +138,116 @@ void gen_primes() {
     }
 }
 
+
+vector<ll> parent; // To store parent information
 //visited nodes
-vector<bool> v;
+vector<bool> vis;
 //bool vis[61][61][61][61]={0};
-//graph as adjacency list
-vector<vector<int> > g;
+map<ll,ll> depth;
 
-void edge(int a, int b)
+//initialize graph as adjacency list
+vector<vector<ll> > g;
+//initialize weighted graph as adjacency list
+vector<vector<pair<ll,ll>>> dg;
+//for building the adjacency list by adding edges info
+void edge(ll originNode, ll destNode)
 {
-    g[a].pb(b);
+    g[originNode].pb(destNode);
  
-    // for undirected graph add this line
-    // g[b].pb(a);
+    // for undirected graph e.g. tree, add this line:
+    // g[destNode].pb(originNode);
 }
 
-void bfs(int u)
-{
-    queue<int> q;
- 
-    q.push(u);
-    v[u] = true;
- 
-    //If want first time something happens/node reached then break when that happens
-    while (!q.empty()) {
- 
-        int f = q.front();
-        q.pop();
- 
-        cout << f << " ";
- 
-        // Enqueue all adjacent of f and mark them visited 
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!v[*i]) {
-                q.push(*i);
-                v[*i] = true;
-            }
+void edge(ll originNode, ll destNode, ll weight){
+    dg[originNode].emplace_back(destNode, weight);
+    // For an undirected graph e.g., tree, add this line:
+    // g[destNode].emplace_back(originNode, weight);
+}
+
+//returns vector where each index is the shortest distance between the start node and node i
+vector<ll> dijkstra(int start) {
+    vector<ll> dist(dg.size(), INF);  // Distance from start to each node
+    //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
+    //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    dist[start] = 0;
+    pq.push({0, start});  // {distance, node}
+
+    while (!pq.empty()) {
+        //cerr << "pq" << pq << endl;
+        ll currentDist = pq.top().first;
+        ll currentNode = pq.top().second;
+        pq.pop();
+
+        // If the distance in priority queue is larger, we have already found a better path
+        if (currentDist > dist[currentNode]) {
+            continue;
         }
-    }
-}
 
-vector<int> parent; // To store parent information
+        for (auto &neighbor : dg[currentNode]) {
+            ll nextNode = neighbor.first;
+            ll weight = neighbor.second;
+            ll newDist = currentDist + weight;
 
-vector<int> bfs(int start, int end) {
-    queue<int> q;
-    q.push(start);
-    v[start] = true;
-    parent[start] = -1; // Start node has no parent
-
-    while (!q.empty()) {
-        int f = q.front();
-        q.pop();
-
-        if (f == end) break; // Stop if we reach the end node
-
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!v[*i]) {
-                q.push(*i);
-                v[*i] = true;
-                parent[*i] = f; // Set parent
+            if (newDist < dist[nextNode]) {
+                dist[nextNode] = newDist;
+                pq.push({newDist, nextNode});
             }
         }
     }
 
-    vector<int> path;
-    for (int i = end; i != -1; i = parent[i]) {
-        path.push_back(i);
-    }
-    reverse(path.begin(), path.end()); // Reverse to get the correct order
-    return path;
+    return dist;
 }
 
-string itobins(int n) {
-    if (n == 0) return "0";
-
-    string binary = "";
-    while (n > 0) {
-        binary += (n % 2) ? '1' : '0';
-        n /= 2;
-    }
-
-    reverse(binary.begin(), binary.end()); // Reverse to get the correct order
-    return binary;
-}
+//Graph visualizer:
+//https://csacademy.com/app/graph_editor/
 
 
 
 long long solve(int N, const std::vector<long long> &A, const std::vector<long long> &B, const std::vector<long long> &X) {
-    // TODO: edit here
+    vis.assign(N+1, false);
+    dg.assign(N + 1, vector<pair<ll,ll>>());
+    parent.assign(N+1, -1);
+    for(ll i = 0; i<A.size(); i++){
+        edge(i+1, i+2, A[i]);
+        edge(i+1,X[i],B[i]);
+    }
+    for(auto DG : dg){
+        cerr << DG << endl;
+    }
+    vector<ll> potans;
+    potans = dijkstra(1);
+    //cerr << "potans: " << potans << endl;
+    return potans[N];
 }
 
-// generated by oj-template v4.8.1 (https://github.com/online-judge-tools/template-generator)
 int main() {
     std::ios::sync_with_stdio(false);
+    setIO("");
     std::cin.tie(nullptr);
     int N;
     std::cin >> N;
+    
     std::vector<long long> A(N - 1), B(N - 1), X(N - 1);
     REP (i, N - 1) {
         std::cin >> A[i] >> B[i] >> X[i];
     }
     auto ans = solve(N, A, B, X);
     std::cout << ans << '\n';
+    
+
+    
 
     /* genprimes(1e5); */
 
-    //Uncomment for BFS
-    /* int n, e;
-    //get number of nodes and edges
-    cin >> n >> e;
-    
-    //initialize your visited vector and your graph as adjacency list
-    v.assign(n, false);
-    g.assign(n, vector<int>());
-    
-    parent.assign(n, -1);
-
-
-    //construct your graph as an adjacency list
-    int a, b;
-    for (int i = 0; i < e; i++) {
-        cin >> a >> b;
-        edge(a, b);
-    }
-    
-    //run the bfs and output order of traversed nodes
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
     for (int i = 0; i < n; i++) {
         if (!v[i])
             bfs(i);
     }
-    cout << endl;
     
-    //run the bfs outputing  path traversed + shortest path
-    v.assign(n, false);
-    int startNode, endNode;
-    startNode = 0;
-    endNode = 7;
-    //cin >> startNode >> endNode;
-    vector<int> path = bfs(startNode, endNode);
-
-    // Output the path
-    for (int node : path) {
-        cout << node << " ";
-    }
-    cout << endl;
-    // Output the length of the path i.e. # of edges
-    cout << path.size()-1;
-    cout << endl; */
-
     //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    /* wasd(
+    wasd(
         //cout << "Use this for problems where you have to go up, down, left right" << endl;
     ) */
     return 0;

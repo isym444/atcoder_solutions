@@ -14,6 +14,8 @@
 #include <set>
 #include <map>
 #include <bitset>
+#include <deque>
+#include <numeric>
 
 using namespace std;
 
@@ -30,19 +32,26 @@ using namespace std;
 #define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
-#define gcd __gcd
+//#define gcd __gcd
 #define mp make_pair
+//Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
-#define print(p) cout<<p<<endl;
+#define print(p) cout<<p<<endl
 #define fi first
 #define sec second
 #define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
 #define pra(a) {for(auto i: a) cout<<i<<endl;}
 #define prm(a) {for(auto i: a) pra(i) cout<<endl;}
 //#define itobin(x) bitset<32> bin(x)
-#define itobin(variable, x) std::bitset<32> variable(x)
-#define bintoi(x) x.to_ulong()
-#define binstoi(x) stoi(x, nullptr, 2)
+#define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
+#define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
+#define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
+#define setbits(decimalnumber) __builtin_popcount(decimalnumber)
+#define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
+#define string_pop_back(str) (str).pop_back()
+#define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
+
 typedef pair<ll, ll> pl;
 
 #define pb push_back
@@ -90,7 +99,25 @@ template<class P> ostream& operator << (ostream& out, queue<P> const& M){
         out << U.front() << " ", U.pop();
     return (out << "}");
 }
+template<typename CharT, typename Traits>
+ostream& operator << (std::basic_ostream<CharT, Traits> &out, vector<vector<ll>> const &matrix) {
+    for (auto &row : matrix) {
+        out << row << "\n";
+    }
+    return out;
+}
 
+void setIO(string name = "")
+{ // name is nonempty for USACO file I/O
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); // see Fast Input & Output
+    // alternatively, cin.tie(0)->sync_with_stdio(0);
+    if (sz(name))
+    {
+    freopen((name + ".in").c_str(), "r", stdin); // see Input & Output
+    freopen((name + ".out").c_str(), "w", stdout);
+    }
+}
 
 const int MAXA = 5000006;
 bool prime[MAXA];
@@ -111,74 +138,116 @@ void gen_primes() {
     }
 }
 
-//visited nodes
-vector<bool> v;
-//bool vis[61][61][61][61]={0};
-//graph as adjacency list
-vector<vector<int> > g;
 
-void edge(int a, int b)
+vector<ll> parent; // To store parent information
+//visited nodes
+vector<bool> vis;
+//bool vis[61][61][61][61]={0};
+map<ll,ll> depth;
+
+//graph as adjacency list
+vector<vector<ll> > g;
+void edge(ll originNode, ll destNode)
 {
-    g[a].pb(b);
+    g[originNode].pb(destNode);
  
-    // for undirected graph add this line
-    // g[b].pb(a);
+    // for undirected graph e.g. tree, add this line
+    // g[destNode].pb(originNode);
 }
 
-void bfs(int u)
+//traverse a graph using bfs from the specified start node to all other nodes, in the process printing the order the nodes are visited in
+void bfs(ll start)
 {
-    queue<int> q;
+    queue<ll> q;
  
-    q.push(u);
-    v[u] = true;
- 
+    q.push(start);
+    vis[start] = true;
+    depth[start] = 1; // Depth of starting node is 1
     //If want first time something happens/node reached then break when that happens
     while (!q.empty()) {
- 
-        int f = q.front();
+        ll f = q.front();
         q.pop();
  
-        cout << f << " ";
- 
+        cerr << f << " ";
+        
         // Enqueue all adjacent of f and mark them visited 
+        ll counter = 0;
         for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!v[*i]) {
+            if (!vis[*i]) {
+                counter++;
                 q.push(*i);
-                v[*i] = true;
+                vis[*i] = true;
+                depth[*i] = depth[f] + 1; // Set the depth of the neighboring node
             }
         }
+        /* if(counter==0){
+            cerr << "depths to leafs: " << depth[f] << endl;
+        } */
     }
 }
 
-vector<int> parent; // To store parent information
-
-vector<int> bfs(int start, int end) {
-    queue<int> q;
+//return a vector containing bfs path from start to end nodes specified
+vector<ll> bfs(ll start, ll end) {
+    queue<ll> q;
     q.push(start);
-    v[start] = true;
+    vis[start] = true;
     parent[start] = -1; // Start node has no parent
 
     while (!q.empty()) {
-        int f = q.front();
+        ll f = q.front();
         q.pop();
 
         if (f == end) break; // Stop if we reach the end node
 
         for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!v[*i]) {
+            if (!vis[*i]) {
                 q.push(*i);
-                v[*i] = true;
+                vis[*i] = true;
                 parent[*i] = f; // Set parent
             }
         }
     }
 
-    vector<int> path;
-    for (int i = end; i != -1; i = parent[i]) {
+    vector<ll> path;
+    for (ll i = end; i != -1; i = parent[i]) {
         path.push_back(i);
     }
     reverse(path.begin(), path.end()); // Reverse to get the correct order
     return path;
+}
+
+//dfs traversal from start node, in process keeping track of max depth & keeping track of each node's depth & printing order of traversal
+ll maxDepth = 0;
+void dfs(ll startNode, ll startDepth){
+    vis[startNode] = true;
+    depth[startNode]=startDepth;
+    maxDepth=max(maxDepth, startDepth);
+    cerr << startNode << " ";
+    for(auto adjNode : g[startNode]){
+        if(!vis[adjNode]) dfs(adjNode, startDepth+1);
+    }
+}
+
+map<ll,ll>subtreeSizes; //Map to store subtree sizes for each child of the start node
+ll dfsSubtreesHelper(ll startNode){
+    vis[startNode] = true;
+    ll subtreeSize = 1;
+    //cerr << startNode << " ";
+    for(auto adjNode : g[startNode]){
+        if(!vis[adjNode]){
+            subtreeSize+=dfsSubtreesHelper(adjNode);
+        }
+    }
+    return subtreeSize;
+}
+//main function to call to populate subtreeSizes
+ll minSubtreeSize = 3*pow(10,5)+1; //Adjust this to the max given boundary of the problem
+void dfsSubtrees(ll startNode){
+    vis[startNode] = true;
+    for(auto adjNode : g[startNode]){
+        subtreeSizes[adjNode]=dfsSubtreesHelper(adjNode); //+1 if want to include startNode in size of subtrees
+        minSubtreeSize=min(minSubtreeSize,subtreeSizes[adjNode]);
+    }
 }
 
 string itobins(int n) {
@@ -194,15 +263,98 @@ string itobins(int n) {
     return binary;
 }
 
+string dtobx(int decimalNumber, int base) {
+    if (base < 2 || base > 36) {
+        return "Invalid base";
+    }
+
+    string result = "";
+    while (decimalNumber > 0) {
+        int remainder = decimalNumber % base;
+
+        // Convert remainder to corresponding character
+        if (remainder >= 10) {
+            result += 'A' + (remainder - 10);
+        } else {
+            result += '0' + remainder;
+        }
+
+        decimalNumber /= base;
+    }
+
+    // Reverse the string as the result is calculated in reverse order
+    reverse(result.begin(), result.end());
+
+    return result.empty() ? "0" : result;
+}
+
+ll ceildiv(ll n, ll d){
+    return((n+d-1)/d);
+}
+
+ll floordiv(ll n, ll d){
+    ll x = (n%d+d)%d;
+    return ((n-x)/d);
+}
+
+ll midpoint(ll L, ll R){
+    return (L+(R-L)/2);
+}
+
+ll lcm(ll a, ll b) {
+    return std::abs(a * b) / std::gcd(a, b);
+}
+
+
+int stringToBinary(const std::string& s, char charAsOne) {
+    int x = 0;
+    for (int j = 0; j < s.length(); j++) {
+        x = 2 * x + (s[j] == charAsOne);
+    }
+    return x;
+}
+
+//returns index of first element greater than or equal to target
+ll findGreaterEqual(vector<ll> sortedVector, ll target){
+    auto it = lower_bound(sortedVector.begin(), sortedVector.end(), target);
+    return it-sortedVector.begin();
+}
+
+//returns index of first element less than or equal to target
+//if all elements are greater than target returns -1
+//if all elements are smaller than target, returns last element
+ll findLessEqual(vector<ll> sortedVector, ll target){
+    auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
+    if(it != sortedVector.begin()){
+        --it;
+        if(*it<=target){
+            return it-sortedVector.begin()+1;
+        }
+    }
+    else{
+        return -1;
+    }
+}
+
+struct loc
+{
+    inline static ll x=0;
+    inline static ll y=0;
+    inline static char dir='r';
+    //loc::x to access or modify x
+};
+
+//Graph visualizer:
+//https://csacademy.com/app/graph_editor/
 
 
 std::vector<auto> solve(int N, int M, const std::vector<long long> &A, const std::vector<long long> &B) {
-    // TODO: edit here
+    
 }
 
-// generated by oj-template v4.8.1 (https://github.com/online-judge-tools/template-generator)
 int main() {
     std::ios::sync_with_stdio(false);
+    setIO("");
     std::cin.tie(nullptr);
     int N, M;
     std::cin >> N;
@@ -220,52 +372,18 @@ int main() {
         std::cout << ans[i] << ' ';
     }
     std::cout << '\n';
+    vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    parent.assign(n+1, -1);
 
     /* genprimes(1e5); */
 
-    //Uncomment for BFS
-    /* int n, e;
-    //get number of nodes and edges
-    cin >> n >> e;
-    
-    //initialize your visited vector and your graph as adjacency list
-    v.assign(n, false);
-    g.assign(n, vector<int>());
-    
-    parent.assign(n, -1);
-
-
-    //construct your graph as an adjacency list
-    int a, b;
-    for (int i = 0; i < e; i++) {
-        cin >> a >> b;
-        edge(a, b);
-    }
-    
-    //run the bfs and output order of traversed nodes
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
     for (int i = 0; i < n; i++) {
         if (!v[i])
             bfs(i);
     }
-    cout << endl;
     
-    //run the bfs outputing  path traversed + shortest path
-    v.assign(n, false);
-    int startNode, endNode;
-    startNode = 0;
-    endNode = 7;
-    //cin >> startNode >> endNode;
-    vector<int> path = bfs(startNode, endNode);
-
-    // Output the path
-    for (int node : path) {
-        cout << node << " ";
-    }
-    cout << endl;
-    // Output the length of the path i.e. # of edges
-    cout << path.size()-1;
-    cout << endl; */
-
     //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
     /* wasd(
         //cout << "Use this for problems where you have to go up, down, left right" << endl;

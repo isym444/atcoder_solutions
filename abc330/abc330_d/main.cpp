@@ -297,22 +297,24 @@ struct loc
 
 long long solve(ll N, std::vector<std::string> &S) {
     ll ans = 0;
-    cerr << S << endl;
+    /* cerr << S << endl; */
     vector<ll> rows(N,0);
     vector<ll> columns(N,0);
     foi(0,N){
         ll rowCount=0;
         ll columnCount=0;
         foj(0,N){
-            rowCount+=S[i][j];
-            columnCount+=S[j][i];
+            if(S[i][j]=='o') rowCount++;
+            if(S[j][i]=='o') columnCount++;
         }
-        row[i]=rowCount;
-        column[i]=columnCount;
+        rows[i]=rowCount;
+        columns[i]=columnCount;
     }
+    /* cerr << "rows: " << rows << endl;
+    cerr << "columns: " << columns << endl; */
     foi(0,N){
         foj(0,N){
-
+            if(S[i][j]=='o') ans+=((rows[i]-1)*(columns[j]-1));
         }
     }
     /* if(true){
