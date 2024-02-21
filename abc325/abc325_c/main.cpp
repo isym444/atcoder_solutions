@@ -16,6 +16,7 @@
 #include <bitset>
 #include <deque>
 #include <numeric>
+#include <assert.h>
 
 using namespace std;
 
@@ -138,330 +139,147 @@ void gen_primes() {
     }
 }
 
-vector<ll> parent; // To store parent information
-//visited nodes
-vector<bool> vis;
-//bool vis[61][61][61][61]={0};
-map<ll,ll> depth;
+//disjoint set union/union find
+struct dsu {
+  public:
+    dsu() : _n(0) {}
+    //constructor for dsu. Initialize as "dsu name_of_object(x);"
+    explicit dsu(int n) : _n(n), parent_or_size(n, -1) {}
 
-//initialize graph as adjacency list
-vector<vector<ll> > g;
-//initialize weighted graph as adjacency list
-vector<vector<pair<ll,ll>>> wg;
-//for building the adjacency list by adding edges info
-ll totalEdges = 0;
-void edge(ll originNode, ll destNode)
-{
-    g[originNode].pb(destNode);
-    totalEdges++;
- 
-    // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
-}
+    //returns representative of component if a&b already in component or else joins them into a new component and selects one as representative
+    int merge(int a, int b) {
+        assert(0 <= a && a < _n);
+        assert(0 <= b && b < _n);
+        int x = leader(a), y = leader(b);
+        if (x == y) return x;
+        if (-parent_or_size[x] < -parent_or_size[y]) std::swap(x, y);
+        parent_or_size[x] += parent_or_size[y];
+        parent_or_size[y] = x;
+        return x;
+    }
 
-void edge(ll originNode, ll destNode, ll weight){
-    wg[originNode].emplace_back(destNode, weight);
-    totalEdges++;
-    // For an undirected graph e.g., tree, add this line:
-    // g[destNode].emplace_back(originNode, weight);
-}
+    //returns whether a&b in same component
+    bool same(int a, int b) {
+        assert(0 <= a && a < _n);
+        assert(0 <= b && b < _n);
+        return leader(a) == leader(b);
+    }
 
-//returns vector where each index is the shortest distance between the start node and node i
-vector<ll> dijkstra(ll start) {
-    vector<ll> dist(wg.size(), INF);  // Distance from start to each node
-    //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
-    //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
-    dist[start] = 0;
-    pq.push({0, start});  // {distance, node}
+    //returns representative of connected component in which a resides
+    int leader(int a) {
+        assert(0 <= a && a < _n);
+        if (parent_or_size[a] < 0) return a;
+        return parent_or_size[a] = leader(parent_or_size[a]);
+    }
 
-    while (!pq.empty()) {
-        //cerr << "pq" << pq << endl;
-        ll currentDist = pq.top().first;
-        ll currentNode = pq.top().second;
-        pq.pop();
+    //returns size of connected component in which a resides
+    int size(int a) {
+        assert(0 <= a && a < _n);
+        return -parent_or_size[leader(a)];
+    }
 
-        // If the distance in priority queue is larger, we have already found a better path
-        if (currentDist > dist[currentNode]) {
-            continue;
+    //returns a list of the nodes of each connected component
+    std::vector<std::vector<int>> groups() {
+        std::vector<int> leader_buf(_n), group_size(_n);
+        for (int i = 0; i < _n; i++) {
+            leader_buf[i] = leader(i);
+            group_size[leader_buf[i]]++;
         }
-        /* Optimization to try if TLEing instead of if statement above
-        if (cdist != dist[node]) { continue; }*/
-    
-        for (auto &neighbor : wg[currentNode]) {
-            ll nextNode = neighbor.first;
-            ll weight = neighbor.second;
-            ll newDist = currentDist + weight;
-
-            if (newDist < dist[nextNode]) {
-                dist[nextNode] = newDist;
-                pq.push({newDist, nextNode});
-            }
+        std::vector<std::vector<int>> result(_n);
+        for (int i = 0; i < _n; i++) {
+            result[i].reserve(group_size[i]);
         }
-    }
-
-    return dist;
-}
-
-//Bellman Ford Graph: L node, R node, weight of edge between L&R
-vector<tuple<int, int, ll>> bfg;
-
-vector<ll> bellmanDistances;
-// Function to run Bellman-Ford algorithm given start node and # vertices, saves min distances in bellmanDistances vector
-bool bellmanFord(ll start, ll V) {
-    vector<ll> distance(V, INF);
-    bellmanDistances.resize(V, INF);
-    bellmanDistances[start] = 0;
-    ll a,b,w;
-    for (ll i = 1; i <= V - 1; i++) {
-        for (const auto& e : bfg) {
-            tie(a, b, w) = e;
-            bellmanDistances[b]=min(bellmanDistances[b],bellmanDistances[a]+w);
-            /* if (bellmanDistances[a] + w < bellmanDistances[b]) {
-                bellmanDistances[b] = bellmanDistances[a] + w;
-            } */
+        for (int i = 0; i < _n; i++) {
+            result[leader_buf[i]].push_back(i);
         }
+        result.erase(
+            std::remove_if(result.begin(), result.end(),[&](const std::vector<int>& v) { return v.empty(); }),result.end());
+        return result;
     }
 
-    // Check for negative-weight cycles (negative sum of edges in a cycle)
-    for (const auto& e : bfg) {
-        tie(a, b, w) = e;
-        if (bellmanDistances[a] + w < bellmanDistances[b]) {
-            cout << "Graph contains negative weight cycle" << endl;
-            return false;
-        }
-    }
-
-/*     // Print the distances
-    for (int i = 0; i < V; i++)
-        cout << "Distance from " << start << " to " << i << " is " << (distance[i] == INF ? "INF" : to_string(distance[i])) << endl;
- */
-    return true;
-}
-
-
-//traverse a graph using bfs from the specified start node to all other nodes, in the process printing the order the nodes are visited in
-void bfs(ll start)
-{
-    queue<ll> q;
- 
-    q.push(start);
-    vis[start] = true;
-    depth[start] = 1; // Depth of starting node is 1
-    //If want first time something happens/node reached then break when that happens
-    while (!q.empty()) {
-        ll f = q.front();
-        q.pop();
- 
-        cerr << f << " ";
-        
-        // Enqueue all adjacent of f and mark them visited 
-        ll counter = 0;
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!vis[*i]) {
-                counter++;
-                q.push(*i);
-                vis[*i] = true;
-                depth[*i] = depth[f] + 1; // Set the depth of the neighboring node
-            }
-        }
-        /* if(counter==0){
-            cerr << "depths to leafs: " << depth[f] << endl;
-        } */
-    }
-}
-
-//bfs function returning vector with the shortest paths from start node to every other node
-vector<ll> bfs_shortest_paths(ll start) {
-    vector<long long> distances(g.size()+1, -1);
-    queue<int> q;
-
-    distances[start] = 0;
-    q.push(start);
-
-    while (!q.empty()) {
-        int node = q.front();
-        q.pop();
-
-        for (int neighbor : g[node]) {
-            if (distances[neighbor] == -1) {
-                distances[neighbor] = distances[node] + 1;
-                q.push(neighbor);
-            }
-        }
-    }
-    return distances;
-}
-
-//return a vector containing bfs path from start to end nodes specified
-vector<ll> bfs(ll start, ll end) {
-    queue<ll> q;
-    q.push(start);
-    vis[start] = true;
-    parent[start] = -1; // Start node has no parent
-
-    while (!q.empty()) {
-        ll f = q.front();
-        q.pop();
-
-        if (f == end) break; // Stop if we reach the end node
-
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!vis[*i]) {
-                q.push(*i);
-                vis[*i] = true;
-                parent[*i] = f; // Set parent
-            }
-        }
-    }
-
-    vector<ll> path;
-    for (ll i = end; i != -1; i = parent[i]) {
-        path.push_back(i);
-    }
-    reverse(path.begin(), path.end()); // Reverse to get the correct order
-    return path;
-}
-
-//dfs traversal from start node, in process keeping track of max depth & keeping track of each node's depth & printing order of traversal
-ll maxDepth = 0;
-void dfs(ll startNode, ll startDepth){
-    vis[startNode] = true;
-    depth[startNode]=startDepth;
-    maxDepth=max(maxDepth, startDepth);
-    cerr << startNode << " ";
-    for(auto adjNode : g[startNode]){
-        if(!vis[adjNode]) dfs(adjNode, startDepth+1);
-    }
-}
-
-map<ll,ll>subtreeSizes; //Map to store subtree sizes for each child of the start node
-ll dfsSubtreesHelper(ll startNode){
-    vis[startNode] = true;
-    ll subtreeSize = 1;
-    //cerr << startNode << " ";
-    for(auto adjNode : g[startNode]){
-        if(!vis[adjNode]){
-            subtreeSize+=dfsSubtreesHelper(adjNode);
-        }
-    }
-    return subtreeSize;
-}
-//main function to call to populate subtreeSizes
-ll minSubtreeSize = 3*pow(10,5)+1; //Adjust this to the max given boundary of the problem
-void dfsSubtrees(ll startNode){
-    vis[startNode] = true;
-    for(auto adjNode : g[startNode]){
-        subtreeSizes[adjNode]=dfsSubtreesHelper(adjNode); //+1 if want to include startNode in size of subtrees
-        minSubtreeSize=min(minSubtreeSize,subtreeSizes[adjNode]);
-    }
-}
-
-string itobins(int n) {
-    if (n == 0) return "0";
-
-    string binary = "";
-    while (n > 0) {
-        binary += (n % 2) ? '1' : '0';
-        n /= 2;
-    }
-
-    reverse(binary.begin(), binary.end()); // Reverse to get the correct order
-    return binary;
-}
-
-string dtobx(int decimalNumber, int base) {
-    if (base < 2 || base > 36) {
-        return "Invalid base";
-    }
-
-    string result = "";
-    while (decimalNumber > 0) {
-        int remainder = decimalNumber % base;
-
-        // Convert remainder to corresponding character
-        if (remainder >= 10) {
-            result += 'A' + (remainder - 10);
-        } else {
-            result += '0' + remainder;
-        }
-
-        decimalNumber /= base;
-    }
-
-    // Reverse the string as the result is calculated in reverse order
-    reverse(result.begin(), result.end());
-
-    return result.empty() ? "0" : result;
-}
-
-ll ceildiv(ll n, ll d){
-    return((n+d-1)/d);
-}
-
-ll floordiv(ll n, ll d){
-    ll x = (n%d+d)%d;
-    return ((n-x)/d);
-}
-
-ll midpoint(ll L, ll R){
-    return (L+(R-L)/2);
-}
-
-ll lcm(ll a, ll b) {
-    return std::abs(a * b) / std::gcd(a, b);
-}
-
-
-int stringToBinary(const std::string& s, char charAsOne) {
-    int x = 0;
-    for (int j = 0; j < s.length(); j++) {
-        x = 2 * x + (s[j] == charAsOne);
-    }
-    return x;
-}
-
-//returns index of first element greater than or equal to target
-ll findGreaterEqual(vector<ll> sortedVector, ll target){
-    auto it = lower_bound(sortedVector.begin(), sortedVector.end(), target);
-    return it-sortedVector.begin();
-}
-
-//returns index of first element less than or equal to target
-//if all elements are greater than target returns -1
-//if all elements are smaller than target, returns last element
-ll findLessEqual(vector<ll> sortedVector, ll target){
-    auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
-    if(it != sortedVector.begin()){
-        --it;
-        if(*it<=target){
-            return it-sortedVector.begin()+1;
-        }
-    }
-    else{
-        return -1;
-    }
-}
-
-struct loc
-{
-    inline static ll x=0;
-    inline static ll y=0;
-    inline static char dir='r';
-    //loc::x to access or modify x
+  private:
+    int _n;
+    // root node: -1 * component size
+    // otherwise: parent
+    std::vector<int> parent_or_size;
 };
 
+
+std::vector<std::string> S;
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
+vector<vector<bool>> vis;
+//dfs traversal from start node, in process keeping track of max depth & keeping track of each node's depth & printing order of traversal
+ll maxDepth = 0;
+void dfs(ll i, ll j, ll H, ll W){
+    vis[i][j] = true;
+    S[i][j]='.';
+    //cerr << startNode << " ";
+    if(isvalid(i+1,H,j,W)){if(S[i+1][j]=='#'&&!vis[i+1][j]) dfs(i+1, j, H, W);}
+    if(isvalid(i-1,H,j,W)){ if(S[i-1][j]=='#'&&!vis[i-1][j]) dfs(i-1, j, H, W);}
+    if(isvalid(i,H,j+1,W)) {if(S[i][j+1]=='#'&&!vis[i][j+1]) dfs(i, j+1, H, W);}
+    if(isvalid(i,H,j-1,W)) {if(S[i][j-1]=='#'&&!vis[i][j-1]) dfs(i, j-1, H, W);}
+    if(isvalid(i+1,H,j+1,W)) {if(S[i+1][j+1]=='#'&&!vis[i+1][j+1]) dfs(i+1, j+1, H, W);}
+    if(isvalid(i-1,H,j-1,W)) {if(S[i-1][j-1]=='#'&&!vis[i-1][j-1]) dfs(i-1, j-1, H, W);}
+    if(isvalid(i+1,H,j-1,W)) {if(S[i+1][j-1]=='#'&&!vis[i+1][j-1]) dfs(i+1, j-1, H, W);}
+    if(isvalid(i-1,H,j+1,W)) {if(S[i-1][j+1]=='#'&&!vis[i-1][j+1]) dfs(i-1, j+1, H, W);}
+}
 
-
-long long solve(int H, long long W, const std::vector<std::string> &S) {
-    /* vis.assign(n+1, false);
+long long solve(ll h, long long w, const std::vector<std::string> &S) {
+    /* 
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    return 0;
+    /* ll counter = 0;
+    vis.assign(H+1, vector<bool>(W+1, false));
+    for(ll i = 0; i<H; i++){
+        for(ll j = 0; j<W; j++){
+            if(S[i][j]=='#'){
+                //cerr << i << " " << j << endl;
+                dfs(i,j,H,W);
+                //cerr << S << endl;
+                counter++;
+            }
+        }
+    }
+    return counter; */
+    ll n = h*w;
+    ll ans = 0;
+    dsu uf(n);
+    foi(0,h)foj(0,w){
+        if(S[i][j] !='#') continue;
+        //cerr << "S[i][j]" << i << " " << j << endl;
+        //ans++;
+        for(ll di = -1; di<=1; di++){
+            for(ll dj=-1;dj<=1;dj++){
+                ll ni=i+di, nj = j+dj;
+                if(ni<0||ni>=h||nj<0||nj>=w) continue;
+                if(S[ni][nj]!='#') continue;
+                if(i==ni&&j==nj) continue;
+                ll v = i*w+j, u=ni*w+nj;
+                //cerr << "ni: " << ni << " nj: " << nj << endl;
+                //cerr << "v: " << v << " u: " << u << endl;
+                if(uf.same(v,u)) continue;
+                uf.merge(v,u);
+                //ans--;
+            }
+        }
+        //cerr << endl;
+    }
+    /* for(auto x: uf.groups()){
+        cerr << x << endl;
+    } */
+    set<ll> an;
+    foi(0,h)foj(0,w){
+        if(S[i][j]=='#'){
+            //an.insert(uf.leader(i*w+j));
+            if(uf.leader(i*w+j)==i*w+j)ans++;
+        }
+    }
+    //return an.size();
+    return ans;
 }
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -470,7 +288,7 @@ int main() {
     int H;
     long long W;
     std::cin >> H;
-    std::vector<std::string> S(H);
+    S.resize(H);
     std::cin >> W;
     REP (i, H) {
         std::cin >> S[i];
