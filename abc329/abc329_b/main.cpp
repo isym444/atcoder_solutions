@@ -32,6 +32,7 @@ using namespace std;
 #define foj(from,non_incl_to) for(int j=from;j<non_incl_to;j++)
 #define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
+#define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
 //#define gcd __gcd
 #define mp make_pair
@@ -526,41 +527,25 @@ struct loc
 //https://csacademy.com/app/graph_editor/
 
 
-void solve(long long N, int Q, const std::vector<long long> &t, const std::vector<long long> &u, const std::vector<long long> &v) {
+long long solve(int N, const std::vector<long long> &A) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    dsu d(N);
-    foi(0,Q){
-        if(t[i]==0){
-            d.merge(u[i],v[i]);
-        }
-        else{
-            if(d.same(u[i],v[i])){
-                cout << 1 << endl;
-            }
-            else{
-                cout << 0 << endl;
-            }
-        }
-    }
-    return;
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long N;
-    int Q;
-    std::cin >> N >> Q;
-    std::vector<long long> t(Q), u(Q), v(Q);
-    REP (i, Q) {
-        std::cin >> t[i] >> u[i] >> v[i];
+    int N;
+    std::cin >> N;
+    std::vector<long long> A(N);
+    REP (i, N) {
+        std::cin >> A[i];
     }
-    solve(N, Q, t, u, v);
-    
+    auto ans = solve(N, A);
+    std::cout << ans << '\n';
 
     /* genprimes(1e5); */
 
