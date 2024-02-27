@@ -295,8 +295,17 @@ struct loc
 //https://csacademy.com/app/graph_editor/
 
 
-auto solve(long long N, int Q, std::string S, const std::vector<long long> &l, const std::vector<long long> &r) {
-    
+void solve(long long N, int Q, std::string S, const std::vector<long long> &l, const std::vector<long long> &r) {
+    vector<ll> psum(N+1,0);
+    foi(0,N-1){
+        char lc=S[i];
+        char rc=S[i+1];
+        psum[i+1]=psum[i]+(lc==rc);
+    }
+    //cerr << psum << endl;
+    foi(0,Q){
+        cout << psum[r[i]-1]-psum[l[i]-1] << endl;
+    }
 }
 
 int main() {
@@ -312,10 +321,7 @@ int main() {
     REP (i, Q) {
         std::cin >> l[i] >> r[i];
     }
-    auto ans = solve(N, Q, S, l, r);
-    REP (i, Q) {
-        std::cout << a[i] << '\n';
-    }
+    solve(N, Q, S, l, r);
 
     /* genprimes(1e5); */
 
