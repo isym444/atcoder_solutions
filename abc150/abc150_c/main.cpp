@@ -18,6 +18,8 @@
 #include <numeric>
 #include <assert.h>
 #include <unordered_map>
+#include <type_traits> // For std::is_floating_point
+#include <cmath> // For std::ceil
 
 using namespace std;
 
@@ -558,13 +560,42 @@ string dtobx(int decimalNumber, int base) {
     return result.empty() ? "0" : result;
 }
 
-ll ceildiv(ll n, ll d){
-    return((n+d-1)/d);
+template<typename T, typename U>
+auto ceildiv(T n, U d) -> decltype(n / d + 0) {
+static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "ceildiv requires arithmetic types");
+
+if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+    // Handle case where either n or d is a floating-point number
+    return static_cast<decltype(n / d + 0)>(std::ceil(n / static_cast<double>(d)));
+} else {
+    // Handle case where both n and d are integers
+    return (n + d - 1) / d;
+}
 }
 
-ll floordiv(ll n, ll d){
-    ll x = (n%d+d)%d;
-    return ((n-x)/d);
+/* ll ceildiv(ll n, ll d){
+return((n+d-1)/d);
+}
+*/
+/* ll floordiv(ll n, ll d){
+ll x = (n%d+d)%d;
+return ((n-x)/d);
+}
+ */
+template<typename T, typename U>
+auto floordiv(T n, U d) -> decltype(n / d + 0) {
+    static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "floordiv requires arithmetic types");
+
+    if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+        // Handle case where either n or d is a floating-point number
+        // Perform the division as floating-point operation and use std::floor to round down
+        return static_cast<decltype(n / d + 0)>(std::floor(n / static_cast<double>(d)));
+    } else {
+        // Handle case where both n and d are integers
+        // Original logic for floor division with integers
+        T x = (n % d + d) % d;
+        return (n - x) / d;
+    }
 }
 
 ll midpoint(ll L, ll R){
@@ -608,11 +639,22 @@ ll findLessEqual(vector<ll> sortedVector, ll target){
 
 struct loc
 {
-    inline static ll x=0;
-    inline static ll y=0;
-    inline static char dir='r';
+    ll x;
+    ll y;
+    char dir;
+    loc(ll x, ll y, char c) : x(x), y(y), dir(c) {}
     //loc::x to access or modify x
+    //initialize using loc locobj(1,2,'r')
 };
+
+/* sorting vector<loc> locvector by y first then x
+std::sort(locations.begin(), locations.end(), [](const loc &a, const loc &b) {
+        if (a.y == b.y) {
+            return a.x < b.x; // Sort by x if y is the same
+        }
+        return a.y < b.y; // Otherwise, sort by y
+    });
+ */
 
 vector<ll> genAlphabetPlaceholder(){
     vector<ll> f(26);
@@ -626,49 +668,67 @@ vector<char> genAlphabet(){
     return alphabet;
 }
 
+const ll LCSN = 1000 + 20;
+//dp holds the longest common subsequence (LCS) for the 2 substrings to index i & j
+//e.g. for s = "hleloworld", t = "thequickbrown"
+//i=3 j=4 i.e. dp[3][4]=2 as s[0toi]="hle" & t[0toj]="theq" -> LCS is "he"
+ll dp[LCSN][LCSN];
+//outputs the value of the longest common subsequence between 2 strings s & t
+ll lcs(string s, string t){
+    for(ll i = 0; i <= s.size(); i++){
+        for(ll j = 0; j <= t.size(); j++){
+            //if either s or t is empty then LCS = 0
+            if(!i || !j) dp[i][j] = 0;
+            //else if cur letters being compared i.e. s[i] or t[i] are the same
+            //then dp[i][j] is 1 more than dp[i-1][j-1]
+            else if (s[i-1] == t[j-1]) dp[i][j]=dp[i-1][j-1]+1;
+            //else if cur letters being compared i.e. s[i] or t[i] are not the same
+            //then dp[i][j] is max of dp[i-1][j] (comparing cur longest t to s-1)
+            //and dp[i][j-1] (comparing cur longest s to t-1)
+            else if (s[i-1] != t[j-1]) dp[i][j]=max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[s.size()][t.size()];
+}
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
 
-#define rep(i,n) for (int i = 0; i < (n); ++i)
+long long solve(int N, const std::vector<long long> &P, const std::vector<long long> &Q) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
-  ll n, k;
-  cin >> n >> k;
-  vector<ll> a(n);
-  foi(0,n){
-    cin >> a[i];
-  }
-  vector<ll> b(n);
-  foi(0,n){
-    cin >> b[i];
-  }
-  vector<vector<ll>> dp(n,vector<ll>(2,0));
-  dp[0][0]=1;
-  dp[0][1]=1;
-  for(ll i = 1; i<n; i++){
-    //cerr << dp[i][k] << " " << dp[i-1][j] << endl;
-    if(dp[i-1][0]){
-        if(abs(a[i]-a[i-1])<=k) dp[i][0]=1;
-        if(abs(b[i]-a[i-1])<=k) dp[i][1]=1;
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    int N;
+    std::cin >> N;
+    std::vector<long long> P(N), Q(N);
+    REP (i, N) {
+        std::cin >> P[i];
     }
-    if(dp[i-1][1]){
-        if(abs(a[i]-b[i-1])<=k) dp[i][0]=1;
-        if(abs(b[i]-b[i-1])<=k) dp[i][1]=1;
+    REP (i, N) {
+        std::cin >> Q[i];
     }
-    //cerr << dp <<endl;
-    if(dp[i][0]==0&&dp[i][1]==0){
-        cout << "No";
-        return 0;
+    auto ans = solve(N, P, Q);
+    std::cout << ans << '\n';
+
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-  }
-  //cerr << dp <<endl;
-  if(dp[n-1][0]==1||dp[n-1][1]==1){
-    cout << "Yes";
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
     return 0;
-  }
-  cout << "No";
-  return 0;
 }

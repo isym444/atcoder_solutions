@@ -626,49 +626,60 @@ vector<char> genAlphabet(){
     return alphabet;
 }
 
+const ll LCSN = 1000 + 20;
+//dp holds the longest common subsequence (LCS) for the 2 substrings to index i & j
+//e.g. for s = "hleloworld", t = "thequickbrown"
+//i=3 j=4 i.e. dp[3][4]=2 as s[0toi]="hle" & t[0toj]="theq" -> LCS is "he"
+ll dp[LCSN][LCSN];
+//outputs the value of the longest common subsequence between 2 strings s & t
+ll lcs(string s, string t){
+    for(ll i = 0; i <= s.size(); i++){
+        for(ll j = 0; j <= t.size(); j++){
+            //if either s or t is empty then LCS = 0
+            if(!i || !j) dp[i][j] = 0;
+            //else if cur letters being compared i.e. s[i] or t[i] are the same
+            //then dp[i][j] is 1 more than dp[i-1][j-1]
+            else if (s[i-1] == t[j-1]) dp[i][j]=dp[i-1][j-1]+1;
+            //else if cur letters being compared i.e. s[i] or t[i] are not the same
+            //then dp[i][j] is max of dp[i-1][j] (comparing cur longest t to s-1)
+            //and dp[i][j-1] (comparing cur longest s to t-1)
+            else if (s[i-1] != t[j-1]) dp[i][j]=max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[s.size()][t.size()];
+}
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
 
-#define rep(i,n) for (int i = 0; i < (n); ++i)
+char solve(long long V, long long A, long long B, long long C) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
-  ll n, k;
-  cin >> n >> k;
-  vector<ll> a(n);
-  foi(0,n){
-    cin >> a[i];
-  }
-  vector<ll> b(n);
-  foi(0,n){
-    cin >> b[i];
-  }
-  vector<vector<ll>> dp(n,vector<ll>(2,0));
-  dp[0][0]=1;
-  dp[0][1]=1;
-  for(ll i = 1; i<n; i++){
-    //cerr << dp[i][k] << " " << dp[i-1][j] << endl;
-    if(dp[i-1][0]){
-        if(abs(a[i]-a[i-1])<=k) dp[i][0]=1;
-        if(abs(b[i]-a[i-1])<=k) dp[i][1]=1;
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    long long V, A, B, C;
+    std::cin >> V >> A >> B >> C;
+    auto ans = solve(V, A, B, C);
+    std::cout << ans << '\n';
+
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    if(dp[i-1][1]){
-        if(abs(a[i]-b[i-1])<=k) dp[i][0]=1;
-        if(abs(b[i]-b[i-1])<=k) dp[i][1]=1;
-    }
-    //cerr << dp <<endl;
-    if(dp[i][0]==0&&dp[i][1]==0){
-        cout << "No";
-        return 0;
-    }
-  }
-  //cerr << dp <<endl;
-  if(dp[n-1][0]==1||dp[n-1][1]==1){
-    cout << "Yes";
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
     return 0;
-  }
-  cout << "No";
-  return 0;
 }
