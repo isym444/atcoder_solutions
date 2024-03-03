@@ -1,0 +1,7 @@
+{
+    "cph.general.saveLocation": "",
+    "files.associations": {
+        "string": "cpp",
+        "string_view": "cpp"
+    }
+}

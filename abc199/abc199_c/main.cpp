@@ -749,12 +749,6 @@ void lexperm(vector<ll> vec){
 //https://csacademy.com/app/graph_editor/
 
 
-std::string solve(long long N, std::string S, int Q, const std::vector<long long> &T, const std::vector<long long> &A, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -768,8 +762,45 @@ int main() {
     REP (i, Q) {
         std::cin >> T[i] >> A[i] >> B[i];
     }
-    auto ans = solve(N, S, Q, T, A, B);
-    std::cout << ans << '\n';
+    int flipped = 0;
+    foi(0,Q){
+        if(T[i]==1){
+            ll a,b;
+            a=A[i]-1;
+            b=B[i]-1;
+            if(flipped){
+                a+=N;
+                b+=N;
+                //cerr << a << " " << b << endl;
+                a=MOD(a,(2*N));
+                b=MOD(b,(2*N));
+                /* a=a%(2*N);
+                b=b%(2*N); */
+            }
+            //cerr << a << " " << b << endl;
+            char achar = S[a];
+            char bchar = S[b];
+            /* cerr << achar << endl;
+            cerr << bchar << endl;
+            cerr << endl; */
+            swap(S[a],S[b]);
+        }
+        else{
+            flipped==0?flipped=1:flipped=0;
+        }
+    }
+    if(!flipped){
+        cout << S;
+    }
+    else{
+        foi(0,2*N){
+            ll mi = i;
+            mi+=N;
+            mi=MOD(mi,(2*N));
+            //mi=mi%(2*N);
+            cout << S[mi];
+        }
+    }
 
     /* genprimes(1e5); */
 
