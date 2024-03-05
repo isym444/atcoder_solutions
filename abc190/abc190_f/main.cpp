@@ -32,12 +32,12 @@ using namespace std;
 #define sz(x) (int)(x).size()
 #define fo(from_0_to_non_incl_to) for(int i=0;i<from_0_to_non_incl_to;i++)
 //h CAREFUL if you put an expression as an argument it will give bugs, better assign expression to variable then put that in the foi() as argument
-#define foi(from,non_incl_to) for(int i=from;i<non_incl_to;i++)
-#define foii(non_incl_to) for(int i=0;i<non_incl_to;i++)
-#define foj(from,non_incl_to) for(int j=from;j<non_incl_to;j++)
-#define fojj(non_incl_to) for(int j=0;j<non_incl_to;j++)
-#define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
-#define fokk(non_incl_to) for(int k=0;k<non_incl_to;k++)
+#define foi(from,non_incl_to) for(int i=from;i<(non_incl_to);i++)
+#define foii(non_incl_to) for(int i=0;i<(non_incl_to);i++)
+#define foj(from,non_incl_to) for(int j=from;j<(non_incl_to);j++)
+#define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
+#define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
+#define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
 #define fa(x, dataStructure) for(auto x : dataStructure)
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
@@ -792,36 +792,28 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
-bool solve(int N, long long X, const std::vector<long long> &a, const std::vector<long long> &b) {
+
+auto solve(int N, const std::vector<long long> &a) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    vector dp(N+1,bitset<10001>());
-    dp[0][0]=1;
-    foi(0,N){
-        dp[i+1] = (dp[i]<<a[i]) | dp[i]<<b[i];
-    }
-    //cerr << dp << endl;
-    return dp[N][X];
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;sa
-    long long X;
+    int N;
     std::cin >> N;
-    std::vector<long long> a(N), b(N);
-    std::cin >> X;
+    std::vector<long long> a(N);
     REP (i, N) {
-        std::cin >> a[i] >> b[i];
+        std::cin >> a[i];
     }
-    auto ans = solve(N, X, a, b);
-    std::cout << (ans ? YES : NO) << '\n';
+    auto ans = solve(N, a);
+    REP (i, N) {
+        std::cout << ans[i] << '\n';
+    }
 
     /* genprimes(1e5); */
 
