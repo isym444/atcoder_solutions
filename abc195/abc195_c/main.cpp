@@ -672,6 +672,7 @@ struct loc
     loc(ll x, ll y, char c) : x(x), y(y), dir(c) {}
     //loc::x to access or modify x
     //initialize using loc locobj(1,2,'r')
+    //if don't want to use constructor, can initialize using loc locobj = {1, 2, 'n'};
 };
 
 /* sorting vector<loc> locvector by y first then x
@@ -792,41 +793,23 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
+
+long long solve(long long N) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    vector<vector<ll>> a(3,vector<ll>(3,0));
-    foi(0,3){
-        foj(0,3){
-            cin >> a[i][j];
-        }
-    }
-    //cerr << a << endl;
-    ll a1,a2,a3,b1,b2,b3;
-    a1 = 0;
-    b1 = a[0][0];
-    b2 = a[0][1];
-    b3 = a[0][2];
-    a2 = a[1][0] - b1;
-    a3 = a[2][0] - b1;
-    ll checker = 1;
-    if(a1+b1!=a[0][0]) checker = 0;
-    if(a1+b2!=a[0][1]) checker = 0;
-    if(a1+b3!=a[0][2]) checker = 0;
-    if(a2+b1!=a[1][0]) checker = 0;
-    if(a2+b2!=a[1][1]) checker = 0;
-    if(a2+b3!=a[1][2]) checker = 0;
-    if(a3+b1!=a[2][0]) checker = 0;
-    if(a3+b2!=a[2][1]) checker = 0;
-    if(a3+b3!=a[2][2]) checker = 0;
-    if(checker == 1) cout << "Yes";
-    else cout << "No";
+    long long N;
+    std::cin >> N;
+    auto ans = solve(N);
+    std::cout << ans << '\n';
+
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

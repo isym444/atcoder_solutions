@@ -664,15 +664,7 @@ ll findLessEqual(vector<ll> sortedVector, ll target){
     }
 }
 
-struct loc
-{
-    ll x;
-    ll y;
-    char dir;
-    loc(ll x, ll y, char c) : x(x), y(y), dir(c) {}
-    //loc::x to access or modify x
-    //initialize using loc locobj(1,2,'r')
-};
+
 
 /* sorting vector<loc> locvector by y first then x
 std::sort(locations.begin(), locations.end(), [](const loc &a, const loc &b) {
@@ -792,41 +784,87 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
+struct loc
+{
+    ll h;
+    ll w;
+    ll newh;
+    ll neww;
+    ll initiali;
+    //loc::x to access or modify x
+    //initialize using loc locobj(1,2,'r')
+};
+
+bool compareByW(const loc& a, const loc& b)
+{
+    if (a.w == b.w) return a.h < b.h; // If h is the same, sort by w
+    return a.w < b.w; // Otherwise, sort by h
+}
+bool compareByH(const loc& a, const loc& b)
+{
+    if (a.h == b.h) return a.w < b.w; // If h is the same, sort by w
+    return a.h < b.h; // Otherwise, sort by h
+}
+bool compareByinitiali(const loc& a, const loc& b)
+{
+    return a.initiali < b.initiali; // Ascending order
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
-    std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    vector<vector<ll>> a(3,vector<ll>(3,0));
-    foi(0,3){
-        foj(0,3){
-            cin >> a[i][j];
-        }
+    cin.tie(nullptr);
+    long long H, W;
+    int N;
+    cin >> H >> W >> N;
+    //std::vector<pair<ll,ll>> A;
+    vector<loc> A;
+    foi(0,N){
+        ll t1, t2;
+        cin >> t1 >> t2;
+        loc locobj = {t1,t2,(ll)0,(ll)0,(ll)i+1};
+        A.pb(locobj);
     }
-    //cerr << a << endl;
-    ll a1,a2,a3,b1,b2,b3;
-    a1 = 0;
-    b1 = a[0][0];
-    b2 = a[0][1];
-    b3 = a[0][2];
-    a2 = a[1][0] - b1;
-    a3 = a[2][0] - b1;
-    ll checker = 1;
-    if(a1+b1!=a[0][0]) checker = 0;
-    if(a1+b2!=a[0][1]) checker = 0;
-    if(a1+b3!=a[0][2]) checker = 0;
-    if(a2+b1!=a[1][0]) checker = 0;
-    if(a2+b2!=a[1][1]) checker = 0;
-    if(a2+b3!=a[1][2]) checker = 0;
-    if(a3+b1!=a[2][0]) checker = 0;
-    if(a3+b2!=a[2][1]) checker = 0;
-    if(a3+b3!=a[2][2]) checker = 0;
-    if(checker == 1) cout << "Yes";
-    else cout << "No";
+    
+    sort(A.begin(),A.end(), compareByH);
+    ll maxh=-1;
+    ll minh=INF;
+    ll maxw=-1;
+    ll minw=INF;
+    ll counter = 0;
+    for(int i = 0; i<N; i++){
+        /* cerr << A[i].h << endl;
+        cerr << A[i].w << endl;
+        cerr << A[i].newh << endl;
+        cerr << A[i].neww << endl;
+        cerr << A[i].initiali << endl;
+        cerr << endl; */
+        maxh=max(maxh,(ll)i);
+        minh=min(minh,(ll)i);
+        if(i>0) if(A[i].h!=A[i-1].h) counter++;
+        A[i].newh=counter;
+    }
+    std::sort(A.begin(), A.end(), compareByW);
+    counter = 0;
+    for(int i = 0; i<N; i++){
+        /* cerr << A[i].h << endl;
+        cerr << A[i].w << endl;
+        cerr << A[i].newh << endl;
+        cerr << A[i].neww << endl;
+        cerr << A[i].initiali << endl;
+        cerr << endl; */
+        maxw=max(maxw,(ll)i);
+        minw=min(minw,(ll)i);
+        if(i>0) if(A[i].w!=A[i-1].w) counter++;
+        A[i].neww=counter;
+    }
+    sort(A.begin(), A.end(), compareByinitiali);
+    //cerr << ans << endl;
+    for(auto x:A){
+        cout << x.newh+1 << " " << x.neww+1 << endl;
+    }
+    //cerr << ans << endl;
+
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
