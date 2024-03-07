@@ -794,27 +794,52 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-double solve(int N, long long K, const std::vector<long long> &p) {
+long long solve(ll N, const std::vector<char> &c) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    
+    if(c.size()==1) return 0;
+    ll rs=0;
+    ll ws=0;
+    foi(0,N){
+        if(c[i]=='R') rs++;
+        else ws++;
+    }
+    if(rs==0||ws==0) return 0;
+    ll wonleft=0;
+    ll ronright=rs;
+    ll ans = 0;
+    ans = INF;
+    ll tempans;
+    tempans = max(wonleft, ronright);
+    ans=min(ans,tempans);
+    for(ll i = 0; i<N; i++){
+        if(c[i]=='W'){
+            wonleft++;
+        }
+        else{
+            ronright--;
+        }
+        tempans = max(wonleft, ronright);
+        ans=min(ans,tempans);
+    }
+    return ans;
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    long long K;
+    ll N;
     std::cin >> N;
-    std::vector<long long> p(N);
-    std::cin >> K;
+    std::vector<char> c(N);
+    string temp;
+    cin >> temp;
     REP (i, N) {
-        std::cin >> p[i];
+        c[i]=temp[i];
     }
-    auto ans = solve(N, K, p);
+    auto ans = solve(N, c);
     std::cout << ans << '\n';
 
     /* genprimes(1e5); */

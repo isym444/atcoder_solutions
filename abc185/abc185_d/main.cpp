@@ -794,28 +794,85 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-double solve(int N, long long K, const std::vector<long long> &p) {
+long long solve(ll N, ll M, const std::vector<ll> &A) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    
+/*     vll b;
+    ll count=0;
+    ll shortest=INF;
+    ll firstwhite=0;
+    foi(0,N){
+        if(A[i]==1&&firstwhite!=0){
+            b.pb(count);
+            shortest = min(shortest,count);
+            count=0;
+        }
+        if(A[i]==0){
+            firstwhite=1;
+            count++;
+        }
+        if(i==N-1&&A[i]==0){
+            b.pb(count);
+            shortest=min(shortest,count);
+        }
+    }
+    ll ans = 0;
+    fx(b){
+        ans+=ceildiv(x,shortest);
+    }
+    return ans; */
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    long long K;
-    std::cin >> N;
-    std::vector<long long> p(N);
-    std::cin >> K;
-    REP (i, N) {
-        std::cin >> p[i];
+    ll N, M;
+    std::cin >> N >> M;
+    //std::vector<pair<ll,ll>> A;
+    /* foi(0,N){
+        A.pb(mp(i,0));
+    } */
+    //vll A(N,0);
+    if(M==0){
+        cout << 1 << endl;
+        return 0;
     }
-    auto ans = solve(N, K, p);
-    std::cout << ans << '\n';
+    ll count=0;
+    ll shortest=INF;
+    ll firstwhite=0;
+    vll blues(M);
+    REP (i, M) {
+        cin >> blues[i];
+        
+    }
+    sort(blues.begin(), blues.end());
+    vll whitelengths;
+    if(blues[0]!=1){
+        whitelengths.pb(blues[0]-1);
+        shortest=min(shortest,blues[0]-1);
+    }
+    foi(0,M-1){
+        if(blues[i+1]-blues[i]-1!=0){
+            whitelengths.pb(blues[i+1]-blues[i]-1);
+            shortest=min(shortest,blues[i+1]-blues[i]-1);
+        }
+    }
+    if(blues[M-1]!=N){
+        whitelengths.pb(N-blues[M-1]);
+        shortest=min(shortest,N-blues[M-1]);
+    }
+    ll K=shortest;
+    ll ans=0;
+    fx(whitelengths){
+        ans+=ceildiv(x,K);
+    }
+    cout << ans << endl;
+    /* cerr << A << endl;
+    auto ans = solve(N, M, A);
+    std::cout << ans << '\n'; */
 
     /* genprimes(1e5); */
 

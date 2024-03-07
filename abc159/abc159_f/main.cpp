@@ -793,13 +793,12 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-double solve(int N, long long K, const std::vector<long long> &p) {
+constexpr long long MOD = 998244353;
+long long solve(int N, long long S, const std::vector<long long> &A) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    
 }
 
 int main() {
@@ -807,14 +806,14 @@ int main() {
     setIO("");
     std::cin.tie(nullptr);
     int N;
-    long long K;
+    long long S;
     std::cin >> N;
-    std::vector<long long> p(N);
-    std::cin >> K;
+    std::vector<long long> A(N);
+    std::cin >> S;
     REP (i, N) {
-        std::cin >> p[i];
+        std::cin >> A[i];
     }
-    auto ans = solve(N, K, p);
+    auto ans = solve(N, S, A);
     std::cout << ans << '\n';
 
     /* genprimes(1e5); */

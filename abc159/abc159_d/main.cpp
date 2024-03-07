@@ -229,7 +229,7 @@ ll mpow(ll base, ll exp)
 }
 
 //use if possible as faster than nCx
-long long nC2(int n) {
+long long nC2(ll n) {
     return static_cast<long long>(n) * (n - 1) / 2;
 }
 
@@ -794,29 +794,38 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-double solve(int N, long long K, const std::vector<long long> &p) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    
-}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
     int N;
-    long long K;
     std::cin >> N;
-    std::vector<long long> p(N);
-    std::cin >> K;
+    std::vector<long long> A(N);
+    map<ll,ll> ocur;
     REP (i, N) {
-        std::cin >> p[i];
+        ll temp;
+        std::cin >> temp;
+        A[i] = temp;
+        if(ocur.find(temp)!=ocur.end()){
+            ocur[temp]++;
+        }
+        else{
+            ocur[temp]=1;
+        }
     }
-    auto ans = solve(N, K, p);
-    std::cout << ans << '\n';
-
+    map<ll,ll> ac2;
+    map<ll,ll> ac2m;
+    ll sum=0;
+    fx(ocur){
+        ac2[x.first]=nC2(x.second);
+        sum+=nC2(x.second);
+        ac2m[x.first]=nC2(x.second-1);
+    }
+    foi(0,N){
+        cout << sum-ac2[A[i]]+ac2m[A[i]] << endl;
+    }
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
