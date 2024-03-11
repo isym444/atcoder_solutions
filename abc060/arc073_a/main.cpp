@@ -799,11 +799,16 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, long long T, const std::vector<long long> &t) {
+long long solve(int N, long long T, std::vector<long long> &t) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    ll ans = N*T;
+    foi(1,t.size()){
+        if(t[i]-t[i-1]<T) ans-=(T-(t[i]-t[i-1]));
+    }
+    return(ans);
 }
 
 int main() {

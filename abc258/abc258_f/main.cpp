@@ -31,9 +31,15 @@ using namespace std;
 #define ll long long
 #define sz(x) (int)(x).size()
 #define fo(from_0_to_non_incl_to) for(int i=0;i<from_0_to_non_incl_to;i++)
-#define foi(from,non_incl_to) for(int i=from;i<non_incl_to;i++)
-#define foj(from,non_incl_to) for(int j=from;j<non_incl_to;j++)
-#define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
+//h CAREFUL if you put an expression as an argument it will give bugs, better assign expression to variable then put that in the foi() as argument
+#define foi(from,non_incl_to) for(int i=from;i<(non_incl_to);i++)
+#define foii(non_incl_to) for(int i=0;i<(non_incl_to);i++)
+#define foj(from,non_incl_to) for(int j=from;j<(non_incl_to);j++)
+#define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
+#define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
+#define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
+#define fa(x, dataStructure) for(auto x : dataStructure)
+#define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
@@ -58,10 +64,12 @@ using namespace std;
 #define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
 
 typedef pair<ll, ll> pl;
+typedef vector<long long> vll;
+typedef std::vector<std::vector<long long>> vvll;
 
 #define pb push_back
 
-ll mod=1e9+7,INF=1e18;
+ll INF=1e18;
 
 
 /*/---------------------------IO(Debugging)----------------------/*/
@@ -201,6 +209,23 @@ std::unordered_map<int, int> fact(int x) {
         x = x / spf[x];
     }
     return pfactors;
+}
+
+ll mod=1e9+7;
+//ll mod=1000;
+//modular exponentiation: calculates a^b mod c where a^b is a crazy big number and would usually overflow. Change mod above as needed
+ll mpow(ll base, ll exp)
+{
+    base %= mod;
+    ll result = 1;
+    while (exp > 0)
+    {
+        if (exp & 1)
+            result = ((ll)result * base) % mod;
+        base = ((ll)base * base) % mod;
+        exp >>= 1;
+    }
+    return result;
 }
 
 //use if possible as faster than nCx
@@ -463,6 +488,7 @@ struct dsu {
     explicit dsu(int n) : _n(n), parent_or_size(n, -1) {}
 
     //returns representative of component if a&b already in component or else joins them into a new component and selects one as representative
+    //don't forget nodes are 0 indexed!!!!!!!!!!!! so if edge in problem connects node 1&2 where nodes are 1 indexed in problem, do --
     int merge(int a, int b) {
         assert(0 <= a && a < _n);
         assert(0 <= b && b < _n);
@@ -562,15 +588,15 @@ string dtobx(int decimalNumber, int base) {
 
 template<typename T, typename U>
 auto ceildiv(T n, U d) -> decltype(n / d + 0) {
-static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "ceildiv requires arithmetic types");
+    static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "ceildiv requires arithmetic types");
 
-if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
-    // Handle case where either n or d is a floating-point number
-    return static_cast<decltype(n / d + 0)>(std::ceil(n / static_cast<double>(d)));
-} else {
-    // Handle case where both n and d are integers
-    return (n + d - 1) / d;
-}
+    if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+        // Handle case where either n or d is a floating-point number
+        return static_cast<decltype(n / d + 0)>(std::ceil(n / static_cast<double>(d)));
+    } else {
+        // Handle case where both n and d are integers
+        return (n + d - 1) / d;
+    }
 }
 
 /* ll ceildiv(ll n, ll d){
@@ -624,6 +650,7 @@ ll findGreaterEqual(vector<ll> sortedVector, ll target){
 //returns index of first element less than or equal to target
 //if all elements are greater than target returns -1
 //if all elements are smaller than target, returns last element
+//h N.B. gives 1-based index
 ll findLessEqual(vector<ll> sortedVector, ll target){
     auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
     if(it != sortedVector.begin()){
@@ -645,6 +672,7 @@ struct loc
     loc(ll x, ll y, char c) : x(x), y(y), dir(c) {}
     //loc::x to access or modify x
     //initialize using loc locobj(1,2,'r')
+    //if don't want to use constructor, can initialize using loc locobj = {1, 2, 'n'};
 };
 
 /* sorting vector<loc> locvector by y first then x
@@ -690,6 +718,82 @@ ll lcs(string s, string t){
     }
     return dp[s.size()][t.size()];
 }
+
+// Helper function to convert a number to a vector of its digits
+std::vector<ll> numberToVector(ll number) {
+    std::vector<ll> digits;
+    while (number > 0) {
+        digits.push_back(number % 10);
+        number /= 10;
+    }
+    std::reverse(digits.begin(), digits.end());
+    return digits;
+}
+
+// Helper function to convert a vector of digits back to a number
+ll vectorToNumber(const std::vector<ll>& digits) {
+    ll number = 0;
+    for (ll digit : digits) {
+        number = number * 10 + digit;
+    }
+    return number;
+}
+
+//checks whether vec1 is lexicographically smaller than vec2
+bool isLexicographicallySmaller(const std::vector<long long>& vec1, const std::vector<long long>& vec2) {
+    return std::lexicographical_compare(vec1.begin(), vec1.end(), vec2.begin(), vec2.end());
+}
+
+// cout all permutations of a vector<ll> in lexicographic order
+void lexperm(vector<ll> vec){
+    while (std::next_permutation(vec.begin(), vec.end())){
+        // Print the current permutation
+        for (ll num : vec) {
+            std::cout << num << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
+bool isPalindrome(const std::string& s) {
+    int start = 0;
+    int end = s.length() - 1;
+
+    while(start < end) {
+        // Skip non-alphanumeric characters
+        while(start < end && !isalnum(s[start])) start++;
+        while(start < end && !isalnum(s[end])) end--;
+
+        // Check for palindrome, ignoring case
+        if(tolower(s[start]) != tolower(s[end])) {
+            return false;
+        }
+
+        start++;
+        end--;
+    }
+
+    return true;
+}
+
+bool isPalindrome(long long n) {
+    if (n < 0) return false; // Negative numbers are not considered palindromes
+
+    long long reversed = 0, original = n, remainder;
+
+    while (n != 0) {
+        remainder = n % 10;
+        reversed = reversed * 10 + remainder;
+        n /= 10;
+    }
+
+    return original == reversed;
+}
+
+//max heap priority queue i.e. top() gives largest value
+//priority_queue<ll> d;
+//min heap priority queue i.e. top() gives smallest value
+//priority_queue <ll, vector<ll>, greater<ll>> d;
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
