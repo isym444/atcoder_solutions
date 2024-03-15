@@ -804,14 +804,8 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-double solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-     
-}
+const std::string YES = "Yes";
+const std::string NO = "No";
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -819,15 +813,24 @@ int main() {
     std::cin.tie(nullptr);
     // failed to analyze input format
     // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll t;
+    cin >> t;
+    foi(0,t){
+        ll n;
+        cin >> n;
+        string s1, s2;
+        cin >> s1 >> s2;
+        cerr << s1 << " " << s2 << endl;
+        ll checker = 0;
+        for(ll j = 1; j<n; j++){
+            if(s1[j]=='<'&&s2[j-1]=='<'&&j%2==1){
+                cout << "No" << endl;
+                checker = 1;
+                break;
+            }
+        }
+        if(checker == 0) cout << "Yes" << endl;
     }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
-
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

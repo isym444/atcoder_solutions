@@ -805,27 +805,22 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-double solve(int n, const std::vector<int64_t> &a) {
+auto solve(long long N, long long A, long long B) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-     
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
+    long long N, A, B;
+    std::cin >> N >> A >> B;
+    auto ans = solve(N, A, B);
+    // failed to analyze output format
     // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
     std::cout << ans << '\n';
 
     /* genprimes(1e5); */

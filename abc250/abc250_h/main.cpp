@@ -804,29 +804,38 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-double solve(int n, const std::vector<int64_t> &a) {
+const std::string YES = "Yes";
+const std::string NO = "No";
+auto solve(long long N, int M, long long K, const std::vector<long long> &a, const std::vector<long long> &b, const std::vector<long long> &c, int Q, const std::vector<long long> &x, const std::vector<long long> &y, const std::vector<long long> &t) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-     
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    long long N;
+    int M;
+    long long K;
+    int Q;
+    std::cin >> N >> M;
+    std::vector<long long> a(M), b(M), c(M);
+    std::cin >> K;
+    REP (i, M) {
+        std::cin >> a[i] >> b[i] >> c[i];
     }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
+    std::cin >> Q;
+    std::vector<long long> x(Q), y(Q), t(Q);
+    REP (i, Q) {
+        std::cin >> x[i] >> y[i] >> t[i];
+    }
+    auto ans = solve(N, M, K, a, b, c, Q, x, y, t);
+    REP (i, K) {
+        std::cout << d[i] << '\n';
+    }
 
     /* genprimes(1e5); */
 

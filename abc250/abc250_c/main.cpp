@@ -805,28 +805,48 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-double solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-     
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll n,q;
+    cin >> n >> q;
+    vll ar(n+1);
+    iota(ar.begin(), ar.end(), 0);
+    //cerr << ar << endl;
+    map<ll,ll> og_cur;
+    for(ll i = 1; i<=n; i++){
+        og_cur[i]=i;
     }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
+    /* cerr << og_cur << endl;
+    cerr << "--------------" << endl; */
+    foi(0,q){
+        ll x;
+        cin >> x;
+        //cerr << "x: " << x << endl;
+        ll posofx = og_cur[x];
+        //cerr << "posx: " << posofx << endl;
+        //cerr << "og_cur before: " << og_cur << endl;
+        if(posofx<n){
+            og_cur[x] = posofx+1;
+            og_cur[ar[posofx+1]]=posofx;
+            swap(ar[posofx],ar[posofx+1]);
+
+        }
+        else{
+            og_cur[x] = n-1;
+            og_cur[ar[n-1]]=n;
+            swap(ar[posofx],ar[posofx-1]);
+        }
+        //cerr << "og_cur after: " << og_cur << endl;
+        //cerr << ar << endl;
+    }
+    //cerr << "--------------" << endl;
+    //cerr << ar << endl;
+    foi(1,n+1){
+        cout << ar[i] << " ";
+    }
 
     /* genprimes(1e5); */
 
