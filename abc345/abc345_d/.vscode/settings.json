@@ -1,0 +1,23 @@
+{
+    "cph.general.saveLocation": "",
+    "files.associations": {
+        "ios": "cpp",
+        "set": "cpp",
+        "__tree": "cpp",
+        "bitset": "cpp",
+        "vector": "cpp",
+        "iosfwd": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "initializer_list": "cpp",
+        "map": "cpp",
+        "queue": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "unordered_map": "cpp",
+        "ostream": "cpp",
+        "__node_handle": "cpp"
+    }
+}
