@@ -791,11 +791,9 @@ bool isPalindrome(long long n) {
 }
 
 //max heap priority queue i.e. top() gives largest value
-//priority_queue<ll> d;
 typedef priority_queue<ll> maxpq;
-typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
 //min heap priority queue i.e. top() gives smallest value
-//priority_queue <ll, vector<ll>, greater<ll>> d;
+typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
 
 //.count(x) O(num_of_x+logN)
 //.find(x) O(logN) -> so use find over count if possible
@@ -806,6 +804,7 @@ typedef multiset<ll> msll;
 //doing mymultiset.erase(x) will erase all
 #define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
 #define mseraseall(mymultiset, x) mymultiset.erase(x)
+//find smallest and biggest elements O(1)
 #define msmin(mymultiset) *mymultiset.begin()
 #define msmax(mymultiset) *mymultiset.rbegin()
 
@@ -819,61 +818,52 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
+long long solve(int N, long long K, const std::vector<std::string> &S) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+    ll ans = 0;
+    for(int i = 0; i<(1<<N); i++){
+        std::vector<std::string> currentCombination;
+
+        // Check each bit of i
+        for(int j = 0; j < N; j++) {
+            // If the jth bit of i is set, include S[j] in the current combination
+            if(i & (1 << j)) {
+                currentCombination.push_back(S[j]);
+            }
+        }
+
+        vll numlet(26,0);
+        fx(currentCombination){
+            for(auto y:x){
+                numlet[y-'a']++;
+            }
+        }
+        ll curans=0;
+        fx(numlet){
+            if(x==K) curans++;
+        }
+        ans = max(ans, curans);
+    }
+    return ans;
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    msll test;
-    test.insert(2);
-    test.insert(5);
-    test.insert(5);
-    test.insert(7);
-    //cerr << msmin(test);
-    mserasesingle(test,5);
-    fx(test){
-        cerr << x << endl;
+    int N;
+    long long K;
+    std::cin >> N;
+    std::vector<std::string> S(N);
+    std::cin >> K;
+    REP (i, N) {
+        std::cin >> S[i];
     }
-    int n;
-    std::cin >> n;
-    maxpq maxm;
-    minpq minm;
-    map<ll,ll> nums;
-    foi(0,n){
-        ll t,a,b;
-        cin >> t;
-        if(t==1){
-            cin >> a;
-            if(nums.find(a)!=nums.end()){
-                nums[a]++;
-            }
-            else{
-                nums[a]=1;
-                maxm.push(a);
-                minm.push(a);
-            }
-        }
-        else if(t==2){
-            cin >> a >> b;
-            if(b>=nums[a]){
-                nums.erase(a);
-            }
-            else{
-                nums[a]=nums[a]-b;
-            }
-        }
-        else{
-            while(nums.find(maxm.top())==nums.end()){
-                maxm.pop();
-            }
-            while(nums.find(minm.top())==nums.end()){
-                minm.pop();
-            }
-            cout << maxm.top()-minm.top() << endl;
-        }
-    }
+    auto ans = solve(N, K, S);
+    std::cout << ans << '\n';
 
     /* genprimes(1e5); */
 

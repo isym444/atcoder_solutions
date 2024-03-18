@@ -791,11 +791,9 @@ bool isPalindrome(long long n) {
 }
 
 //max heap priority queue i.e. top() gives largest value
-//priority_queue<ll> d;
 typedef priority_queue<ll> maxpq;
-typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
 //min heap priority queue i.e. top() gives smallest value
-//priority_queue <ll, vector<ll>, greater<ll>> d;
+typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
 
 //.count(x) O(num_of_x+logN)
 //.find(x) O(logN) -> so use find over count if possible
@@ -806,6 +804,7 @@ typedef multiset<ll> msll;
 //doing mymultiset.erase(x) will erase all
 #define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
 #define mseraseall(mymultiset, x) mymultiset.erase(x)
+//find smallest and biggest elements O(1)
 #define msmin(mymultiset) *mymultiset.begin()
 #define msmax(mymultiset) *mymultiset.rbegin()
 
@@ -819,61 +818,32 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
+auto solve(int N, const std::vector<long long> &A, const std::vector<long long> &B, int Q, const std::vector<long long> &U, const std::vector<long long> &K) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
+    int N, Q;
+    std::cin >> N;
+    std::vector<long long> A(N - 1), B(N - 1);
+    REP (i, N - 1) {
+        std::cin >> A[i] >> B[i];
+    }
+    std::cin >> Q;
+    std::vector<long long> U(Q), K(Q);
+    REP (i, Q) {
+        std::cin >> U[i] >> K[i];
+    }
+    auto ans = solve(N, A, B, Q, U, K);
+    // failed to analyze output format
     // TODO: edit here
-    msll test;
-    test.insert(2);
-    test.insert(5);
-    test.insert(5);
-    test.insert(7);
-    //cerr << msmin(test);
-    mserasesingle(test,5);
-    fx(test){
-        cerr << x << endl;
-    }
-    int n;
-    std::cin >> n;
-    maxpq maxm;
-    minpq minm;
-    map<ll,ll> nums;
-    foi(0,n){
-        ll t,a,b;
-        cin >> t;
-        if(t==1){
-            cin >> a;
-            if(nums.find(a)!=nums.end()){
-                nums[a]++;
-            }
-            else{
-                nums[a]=1;
-                maxm.push(a);
-                minm.push(a);
-            }
-        }
-        else if(t==2){
-            cin >> a >> b;
-            if(b>=nums[a]){
-                nums.erase(a);
-            }
-            else{
-                nums[a]=nums[a]-b;
-            }
-        }
-        else{
-            while(nums.find(maxm.top())==nums.end()){
-                maxm.pop();
-            }
-            while(nums.find(minm.top())==nums.end()){
-                minm.pop();
-            }
-            cout << maxm.top()-minm.top() << endl;
-        }
-    }
+    std::cout << ans << '\n';
 
     /* genprimes(1e5); */
 
