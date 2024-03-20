@@ -810,32 +810,48 @@ typedef multiset<ll> msll;
 
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
 vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
-vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
-vector<int> dy_wasd = {0,0,1,-1};
+vector<int> dx_wasd = {1,-1,1,-1};
+vector<int> dy_wasd = {1,-1,-1,1};
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-void dfs(ll i,ll j){
-    
+ll getsize(ll i, ll j, const vector<string> &a, ll h, ll w){
+    ll count = 0;
+    ll ii = i;
+    ll jj = j;
+    ii++;
+    jj++;
+    while(ii<h&&jj<w&&a[ii][jj]=='#'){
+        count++;
+        ii++;
+        jj++;
+    }
+    return count;
 }
 
-std::vector<ll> solve(ll n, long long k, const std::vector<std::string> &a) {
+std::vector<ll> solve(ll h, long long w, const std::vector<std::string> &a) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    vll ans(min(n,k),0);
-    vvll visited(n,vector<ll>(k,0));
-    cerr << a << endl;
-    cerr << visited << endl;
-    foi(0,n){
-        foj(0,k){
-            if(visited[i][j]) continue;
-            else{
-                dfs(i,j);
+    vll ans(min(h,w),0);
+    //cerr << a << endl;
+    //cerr << visited << endl;
+    foi(1,h-1){
+        foj(1,w-1){
+            ll checker = 1;
+            if(a[i][j]=='#'){
+                for(int dir=0; dir<4; dir++){
+                    ll it = i+dx_wasd[dir];
+                    ll jt = j+dy_wasd[dir];
+                    if(a[it][jt]=='.') checker = 0;
+                }
+                if(checker==1){
+                    //cerr << "cross center: " << i << " " << j << endl;
+                    ans[getsize(i,j, a, h, w)-1]++;//h potential bug with the -1
+                }
             }
         }
     }
