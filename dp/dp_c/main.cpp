@@ -1006,6 +1006,16 @@ long long solve(int N, const std::vector<long long> &a, const std::vector<long l
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    vvll dp(N, vll(3));
+    dp[0][0]=a[0];
+    dp[0][1]=b[0];
+    dp[0][2]=c[0];
+    foi(1,N){
+        dp[i][0]=max(a[i]+dp[i-1][1],a[i]+dp[i-1][2]);
+        dp[i][1]=max(b[i]+dp[i-1][0],b[i]+dp[i-1][2]);
+        dp[i][2]=max(c[i]+dp[i-1][0],c[i]+dp[i-1][1]);
+    }
+    return max({dp[N-1][0],dp[N-1][1],dp[N-1][2]});
 }
 
 int main() {

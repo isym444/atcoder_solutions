@@ -1006,6 +1006,20 @@ long long solve(int N, long long K, const std::vector<long long> &h) {
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    // cerr << h << endl;
+    vll dp(N+1,INF);
+    dp[0]=0;
+    dp[1]=0;
+    // foi(0,K){
+
+    // }
+    foi(1,N){
+        foj(1,K+1){
+            if(i+j<N+1) dp[i+j]=min(dp[i+j],dp[i]+abs(h[i-1+j]-h[i-1]));
+        }
+    }
+    // cerr << dp << endl;
+    return dp[N];
 }
 
 int main() {

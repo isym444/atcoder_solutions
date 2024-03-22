@@ -479,10 +479,11 @@ void dfsSubtrees(ll startNode){
 
 
 //disjoint set union/union find
+//consider using coordinate compression!
 struct dsu {
   public:
     dsu() : _n(0) {}
-    //constructor for dsu. Initialize as "dsu name_of_object(x);"
+    //constructor for dsu. Initialize as "dsu name_of_object(n);"
     //creates an undirected graph with n vertices and 0 edges
     //N.b. if initializing for HxW grid then = HxW
     explicit dsu(int n) : _n(n), parent_or_size(n, -1) {}
@@ -546,6 +547,122 @@ struct dsu {
     // root node: -1 * component size
     // otherwise: parent
     std::vector<int> parent_or_size;
+};
+
+
+template <typename T, bool merge_adjacent_segment = true>
+//https://atcoder.jp/contests/abc256/submissions/32542720
+//initialize as RangSet<int> rs;
+struct RangeSet : public std::map<T, T> {
+    public:
+        RangeSet() : _size(0) {}
+
+        // returns the number of intergers in this set (not the number of ranges). O(1)
+        T size() const { return number_of_elements(); }
+        // returns the number of intergers in this set (not the number of ranges). O(1)
+        T number_of_elements() const { return _size; }
+        // returns the number of ranges in this set (not the number of integers). O(1)
+        int number_of_ranges() const { return std::map<T, T>::size(); }
+
+        // returns whether the given integer is in this set or not. O(log N)
+        bool contains(T x) const {
+            auto it = this->upper_bound(x);
+            return it != this->begin() and x <= std::prev(it)->second;
+        }
+
+        /**
+         * returns the iterator pointing to the range [l, r] in this set s.t. l <= x <= r.
+         * if such a range does not exist, returns `end()`.
+         * O(log N)
+         */
+        auto find_range(T x) const {
+            auto it = this->upper_bound(x);
+            return it != this->begin() and x <= (--it)->second ? it : this->end();
+        }
+
+        // returns whether `x` and `y` is in this set and in the same range. O(log N)
+        bool in_the_same_range(T x, T y) const {
+            auto it = get_containing_range(x);
+            return it != this->end() and it->first <= y and y <= it->second;
+        }
+
+        // inserts the range [x, x] and returns the number of integers inserted to this set. O(log N)
+        T insert(T x) {
+            return insert(x, x);
+        }
+        
+        // inserts the range [l, r] and returns the number of integers inserted to this set. amortized O(log N)
+        T insert(T l, T r) {
+            if (l > r) return 0;
+            auto it = this->upper_bound(l);
+            if (it != this->begin() and is_mergeable(std::prev(it)->second, l)) {
+                it = std::prev(it);
+                l = std::min(l, it->first);
+            }
+            T inserted = 0;
+            for (; it != this->end() and is_mergeable(r, it->first); it = std::map<T, T>::erase(it)) {
+                auto [cl, cr] = *it; 
+                r = std::max(r, cr);
+                inserted -= cr - cl + 1;
+            }
+            inserted += r - l + 1;
+            (*this)[l] = r;
+            _size += inserted;
+            return inserted;
+        }
+
+        // erases the range [x, x] and returns the number of intergers erased from this set. O(log N)
+        T erase(T x) {
+            return erase(x, x);
+        }
+
+        // erases the range [l, r] and returns the number of intergers erased from this set. amortized O(log N)
+        T erase(T l, T r) {
+            if (l > r) return 0;
+            T tl = l, tr = r;
+            auto it = this->upper_bound(l);
+            if (it != this->begin() and l <= std::prev(it)->second) {
+                it = std::prev(it);
+                tl = it->first;
+            }
+            T erased = 0;
+            for (; it != this->end() and it->first <= r; it = std::map<T, T>::erase(it)) {
+                auto [cl, cr] = *it;
+                tr = cr;
+                erased += cr - cl + 1;
+            }
+            if (tl < l) {
+                (*this)[tl] = l - 1;
+                erased -= l - tl;
+            }
+            if (r < tr) {
+                (*this)[r + 1] = tr;
+                erased -= tr - r;
+            }
+            _size -= erased;
+            return erased;
+        }
+
+        // returns minimum integer x s.t. x >= lower and x is NOT in this set
+        T minimum_excluded(T lower = 0) const {
+            static_assert(merge_adjacent_segment);
+            auto it = find_range(lower);
+            return it == this->end() ? lower : it->second + 1;
+        }
+
+        // returns maximum integer x s.t. x <= upper and x is NOT in this set
+        T maximum_excluded(T upper) const {
+            static_assert(merge_adjacent_segment);
+            auto it = find_range(upper);
+            return it == this->end() ? upper : it->first - 1;
+        }
+
+    private:
+        T _size;
+
+        bool is_mergeable(T cur_r, T next_l) {
+            return next_l <= cur_r + merge_adjacent_segment;
+        }
 };
 
 string itobins(int n) {
@@ -672,6 +789,7 @@ struct loc
     loc(ll x, ll y, char c) : x(x), y(y), dir(c) {}
     //loc::x to access or modify x
     //initialize using loc locobj(1,2,'r')
+    //if don't want to use constructor, can initialize using loc locobj = {1, 2, 'n'};
 };
 
 /* sorting vector<loc> locvector by y first then x
@@ -727,6 +845,23 @@ std::vector<ll> numberToVector(ll number) {
     }
     std::reverse(digits.begin(), digits.end());
     return digits;
+}
+
+// 8120 becomes [0 1 2 8]
+template <typename T, std::enable_if_t<std::is_integral_v<T>, std::nullptr_t> = nullptr>
+std::vector<T> digits_low_to_high(T val, T base = 10) {
+    std::vector<T> res;
+    for (; val; val /= base) res.push_back(val % base);
+    if (res.empty()) res.push_back(T{ 0 });
+    return res;
+}
+
+// 8120 becomes [8 1 2 0]
+template <typename T, std::enable_if_t<std::is_integral_v<T>, std::nullptr_t> = nullptr>
+std::vector<T> digits_high_to_low(T val, T base = 10) {
+    auto res = digits_low_to_high(val, base);
+    std::reverse(res.begin(), res.end());
+    return res;
 }
 
 // Helper function to convert a vector of digits back to a number
@@ -789,28 +924,130 @@ bool isPalindrome(long long n) {
     return original == reversed;
 }
 
+//max heap priority queue i.e. top() gives largest value
+typedef priority_queue<ll> maxpq;
+//min heap priority queue i.e. top() gives smallest value
+typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
+
+//multiset provides automatic ordering on insertion but unlike set, keeps duplicate/multiple items of same value
+//n.b. set also provides autoamtic ordering on insertion
+//.count(x) O(num_of_x+logN)
+//.find(x) O(logN) -> so use find over count if possible
+//.insert(x) O(logN) -> inserts s.t. sorted order is maintained
+//.erase(x) O(logN)
+//begin() O(logN)
+typedef multiset<ll> msll;
+//doing mymultiset.erase(x) will erase all
+#define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
+#define mseraseall(mymultiset, x) mymultiset.erase(x)
+//find smallest and biggest elements O(1)
+#define msmin(mymultiset) *mymultiset.begin()
+#define msmax(mymultiset) *mymultiset.rbegin()
+
+int digit_to_int(char c) { return c - '0'; }
+int lowercase_to_int(char c) { return c - 'a'; }
+int uppercase_to_int(char c) { return c - 'A'; }
+
+
+template <typename Func, typename Seq>
+auto transform_to_vector(const Func &f, const Seq &s) {
+    std::vector<std::invoke_result_t<Func, typename Seq::value_type>> v;
+    v.reserve(std::size(s)), std::transform(std::begin(s), std::end(s), std::back_inserter(v), f);
+    return v;
+}
+template <typename T, typename Seq>
+auto copy_to_vector(const Seq &s) {
+    std::vector<T> v;
+    v.reserve(std::size(s)), std::copy(std::begin(s), std::end(s), std::back_inserter(v));
+    return v;
+}
+template <typename Seq>
+Seq concat(Seq s, const Seq &t) {
+    s.reserve(std::size(s) + std::size(t));
+    std::copy(std::begin(t), std::end(t), std::back_inserter(s));
+    return s;
+}
+std::vector<int> digit_str_to_ints(const std::string &s) {
+    return transform_to_vector(digit_to_int, s);
+}
+std::vector<int> lowercase_str_to_ints(const std::string &s) {
+    return transform_to_vector(lowercase_to_int, s);
+}
+std::vector<int> uppercase_str_to_ints(const std::string &s) {
+    return transform_to_vector(uppercase_to_int, s);
+}
+template <typename Seq>
+std::vector<Seq> split(const Seq s, typename Seq::value_type delim) {
+    std::vector<Seq> res;
+    for (auto itl = std::begin(s), itr = itl;; itl = ++itr) {
+        while (itr != std::end(s) and *itr != delim) ++itr;
+        res.emplace_back(itl, itr);
+        if (itr == std::end(s)) return res;
+    }
+}
+// Overload of split function to handle C-style strings
+std::vector<std::string> split(const char* s, char delim) {
+    return split(std::string(s), delim);
+}
+
+
+//for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
+vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
+vector<int> dx_wasd = {1,-1,0,0};
+vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
+vector<int> dy_wasd = {0,0,1,-1};
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
-auto solve(std::string S, std::string T) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    std::string S, T;
-    std::cin >> S >> T;
-    auto ans = solve(S, T);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
+    string s,t;
+    cin >> s >> t;
+    // cerr << s << endl;
+    vll prefi, sufi;
+    prefi.pb(1);
+    sufi.pb(1);
+    ll checker = 0;
+    foi(0,t.size()){
+        if(checker==1){
+            prefi.pb(0);
+        }
+        else if(s[i]==t[i]||s[i]=='?'||t[i]=='?'){
+            prefi.pb(1);
+        }
+        else{
+            prefi.pb(0);
+            checker=1;
+        }
+    }
+    checker = 0;
+    for(int i = 0; i<t.size(); i++){
+        if(checker==1){
+            sufi.pb(0);
+        }
+        else if(s[s.size()-1-i]==t[t.size()-1-i]||s[s.size()-1-i]=='?'||t[t.size()-1-i]=='?'){
+            sufi.pb(1);
+        }
+        else{
+            sufi.pb(0);
+            checker=1;
+        }
+    }
+    // cerr << prefi << endl;
+    // cerr << sufi << endl;
+    for(int i = 0; i<=t.size(); i++){
+        if(prefi[i]==1&&sufi[t.size()-i]==1){
+            cout << "Yes" << endl;
+        }
+        else{
+            cout << "No" << endl;
+        }
+    }
 
     /* genprimes(1e5); */
 
