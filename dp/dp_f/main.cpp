@@ -21,6 +21,7 @@
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
 
+
 using namespace std;
 
 #define REP(i, n) for (int i = 0; (i) < (int)(n); ++ (i))
@@ -1000,36 +1001,44 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+const int MX = 15;
 
-auto solve(std::string s, std::string t) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+// int d[MX][MX];
+#define rep(i,n) for(int i = 0; i < (n); ++i)
+#define maxs(x,y) (x = max(x,y))
+#define rng(a) a.begin(),a.end()
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    std::string s, t;
-    std::cin >> s >> t;
-    auto ans = solve(s, t);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+  string s, t;
+  cin>>s>>t;
+  s += '$';
+  t += '#';
+  vector<vector<int>> d(MX, vector<int>(MX));
+  rep(i,sz(s))rep(j,sz(t)) {
+    maxs(d[i+1][j],d[i][j]);
+    maxs(d[i][j+1],d[i][j]);
+    if (s[i] == t[j]) maxs(d[i+1][j+1], d[i][j]+1);
+  }
+  fx(d){
+    cerr << x << endl;
+  }
+  string ans;
+  int i = sz(s)-1, j = sz(t)-1;
+  while (i+j) {
+    int x =d[i][j];
+    if (i &&d[i-1][j] == x) {
+      i--;
+    } else if (j &&d[i][j-1] == x) {
+      j--;
+    } else {
+      i--; j--;
+      ans += s[i];
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-    return 0;
+  }
+  reverse(rng(ans));
+  cerr << ans << endl;
+  cout<<ans<<endl;
+  return 0;
 }
+
+

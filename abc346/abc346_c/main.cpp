@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
+#include <unordered_set>
 
 using namespace std;
 
@@ -1007,40 +1008,24 @@ int main() {
     setIO("");
     std::cin.tie(nullptr);
     int N;
-    long long W;
+    long long K;
     std::cin >> N;
-    cin >> W;
-    //ll dp[N+1][(ll)1e3*N+1];
-    vvll dp(N+1, vll((ll)1e3*N+1,INF));
-    // vvll dp(N+1, vll(20,1000));
-    // cerr << dp << endl;
-
-    dp[0][0]=0;
-    for(int i = 0; i<N; i++){
-        ll wi,vi;
-        cin >> wi >> vi;
-        // cerr << vi << endl;
-        foj(0, (ll)1e3*N+1){
-            if(dp[i][j]!=INF){
-                dp[i+1][j]=min(dp[i+1][j],dp[i][j]);
-                // cerr << j+vi << endl;
-                dp[i+1][j+vi]=min(dp[i+1][j+vi],dp[i][j]+wi);
-            }
+    std::unordered_set<long long> A;
+    std::cin >> K;
+    ll sum = (K*(K+1))/2;
+    REP (i, N) {
+        ll temp;
+        std::cin >> temp;
+        // cerr << temp << endl;
+        // cerr << A << endl;
+        // cerr << "sum before " << sum << endl;
+        if(temp>=1&&temp<=K&&A.find(temp)==A.end()){
+            sum-=temp;
         }
+        // cerr << "sum after " << sum << endl;
+        A.insert(temp);
     }
-    // cerr << dp << endl;
-    ll ans = -1;
-    foi(0,N+1){
-        foj(0,(ll)1e3*N+1){
-            ll temp;
-            if(dp[i][j]<=W){
-                temp = j;
-                ans=max(ans, temp);
-            }
-        }
-    }
-    cout << ans << endl;
-
+    cout << sum;
 
     /* genprimes(1e5); */
 

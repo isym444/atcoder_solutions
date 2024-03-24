@@ -1,7 +1,6 @@
 {
     "cph.general.saveLocation": "",
     "files.associations": {
-        "vector": "cpp",
-        "ostream": "cpp"
+        "deque": "cpp"
     }
 }

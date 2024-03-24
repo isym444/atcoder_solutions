@@ -1001,46 +1001,27 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
+std::vector<ll> solve(int N, std::vector<long long> &A) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+    
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
     int N;
-    long long W;
     std::cin >> N;
-    cin >> W;
-    //ll dp[N+1][(ll)1e3*N+1];
-    vvll dp(N+1, vll((ll)1e3*N+1,INF));
-    // vvll dp(N+1, vll(20,1000));
-    // cerr << dp << endl;
-
-    dp[0][0]=0;
-    for(int i = 0; i<N; i++){
-        ll wi,vi;
-        cin >> wi >> vi;
-        // cerr << vi << endl;
-        foj(0, (ll)1e3*N+1){
-            if(dp[i][j]!=INF){
-                dp[i+1][j]=min(dp[i+1][j],dp[i][j]);
-                // cerr << j+vi << endl;
-                dp[i+1][j+vi]=min(dp[i+1][j+vi],dp[i][j]+wi);
-            }
-        }
+    std::vector<long long> A(N);
+    REP (i, N) {
+        std::cin >> A[i];
     }
-    // cerr << dp << endl;
-    ll ans = -1;
-    foi(0,N+1){
-        foj(0,(ll)1e3*N+1){
-            ll temp;
-            if(dp[i][j]<=W){
-                temp = j;
-                ans=max(ans, temp);
-            }
-        }
+    foi(0,N-1){
+        cout << A[i]*A[i+1] << " ";
     }
-    cout << ans << endl;
-
 
     /* genprimes(1e5); */
 

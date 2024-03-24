@@ -1000,47 +1000,40 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
+const std::string YES = "Yes";
+const std::string NO = "No";
+bool solve(long long W, long long B) {
+    W=100; B=100;
+    string s = "wbwbwwbwbwbw";
+    foi(0,10){
+        s+=s;
+    }
+    cerr << s.size() << endl;
+    cerr << s.substr(0,W+B).size();
+    ll checker = 0;
+    foi(0,50){
+        string ts = s.substr(i,W+B);
+        ll wc = 0;
+        ll bc = 0;
+        fx(ts){
+            if(x=='w') wc++;
+            if(x=='b') bc++;
+        }
+        if(W==wc&&B==bc) checker = 1;
+    }
+    // cerr << s;
+    if(checker==1) return true;
+    return false;
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    long long W;
-    std::cin >> N;
-    cin >> W;
-    //ll dp[N+1][(ll)1e3*N+1];
-    vvll dp(N+1, vll((ll)1e3*N+1,INF));
-    // vvll dp(N+1, vll(20,1000));
-    // cerr << dp << endl;
-
-    dp[0][0]=0;
-    for(int i = 0; i<N; i++){
-        ll wi,vi;
-        cin >> wi >> vi;
-        // cerr << vi << endl;
-        foj(0, (ll)1e3*N+1){
-            if(dp[i][j]!=INF){
-                dp[i+1][j]=min(dp[i+1][j],dp[i][j]);
-                // cerr << j+vi << endl;
-                dp[i+1][j+vi]=min(dp[i+1][j+vi],dp[i][j]+wi);
-            }
-        }
-    }
-    // cerr << dp << endl;
-    ll ans = -1;
-    foi(0,N+1){
-        foj(0,(ll)1e3*N+1){
-            ll temp;
-            if(dp[i][j]<=W){
-                temp = j;
-                ans=max(ans, temp);
-            }
-        }
-    }
-    cout << ans << endl;
-
+    long long W, B;
+    std::cin >> W >> B;
+    auto ans = solve(W, B);
+    std::cout << (ans ? YES : NO) << '\n';
 
     /* genprimes(1e5); */
 
