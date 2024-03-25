@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
+#include <stack>
 
 using namespace std;
 
@@ -792,13 +793,27 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+template<typename T>
+void printAndRestoreStack(std::stack<T>& stack, bool restore = true) {
+    std::stack<T> tempStack;
 
-auto solve(int N, const std::vector<long long> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+    // Pop elements from the original stack, print them, and push them onto the temporary stack
+    while (!stack.empty()) {
+        T topElement = stack.top();
+        std::cerr << topElement << " ";  // Print the top element
+        stack.pop();  // Remove the top element
+        tempStack.push(topElement);  // Push it onto the temporary stack
+    }
+
+    // If restore flag is true, restore the original stack's state
+    if (restore) {
+        while (!tempStack.empty()) {
+            stack.push(tempStack.top());
+            tempStack.pop();
+        }
+    }
 }
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -810,9 +825,62 @@ int main() {
     REP (i, N) {
         std::cin >> a[i];
     }
-    auto ans = solve(N, a);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
+    stack<ll> raw;
+    stack<ll> counts;
+    // ll countsofar = 0;
+    // ll curai = -1;
+    // ll prevai = -1;
+    // ll curseccount = -1;
+    ll prevseccount = -1;
+    ll curcount=0;
+    ll totalcount=0;
+    // cerr << "raw: ";
+    // printAndRestoreStack(raw, true);
+    // cerr << endl;
+    // cerr << "counts: ";
+    // printAndRestoreStack(counts, true);
+    // cerr << endl;
+    // raw.push(a[0]);
+    // cout << totalcount << endl;
+    foi(0,N){
+        if(raw.empty()){
+            raw.push(a[i]);
+            curcount=1;
+            totalcount++;
+        }
+        else{
+            if(a[i]!=raw.top()){
+                counts.push(curcount);
+                curcount=1;
+                totalcount++;
+                raw.push(a[i]);
+            }
+            else if(a[i]==raw.top()){
+                curcount++;
+                totalcount++;
+                raw.push(a[i]);
+            }
+            if(curcount==raw.top()){
+                foj(0,curcount){
+                    raw.pop();
+                }
+                totalcount-=curcount;
+                if(!counts.empty()){
+                    curcount=counts.top();
+                    counts.pop();
+                }
+                else{
+                    curcount=0;
+                }
+            }
+        }
+        // cerr << "raw: ";
+        // printAndRestoreStack(raw, true);
+        // cerr << endl;
+        // cerr << "counts: ";
+        // printAndRestoreStack(counts, true);
+        // cerr << endl;
+        cout << totalcount << endl;
     }
 
     /* genprimes(1e5); */

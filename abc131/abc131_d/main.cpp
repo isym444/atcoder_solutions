@@ -817,14 +817,6 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
-bool solve(int n, const std::vector<long long> &a, const std::vector<long long> &b) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -833,11 +825,23 @@ int main() {
     int n;
     std::cin >> n;
     std::vector<long long> a(n), b(n);
+    vector<pair<int,int>> ab(n);
     REP (i, n) {
-        std::cin >> a[i] >> b[i];
+        std::cin >> ab[i].first >> ab[i].second;
     }
-    auto ans = solve(n, a, b);
-    std::cout << (ans ? YES : NO) << '\n';
+    sort(ab.begin(), ab.end(), [](const pair<int,int> &a, const pair<int,int> &b) {
+        return a.second < b.second; // Otherwise, sort by y
+    });
+    // cerr << ab << endl;
+    ll sum = 0;
+    fx(ab){
+        sum+=x.first;
+        if(sum>x.second){
+            cout << "No" << endl;
+            return 0;
+        }
+    }
+    cout << "Yes" << endl;
 
     /* genprimes(1e5); */
 
