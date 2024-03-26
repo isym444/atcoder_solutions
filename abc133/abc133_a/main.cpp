@@ -47,7 +47,7 @@ using namespace std;
 #define mp make_pair
 //Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
-#define print(p) cout<<p<<endl
+// #define print(p) cout<<p<<endl
 #define fi first
 #define sec second
 #define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
@@ -1243,16 +1243,23 @@ struct lazy_segtree {
     }
 };
 
+//h S represents a node in the tree i.e. a segment in the original array
 // struct S {
 //     int upper, lower;
 // };
 
 // using F = int;
 
+//h defines how to merge 2 segments of the tree to build up the tree & to query a range
 // S op(S l, S r) { return S{l.upper + r.upper, l.lower + r.lower}; }
 
+//h identity element for operation that combines segments
+//h segment that doesn't change anything when combined with another segment "identity element". Needed for things like initialization or when updating bits of segment tree that don't need to be changed
+//h e comes from German Einheit = unit/unity i.e. unifying/neutral element
+//h in this case, the function initializes S upper and lower to 0 and 0
 // S e() { return S{0, 0}; }
 
+//h defines how a function/operation is applied to a segment
 // S mapping(F l, S r) {
 //     if(l == 0) {
 //         return r;
@@ -1263,8 +1270,10 @@ struct lazy_segtree {
 //     }
 // }
 
+//h defines how to combine 2 updates into one
 // F composition(F l, F r) { return l ? l : r; }
 
+//h identity element for operation that updates elements
 // F id() { return 0; }
 
 // int main() {
@@ -1298,6 +1307,333 @@ struct lazy_segtree {
 //     cout << s << endl;
 // }
 
+
+#if __cplusplus >= 201703L
+
+template <class S, auto op, auto e> struct segtree {
+    static_assert(std::is_convertible_v<decltype(op), std::function<S(S, S)>>,
+                  "op must work as S(S, S)");
+    static_assert(std::is_convertible_v<decltype(e), std::function<S()>>,
+                  "e must work as S()");
+
+#else
+
+template <class S, S (*op)(S, S), S (*e)()> struct segtree {
+//initialize as follows:
+// struct S {
+//     int a;
+// };
+// S op(S l, S r){
+//     return S{max(l.a,r.a)};
+// }
+// S e(){
+//     return S{-1};
+// }
+// segtree<S, op, e> mysegtree(a);
+#endif
+
+  public:
+    segtree() : segtree(0) {}
+    explicit segtree(int n) : segtree(std::vector<S>(n, e())) {}
+    explicit segtree(const std::vector<S>& v) : _n(int(v.size())) {
+        size = (int)internal::bit_ceil((unsigned int)(_n));
+        log = internal::countr_zero((unsigned int)size);
+        d = std::vector<S>(2 * size, e());
+        for (int i = 0; i < _n; i++) d[size + i] = v[i];
+        for (int i = size - 1; i >= 1; i--) {
+            update(i);
+        }
+    }
+    //update value at position p with value x
+    //remember 0-indexed so will likely have to do p--
+    void set(int p, S x) {
+        assert(0 <= p && p < _n);
+        p += size;
+        d[p] = x;
+        for (int i = 1; i <= log; i++) update(p >> i);
+    }
+
+    S get(int p) const {
+        assert(0 <= p && p < _n);
+        return d[p + size];
+    }
+
+    //query seg tree in range l->r
+    //remember 0-indexed so will likely have to do l-- (note r not inclusive i.e. < rather than <= so no need to do r--)
+    S prod(int l, int r) const {
+        assert(0 <= l && l <= r && r <= _n);
+        S sml = e(), smr = e();
+        l += size;
+        r += size;
+
+        while (l < r) {
+            if (l & 1) sml = op(sml, d[l++]);
+            if (r & 1) smr = op(d[--r], smr);
+            l >>= 1;
+            r >>= 1;
+        }
+        return op(sml, smr);
+    }
+
+    S all_prod() const { return d[1]; }
+
+    template <bool (*f)(S)> int max_right(int l) const {
+        return max_right(l, [](S x) { return f(x); });
+    }
+    //binary search. Initially considers aggregate of segment from l to end of array
+    //looks for FIRST/leftmost index r where condition given by f transitions from true to false
+    //i.e. returns left-most index where condition false
+    //n.b. can use lambda for f e.g.:
+    //cout << mysegtree.max_right(x,[&](S b){return b.a<v;})+1<<endl;
+    template <class F> int max_right(int l, F f) const {
+        assert(0 <= l && l <= _n);
+        assert(f(e()));
+        if (l == _n) return _n;
+        l += size;
+        S sm = e();
+        do {
+            while (l % 2 == 0) l >>= 1;
+            if (!f(op(sm, d[l]))) {
+                while (l < size) {
+                    l = (2 * l);
+                    if (f(op(sm, d[l]))) {
+                        sm = op(sm, d[l]);
+                        l++;
+                    }
+                }
+                return l - size;
+            }
+            sm = op(sm, d[l]);
+            l++;
+        } while ((l & -l) != l);
+        return _n;
+    }
+
+    template <bool (*f)(S)> int min_left(int r) const {
+        return min_left(r, [](S x) { return f(x); });
+    }
+    template <class F> int min_left(int r, F f) const {
+        assert(0 <= r && r <= _n);
+        assert(f(e()));
+        if (r == 0) return 0;
+        r += size;
+        S sm = e();
+        do {
+            r--;
+            while (r > 1 && (r % 2)) r >>= 1;
+            if (!f(op(d[r], sm))) {
+                while (r < size) {
+                    r = (2 * r + 1);
+                    if (f(op(d[r], sm))) {
+                        sm = op(d[r], sm);
+                        r--;
+                    }
+                }
+                return r + 1 - size;
+            }
+            sm = op(d[r], sm);
+        } while ((r & -r) != r);
+        return 0;
+    }
+
+  private:
+    int _n, size, log;
+    std::vector<S> d;
+
+    void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
+};
+
+
+#include <type_traits>
+
+
+namespace internal {
+
+#ifndef _MSC_VER
+template <class T>
+using is_signed_int128 =
+    typename std::conditional<std::is_same<T, __int128_t>::value ||
+                                  std::is_same<T, __int128>::value,
+                              std::true_type,
+                              std::false_type>::type;
+
+template <class T>
+using is_unsigned_int128 =
+    typename std::conditional<std::is_same<T, __uint128_t>::value ||
+                                  std::is_same<T, unsigned __int128>::value,
+                              std::true_type,
+                              std::false_type>::type;
+
+template <class T>
+using make_unsigned_int128 =
+    typename std::conditional<std::is_same<T, __int128_t>::value,
+                              __uint128_t,
+                              unsigned __int128>;
+
+template <class T>
+using is_integral = typename std::conditional<std::is_integral<T>::value ||
+                                                  is_signed_int128<T>::value ||
+                                                  is_unsigned_int128<T>::value,
+                                              std::true_type,
+                                              std::false_type>::type;
+
+template <class T>
+using is_signed_int = typename std::conditional<(is_integral<T>::value &&
+                                                 std::is_signed<T>::value) ||
+                                                    is_signed_int128<T>::value,
+                                                std::true_type,
+                                                std::false_type>::type;
+
+template <class T>
+using is_unsigned_int =
+    typename std::conditional<(is_integral<T>::value &&
+                               std::is_unsigned<T>::value) ||
+                                  is_unsigned_int128<T>::value,
+                              std::true_type,
+                              std::false_type>::type;
+
+template <class T>
+using to_unsigned = typename std::conditional<
+    is_signed_int128<T>::value,
+    make_unsigned_int128<T>,
+    typename std::conditional<std::is_signed<T>::value,
+                              std::make_unsigned<T>,
+                              std::common_type<T>>::type>::type;
+
+#else
+
+template <class T> using is_integral = typename std::is_integral<T>;
+
+template <class T>
+using is_signed_int =
+    typename std::conditional<is_integral<T>::value && std::is_signed<T>::value,
+                              std::true_type,
+                              std::false_type>::type;
+
+template <class T>
+using is_unsigned_int =
+    typename std::conditional<is_integral<T>::value &&
+                                  std::is_unsigned<T>::value,
+                              std::true_type,
+                              std::false_type>::type;
+
+template <class T>
+using to_unsigned = typename std::conditional<is_signed_int<T>::value,
+                                              std::make_unsigned<T>,
+                                              std::common_type<T>>::type;
+
+#endif
+
+template <class T>
+using is_signed_int_t = std::enable_if_t<is_signed_int<T>::value>;
+
+template <class T>
+using is_unsigned_int_t = std::enable_if_t<is_unsigned_int<T>::value>;
+
+template <class T> using to_unsigned_t = typename to_unsigned<T>::type;
+
+}  // namespace internal
+
+
+template <class T> struct fenwick_tree {
+    using U = internal::to_unsigned_t<T>;
+
+  public:
+    // Declare fenwick_tree (N elements initialized to 0) by doing:
+    // fenwick_tree< long  long > ft (N);
+    // fenwick tree is held in a vector<T> called data
+    fenwick_tree() : _n(0) {}
+    explicit fenwick_tree(int n) : _n(n), data(n) {}
+
+    // a is 0-indexed
+    // use add to add array item 'x' to index 'a' in Fenwick tree
+    // n.b. index 'a' in Fenwick tree represents a range of responsibility
+    // i.e. holds a prefix sum for a particular range of original array
+    // this range of responsibility is determined by index 'a's binary representation
+    // it is responsible for E elements below it
+    // where E is the index of its LSB where index is from R->L of binary number
+    // e.g. 11010 LSB index is 2
+    void add(int p, T x) {
+        assert(0 <= p && p < _n);
+        p++;
+        while (p <= _n) {
+            data[p - 1] += U(x);
+            p += p & -p;
+        }
+    }
+
+    // Get sum over range [l, r), where l is 0-indexed
+    T sum(int l, int r) {
+        assert(0 <= l && l <= r && r <= _n);
+        return sum(r) - sum(l);
+    }
+
+  private:
+    int _n;
+    std::vector<U> data;
+
+    U sum(int r) {
+        U s = 0;
+        while (r > 0) {
+            s += data[r - 1];
+            r -= r & -r;
+        }
+        return s;
+    }
+};
+
+
+//Use fenwick_tree above instead
+template <class T> struct BIT {
+    T UNITY_SUM = 0;
+    vector<T> dat;
+    
+    // [0, n)
+    // Declare BIT (N elements initialized to 0) by doing:
+    // BIT< long  long > bit (N);
+    // fenwick tree is held in a vector<T> called dat
+    BIT(int n, T unity = 0) : UNITY_SUM(unity), dat(n, unity) { }
+    
+    //allows reinitialization of the tree resetting all elements to unity sum
+    void init(int n) {
+        dat.assign(n, UNITY_SUM);
+    }
+    
+    // a is 0-indexed
+    // use add to add array item 'x' to index 'a' in Fenwick tree
+    // n.b. index 'a' in Fenwick tree represents a range of responsibility
+    // i.e. holds a prefix sum for a particular range of original array
+    // this range of responsibility is determined by index 'a's binary representation
+    // it is responsible for E elements below it
+    // where E is the index of its LSB where index is from R->L of binary number
+    // e.g. 11010 LSB index is 2
+    inline void add(int a, T x) {
+        for (int i = a; i < (int)dat.size(); i |= i + 1)
+            dat[i] = dat[i] + x;
+    }
+    
+    // Get sum over range [0, a), where a is 0-indexed
+    inline T sum(int a) {
+        T res = UNITY_SUM;
+        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
+            res = res + dat[i];
+        return res;
+    }
+    
+    // Get sum over range [a, b), where a and b are 0-indexed
+    inline T sum(int a, int b) {
+        return sum(b) - sum(a);
+    }
+    
+    // debug
+    // prints the values of original array after modifications
+    void print() {
+        for (int i = 0; i < (int)dat.size(); ++i)
+            cerr << sum(i, i + 1) << ",";
+        cerr << endl;
+    }
+};
+
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
 vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
 vector<int> dx_wasd = {1,-1,0,0};
@@ -1308,30 +1644,21 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
+long long solve(long long N, long long A, long long B) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long K;
-    std::cin >> K;
-    vll picker = {0,1,2,3,4,5,6,7,8,9};
-    vll targets;
-    for(int i = 0; i < 1<<10; i++){
-        ll temp=0;
-        foj(0, 10){
-            if((i>>j)&1==1){
-                temp+=picker[9-j];
-                temp*=10;
-            }
-        }
-        temp/=10;
-        temp=vectorToNumber(digits_high_to_low(temp));
-        targets.pb(temp);
-    }
-    sort(all(targets));
-    cerr << targets << endl;
-    cout << targets[K+1] << endl;
+    long long N, A, B;
+    std::cin >> N >> A >> B;
+    auto ans = solve(N, A, B);
+    std::cout << ans << '\n';
 
     /* genprimes(1e5); */
 

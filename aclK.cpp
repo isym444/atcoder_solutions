@@ -1243,16 +1243,22 @@ struct lazy_segtree {
     }
 };
 
+//h S represents a node in the tree i.e. a segment in the original array
 // struct S {
 //     int upper, lower;
 // };
 
 // using F = int;
 
+//h defines how to merge 2 segments of the tree to build up the tree & to query a range
 // S op(S l, S r) { return S{l.upper + r.upper, l.lower + r.lower}; }
 
+//h identity element for operation that combines segments
+//h segment that doesn't change anything when combined with another segment "identity element". Needed for things like initialization or when updating bits of segment tree that don't need to be changed
+//h e comes from German Einheit = unit/unity i.e. unifying/neutral element
 // S e() { return S{0, 0}; }
 
+//h defines how a function/operation is applied to a segment
 // S mapping(F l, S r) {
 //     if(l == 0) {
 //         return r;
@@ -1263,8 +1269,10 @@ struct lazy_segtree {
 //     }
 // }
 
+//h defines how to combine 2 updates into one
 // F composition(F l, F r) { return l ? l : r; }
 
+//h identity element for operation that updates elements
 // F id() { return 0; }
 
 // int main() {
@@ -1307,31 +1315,31 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
+constexpr long long MOD = 998244353;
+auto solve(int n, const std::vector<int64_t> &a) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long K;
-    std::cin >> K;
-    vll picker = {0,1,2,3,4,5,6,7,8,9};
-    vll targets;
-    for(int i = 0; i < 1<<10; i++){
-        ll temp=0;
-        foj(0, 10){
-            if((i>>j)&1==1){
-                temp+=picker[9-j];
-                temp*=10;
-            }
-        }
-        temp/=10;
-        temp=vectorToNumber(digits_high_to_low(temp));
-        targets.pb(temp);
+    // failed to analyze input format
+    // TODO: edit here
+    int n;
+    std::cin >> n;
+    std::vector<long long> a(n);
+    REP (i, n) {
+        std::cin >> a[i];
     }
-    sort(all(targets));
-    cerr << targets << endl;
-    cout << targets[K+1] << endl;
+    auto ans = solve(n, a);
+    std::cout << a << '\n';
+    std::cout << b << '\n';
+    std::cout << c << '\n';
+    std::cout << d << '\n';
 
     /* genprimes(1e5); */
 
