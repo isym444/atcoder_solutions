@@ -1644,12 +1644,7 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, const std::vector<long long> &X, const std::vector<long long> &Y) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1661,9 +1656,21 @@ int main() {
     REP (i, N) {
         std::cin >> X[i] >> Y[i];
     }
-    auto ans = solve(N, X, Y);
-    std::cout << ans << '\n';
-
+    vvll dp(N+1, vll(2));
+    dp[0][0]=0;
+    dp[0][1]=-INF;
+    foi(0,N){
+        if(X[i]==0){
+            dp[i+1][0] = max({dp[i][0],dp[i][0]+Y[i],dp[i][1]+Y[i]});
+            dp[i+1][1] = dp[i][1];
+        }
+        else{
+            dp[i+1][0] = dp[i][0];
+            dp[i+1][1] = max(dp[i][1],dp[i][0]+Y[i]);
+        }
+    }
+    // cerr << dp << endl;
+    cout << max(dp[N][0],dp[N][1]) << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
