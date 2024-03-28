@@ -1688,36 +1688,45 @@ void floydWarshall(ll n) {
 
 int main() {
     std::ios::sync_with_stdio(false);
-    setIO("cpp");
+    setIO("");
     std::cin.tie(nullptr);
     // failed to analyze input format
-    // TODO: edit here
-    ll n,m;
-    cin >> n >> m;
-    g.assign(n+1, vector<ll>());
-    vis.assign(n+1, false);
-    parent.assign(n+1, -1);
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
-    }
-    cerr << g << endl;
-    floydWarshall(n+1);
-    cerr << ddist << endl;
-    foi(1,n+1){
-        vis.assign(n+1, false);
-        cerr << "bfs: " << endl;
-        bfs(i);
-        cerr << endl;
-    }
-    cerr << endl;
-    foi(1,n+1){
-        cerr << "bfs_shortest_paths: " << endl;
-        for(auto x: bfs_shortest_paths(i)){
-            cerr << x << endl;
+    ll t,n;
+    cin >> t;
+    foi(0,t){
+    ll c1=0;
+    ll c2=-1;
+    ll c3=0;
+    ll flipper=-1;
+    cin >> n;
+    foj(0,2*n){
+        if(c3%2==0){
+            // c1=0;
+            // c2=-1;
+            flipper*=-1;
         }
+        
+            c1=0;
+            c2=-1*flipper;
+        
+        fok(0,2*n){
+            if(c1%2==0){
+                c2*=-1;
+            }
+            if(c2==1){
+                cout << "#";
+            }
+            else{
+                cout << ".";
+            }
+            c1++;
+        }
+        cout << endl;
+        c3++;
     }
+        // cout << endl;
+    }
+    // cout << 2 << endl;
     // for(auto x:d.groups()){
     //     cerr << x << endl;
     // }

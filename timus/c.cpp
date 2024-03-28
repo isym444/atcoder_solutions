@@ -1688,36 +1688,40 @@ void floydWarshall(ll n) {
 
 int main() {
     std::ios::sync_with_stdio(false);
-    setIO("cpp");
+    setIO("");
     std::cin.tie(nullptr);
     // failed to analyze input format
-    // TODO: edit here
-    ll n,m;
-    cin >> n >> m;
-    g.assign(n+1, vector<ll>());
-    vis.assign(n+1, false);
-    parent.assign(n+1, -1);
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
-    }
-    cerr << g << endl;
-    floydWarshall(n+1);
-    cerr << ddist << endl;
-    foi(1,n+1){
-        vis.assign(n+1, false);
-        cerr << "bfs: " << endl;
-        bfs(i);
-        cerr << endl;
-    }
-    cerr << endl;
-    foi(1,n+1){
-        cerr << "bfs_shortest_paths: " << endl;
-        for(auto x: bfs_shortest_paths(i)){
-            cerr << x << endl;
+    ll t;
+    cin >> t;
+    // cout << t << endl;
+    string a;
+    foi(0,t){
+        cin >> a;
+        if(a[0]=='0'&&a[1]!='0' || (a[0]=='1'&&a[1]=='1') || (a[0]=='1'&&a[1]=='0')){
+            cout << a << " " << "AM" << endl;
+        }
+        else if(a[0]=='0' && a[0]=='0'){
+            cout << "12";
+            cout << a.substr(2,a.length()-2) << " " << "AM" << endl;
+        }
+        else if(a[0]=='1' && a[1]=='2'){
+            cout << a << " " << "PM" << endl;
+        }
+        else{
+            string temp = a.substr(0,2);
+            // cout << temp << endl;
+            int conversion = stoi(temp)-12;
+            // cout << conversion << endl;
+            string sconv = to_string(conversion);
+            if(sconv.length()==1){
+                sconv="0"+sconv;
+            }
+            cout << sconv;
+            cout << a.substr(2,a.length()-2) << " " << "PM" << endl;
         }
     }
+    
+    // cout << 2 << endl;
     // for(auto x:d.groups()){
     //     cerr << x << endl;
     // }

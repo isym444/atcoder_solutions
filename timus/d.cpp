@@ -1685,39 +1685,97 @@ void floydWarshall(ll n) {
     }
 }
 
+bool bincheck(ll a){
+    ll checker = 1;
+    string b = to_string(a);
+    fx(b){
+        if(x!='0'&&x!='1'){
+            checker = 0;
+        }
+    }
+    if(checker == 1) return true;
+    return false;
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
-    setIO("cpp");
+    setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    ll n,m;
-    cin >> n >> m;
-    g.assign(n+1, vector<ll>());
-    vis.assign(n+1, false);
-    parent.assign(n+1, -1);
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
-    }
-    cerr << g << endl;
-    floydWarshall(n+1);
-    cerr << ddist << endl;
-    foi(1,n+1){
-        vis.assign(n+1, false);
-        cerr << "bfs: " << endl;
-        bfs(i);
-        cerr << endl;
-    }
-    cerr << endl;
-    foi(1,n+1){
-        cerr << "bfs_shortest_paths: " << endl;
-        for(auto x: bfs_shortest_paths(i)){
-            cerr << x << endl;
+    ll t;
+    cin >> t;
+    vll vc = {10,11,101,111,1101,1011};
+    foi(0,t){
+        int a;
+        cin >> a;
+        
+        // string b = itobins(a);
+        // cerr << b << endl;
+        string b = to_string(a);
+        ll checker = 1;
+        // cerr << "checker before: " << checker << endl;
+        // cerr << b << endl;
+        fx(b){
+            // cerr << "x: " << x << endl;
+            // cerr << "t/f: " << (x=='1') << endl;
+            if(x!='0'&&x!='1'){
+                checker = 0;
+            }
+        }
+        // cerr << checker << endl;
+        if(checker == 1){
+            cout << "Yes" << endl;
+        }
+        else{
+            while(a>1){
+                // if(a%10!=0&&a%11!=0&&a%101!=0&&a%111!=0&&a%1101!=0&&a%1011!=0){
+                //     cout << "No" << endl;
+                //     break;
+                // }
+                ll checker2=0;
+                fx(vc){
+                    if(a%x==0){
+                        checker2=1;
+                        a/=x;
+                        break;
+                    }
+                }
+                if(checker2==0){
+                    cout << "No" << endl;
+                    break;
+                }
+                // a/=11;
+                if(bincheck(a)){
+                    cout << "Yes" << endl;
+                    break;
+                }
+            }
         }
     }
+    // vll t1 = {1,10,11,100,110,101,111,1000,1001,1010,1100,1110,1101,1011,1111};
+    // vll t2 = {10000,10001,10010,10100,11000,10011,10101,11001,10110,11010,10111,11011,11101,11110,100000};
+    // foi(0,t){
+    //     ll a;
+    //     cin >> a;
+    //     ll checker = 0;
+    //     if(find(t2.begin(),t2.end(),a)!=t2.end()){
+    //         checker = 1;
+    //         // cout << "Yes" << endl;
+    //     }
+    //     else{
+    //         if(a%10==0)
+    //     }
+    //     if(checker == 1){
+    //         cout << "Yes" << endl;
+    //     }
+    //     else
+    //     {
+    //         cout << "No" << endl;
+    //     }
+        
+    // }
+    // failed to analyze input format
+    
+    // cout << 2 << endl;
     // for(auto x:d.groups()){
     //     cerr << x << endl;
     // }

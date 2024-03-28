@@ -1,3 +1,10 @@
 {
-    "cph.general.saveLocation": ""
+    "cph.general.saveLocation": "",
+    "files.associations": {
+        "vector": "cpp",
+        "ios": "cpp",
+        "iostream": "cpp",
+        "string": "cpp",
+        "ostream": "cpp"
+    }
 }

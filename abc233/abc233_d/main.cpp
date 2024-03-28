@@ -267,7 +267,7 @@ vector<bool> vis;
 map<ll,ll> depth;
 
 //initialize graph as adjacency list
-vector<vector<ll>> g;
+vector<vector<ll> > g;
 //initialize weighted graph as adjacency list
 vector<vector<pair<ll,ll>>> wg;
 //for building the adjacency list by adding edges info
@@ -278,7 +278,7 @@ void edge(ll originNode, ll destNode)
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    g[destNode].pb(originNode);
+    // g[destNode].pb(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
@@ -493,6 +493,35 @@ void dfsSubtrees(ll startNode){
     }
 }
 
+vector<vector<ll> >ddist;
+
+void floydWarshall(ll n) {
+    // Step 1: Initialization
+    ddist.assign(n, vector<ll>(n, INF));
+    for (int i = 0; i < n; i++) {
+        ddist[i][i] = 0;
+    }
+
+    // Step 2: Populate the adjacency matrix
+    for (int u = 0; u < n; u++) {
+        for (int i = 0; i < g[u].size(); i++) {
+            ll v = g[u][i];
+            ddist[u][v] = 1; // Assuming unweighted graph, set weight to 1
+            // For a weighted graph, you'd set this to the weight of the edge u->v
+        }
+    }
+
+    // Step 3: Floyd-Warshall Algorithm
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (ddist[i][k] < INF &&ddist[k][j] < INF) {
+                    ddist[i][j] = min(ddist[i][j],ddist[i][k] +ddist[k][j]);
+                }
+            }
+        }
+    }
+}
 
 //disjoint set union/union find
 //consider using coordinate compression!
@@ -764,6 +793,8 @@ ll midpoint(ll L, ll R){
 ll lcm(ll a, ll b) {
     return std::abs(a * b) / std::gcd(a, b);
 }
+
+
 int stringToBinary(const std::string& s, char charAsOne) {
     int x = 0;
     for (int j = 0; j < s.length(); j++) {
@@ -1655,71 +1686,40 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-vector<vector<ll> >ddist;
 
-void floydWarshall(ll n) {
-    // Step 1: Initialization
-    ddist.assign(n, vector<ll>(n, INF));
-    for (int i = 0; i < n; i++) {
-        ddist[i][i] = 0;
-    }
-
-    // Step 2: Populate the adjacency matrix
-    for (int u = 0; u < n; u++) {
-        for (int i = 0; i < g[u].size(); i++) {
-            ll v = g[u][i];
-            ddist[u][v] = 1; // Assuming unweighted graph, set weight to 1
-            // For a weighted graph, you'd set this to the weight of the edge u->v
-        }
-    }
-
-    // Step 3: Floyd-Warshall Algorithm
-    for (int k = 0; k < n; k++) {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (ddist[i][k] < INF &&ddist[k][j] < INF) {
-                    ddist[i][j] = min(ddist[i][j],ddist[i][k] +ddist[k][j]);
-                }
-            }
-        }
-    }
+long long solve(int N, long long K, const std::vector<long long> &A) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
 }
-
 
 int main() {
     std::ios::sync_with_stdio(false);
-    setIO("cpp");
+    setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    ll n,m;
-    cin >> n >> m;
-    g.assign(n+1, vector<ll>());
-    vis.assign(n+1, false);
-    parent.assign(n+1, -1);
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
+    int N;
+    long long K;
+    std::cin >> N;
+    std::vector<long long> A(N);
+    std::cin >> K;
+    REP (i, N) {
+        std::cin >> A[i];
     }
-    cerr << g << endl;
-    floydWarshall(n+1);
-    cerr << ddist << endl;
-    foi(1,n+1){
-        vis.assign(n+1, false);
-        cerr << "bfs: " << endl;
-        bfs(i);
-        cerr << endl;
+    auto ans = solve(N, K, A);
+    std::cout << ans << '\n';
+
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    cerr << endl;
-    foi(1,n+1){
-        cerr << "bfs_shortest_paths: " << endl;
-        for(auto x: bfs_shortest_paths(i)){
-            cerr << x << endl;
-        }
-    }
-    // for(auto x:d.groups()){
-    //     cerr << x << endl;
-    // }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
     return 0;
 }
