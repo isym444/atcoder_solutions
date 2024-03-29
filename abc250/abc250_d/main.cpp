@@ -132,8 +132,9 @@ void setIO(string name = "")
     }
 }
 
-const int MAXA = 5000006;
+const int MAXA = 1e6+2;
 bool prime[MAXA];
+
 
 void gen_primes() {
     fill(prime, prime+MAXA, true);
@@ -151,7 +152,7 @@ void gen_primes() {
     }
 }
 
-const int MAXN = 2 * 100000 + 10; // Adjust the size as per the problem constraints
+const int MAXN = 1e6+2; // Adjust the size as per the problem constraints
 //smallest prime factor
 std::vector<int> spf(MAXN);
 
@@ -804,12 +805,59 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+vll ListOfPrimesOnly(){
+    gen_primes();
+    vll allprimes;
+    for(int i = 0; i<1e6+2; i++){
+        if(prime[i]==1){
+            allprimes.pb(i);
+        }
+    }
+    return allprimes;
+}
 
 long long solve(long long N) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    // spfsieve();
+    gen_primes();
+    vll allprimes;
+    for(int i = 0; i<1e6+2; i++){
+        if(prime[i]==1){
+            allprimes.pb(i);
+        }
+    }
+    // cerr << allprimes.size() << endl;
+    // cerr << prime[2] << endl;
+    vll k;
+    ll ans=0;
+    foi(1,allprimes.size()){
+        if(allprimes[i]*pow(allprimes[i+1],3)>N) break;
+        foj(i+1,allprimes.size()){
+            if(allprimes[i]*pow(allprimes[j],3)>N) break;
+            // k.pb(i*pow(j,3));
+            // cerr << i << " " << j << endl;
+            ans++;
+        }
+    }
+    // foi(1,1e6+1){
+    //     if(!prime[i]) continue;
+    //     foj(i+1,1e6+1){
+    //         if(!prime[j]) continue;
+    //         else{
+    //             k.pb(i*pow(j,3));
+    //         }
+    //     }
+    // }
+    sort(k.begin(),k.end());
+    ll finans = 0;
+    // cerr << k.size() << endl;
+    return ans;
+    // cerr << k << endl;
+    // unordered_map<int,int> pf = fact(250);
+    // cerr << pf << endl;
 }
 
 int main() {

@@ -1687,33 +1687,51 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int a, long long b, const std::vector<long long> &c, const std::vector<std::vector<long long> > &d) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+ll n,x,finans;
+vll l;
+vvll a;
+
+void dfs(ll i, ll s){
+    if(i==n){
+        if(s==x) finans++;
+        return;
+    }
+    foj(0,a[i].size()){
+        if(s>x/a[i][j]) continue;
+        dfs(i+1, s*a[i][j]);
+    }
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int a;
-    long long b;
-    std::cin >> a;
-    std::vector<long long> c(a);
-    std::vector<std::vector<long long> > d(a, std::vector<long long>((c_i)));
-    std::cin >> b;
-    REP (i, a) {
-        std::cin >> c[i];
-        REP (j, c_i) {
-            std::cin >> d[i][j];
+    
+    cin >> n >> x;
+    a=vvll(n);
+    foi(0,n){
+        ll temp;
+        cin >> temp;
+        l.pb(temp);
+        for(ll j = 0; j<l[i]; j++){
+            ll temp;
+            cin >> temp;
+            a[i].pb(temp);
         }
     }
-    auto ans = solve(a, b, c, d);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
+    // cerr << l << endl;
+    // cerr << endl;
+    // cerr << a << endl;
+    dfs(0,1);
+    cout << finans << endl;
+    // fx(a){
+    //     cerr << x << endl;
+    // }
+    {
+        /* data */
+    };
+    
+        /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
     for (int i = 0; i < n; i++) {

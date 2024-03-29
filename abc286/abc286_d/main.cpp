@@ -999,7 +999,8 @@ vector<int> dy_wasd = {0,0,1,-1};
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
-
+ll M;
+vll compiled;
 const std::string YES = "Yes";
 const std::string NO = "No";
 bool solve(int N, long long X, const std::vector<long long> &A, const std::vector<long long> &B) {
@@ -1007,6 +1008,22 @@ bool solve(int N, long long X, const std::vector<long long> &A, const std::vecto
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    // one way would be to use bitmasking to try all possible combinations of coins
+    // 2^(50*50) = 3x10^752
+    vvll dp(M+1,vll(X+1,0));
+    dp[0][0]=1;
+    // cerr << compiled << endl;
+    foi(1,M+1){
+        foj(0,X+1){
+            if(dp[i-1][j]==1){
+                dp[i][j]=1;
+                if(j+compiled[i-1]<=X) dp[i][j+compiled[i-1]]=1;
+            }
+        }
+    }
+    // cerr << dp << endl;
+    if(dp[M][X]==1) return 1;
+    return 0;
 }
 
 int main() {
@@ -1020,6 +1037,10 @@ int main() {
     std::cin >> X;
     REP (i, N) {
         std::cin >> A[i] >> B[i];
+        foj(0,B[i]){
+            compiled.pb(A[i]);
+        }
+        M+=B[i];
     }
     auto ans = solve(N, X, A, B);
     std::cout << (ans ? YES : NO) << '\n';

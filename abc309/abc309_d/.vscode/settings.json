@@ -1,0 +1,9 @@
+{
+    "cph.general.saveLocation": "",
+    "files.associations": {
+        "algorithm": "cpp",
+        "__availability": "cpp",
+        "__config": "cpp",
+        "string": "cpp"
+    }
+}
