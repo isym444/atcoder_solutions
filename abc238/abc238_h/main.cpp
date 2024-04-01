@@ -291,7 +291,7 @@ void edge(ll originNode, ll destNode)
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
+    g[destNode].pb(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
@@ -1700,6 +1700,13 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+constexpr long long MOD = 998244353;
+long long solve(long long N, std::string S) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1707,30 +1714,12 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    ll n,m;
-    cin >> n >> m;
-     /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    g.assign(n+1, vll());
+    long long N;
+    std::string S;
+    std::cin >> N >> S;
+    auto ans = solve(N, S);
+    std::cout << ans << '\n';
 
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
-    }
-
-    ll ans=0;
-    foi(1,n+1){
-        auto temp= bfs_shortest_paths(i);
-        // cerr << temp << endl;
-        fx(temp){
-            if(x>=0) ans++;
-        }
-    }
-    // cerr << ans << endl;
-    cout << ans << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

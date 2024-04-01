@@ -291,7 +291,7 @@ void edge(ll originNode, ll destNode)
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
+    g[destNode].pb(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
@@ -1700,6 +1700,91 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+ll sum;
+ll N;
+ll M;
+vll L;
+
+bool prevchecker(ll m){
+    ll lines = 1;
+    ll curline = 0;
+    ll prevnum=0;
+    fx(L){
+        // if(curline>m){
+        //     lines++;
+        //     curline=0;
+        // }
+        if(curline-1>m){
+            lines++;
+            curline=prevnum;
+            if(curline>m) return false;
+            curline++;
+        }
+        curline+=x;
+        prevnum=x;
+        curline++;
+    }
+    if(curline-1>m){
+            lines++;
+            curline=prevnum;
+            if(curline>m) return false;
+            curline++;
+        }
+    // cerr << lines << endl;
+    if(lines<=M){
+        // cerr << "true" << endl;
+        return true;
+    }
+    else{
+        // cerr << "false" << endl;
+        return false;
+    }
+}
+#define rep(i,n) for (int i = 0; i < (n); ++i)    
+
+bool checker(ll w){
+    int line = 0;
+    ll rem = 0;
+    cerr << "midpoint: " << w << endl;
+    rep(i,N) {
+        if (rem >= L[i]+1) {
+            rem -= L[i]+1;
+        }
+        else {
+            line++;
+            rem = w-L[i];
+            if (rem < 0) return false;
+        }
+        cerr << "line: " << line << " rem: " << rem << endl;
+    }
+    return line <= M;
+}
+
+long long solve(int N, long long M, const std::vector<long long> &L) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+    ll l,r;
+    l=0;
+    // r=N-1;
+    // cerr << sum << endl;
+    r=sum+2;
+    ll ans=sum+2;
+    while(l<=r){
+        ll m = midpoint(l,r);
+        // cerr << "midpoint: " << m << endl;
+        if(prevchecker(m)){
+            // ans=min(ans,m);
+            ans = m;
+            r=m-1;
+        }
+        else{
+            l=m+1;
+        }
+    }
+    return ans;
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1707,30 +1792,20 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    ll n,m;
-    cin >> n >> m;
-     /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    g.assign(n+1, vll());
-
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
+    // long long M;
+    std::cin >> N;
+    // std::vector<long long> L(N);
+    L.resize(N);
+    std::cin >> M;
+    REP (i, N) {
+        std::cin >> L[i];
+        sum+=L[i];
+        sum++;
     }
+    sum--;
+    auto ans = solve(N, M, L);
+    std::cout << ans << '\n';
 
-    ll ans=0;
-    foi(1,n+1){
-        auto temp= bfs_shortest_paths(i);
-        // cerr << temp << endl;
-        fx(temp){
-            if(x>=0) ans++;
-        }
-    }
-    // cerr << ans << endl;
-    cout << ans << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

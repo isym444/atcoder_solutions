@@ -17,6 +17,7 @@
 #include <deque>
 #include <numeric>
 #include <assert.h>
+#include <cassert>
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
@@ -44,7 +45,7 @@ using namespace std;
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
-//#define gcd __gcd
+// #define gcd __gcd
 #define mp make_pair
 //Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
@@ -166,20 +167,20 @@ vll GenListOfPrimesOnly(){
     return allprimes;
 }
 
-const int MAXN = 2 * 100000 + 10; // Adjust the size as per the problem constraints
-//smallest prime factor
-std::vector<int> spf(MAXN);
+const ll MAXN = 2 * 1e7 + 10; // Adjust the size as per the problem constraints
+// //smallest prime factor
+std::vector<ll> spf(MAXN);
 
-//Sieve of Eratosthenes to precompute the smallest prime factor of each number
+// //Sieve of Eratosthenes to precompute the smallest prime factor of each number
 void spfsieve() {
     //initializes smallest prime factor for 1 as 1
     spf[1] = 1;
     //initially treats every number as a prime and assigns the smallest prime factor as itself
-    for (int i = 2; i < MAXN; ++i) {
+    for (ll i = 2; i < MAXN; ++i) {
         spf[i] = i;
     }
     //all even numbers' smallest prime factor is 2. This sets this for all even numbers
-    for (int i = 4; i < MAXN; i += 2) {
+    for (ll i = 4; i < MAXN; i += 2) {
         spf[i] = 2;
     }
     //calculates upper limit to which we need to check for primes (optimization)
@@ -187,15 +188,15 @@ void spfsieve() {
     //so after sqrt(N) the pairs will switch and and won't find any further new factors
     //Factors of a number come in pairs, with one factor being less than or equal to the square root of the number,
     //and the other being greater than or equal to the square root.
-    int limit = std::ceil(std::sqrt(MAXN));
-    for (int i = 3; i < limit; i+=2) {
+    ll limit = std::ceil(std::sqrt(MAXN));
+    for (ll i = 3; i < limit; i+=2) {
         //checks if i is still marked as it's own smallest prime factor
         //indicating that it is still prime 
         //because we have iterated through all smaller numbers beforehand so if not a multiple of any of those
         //then by definition it must be prime
         if (spf[i] == i) {
             //start from i*i as spf for smaller numbers than this would be marked by smaller numbers than i (if not prime)
-            for (int j = i * i; j < MAXN; j += i) {
+            for (ll j = i * i; j < MAXN; j += i) {
                 //if smallest prime factor of j is still set as itself i.e. spf not yet been set
                 //then set spf as i
                 if (spf[j] == j) {
@@ -206,10 +207,10 @@ void spfsieve() {
     }
 }
 
-//Function to return the prime factorization of a number (is unique for every number)
-//make sure to call spfsieve() before calling this function so spf values are prepopulated
-std::unordered_map<int, int> fact(int x) {
-    std::unordered_map<int, int> pfactors;
+// //Function to return the prime factorization of a number (is unique for every number)
+// //make sure to call spfsieve() before calling this function so spf values are prepopulated
+std::unordered_map<ll, ll> fact(ll x) {
+    std::unordered_map<ll, ll> pfactors;
     while (x != 1) {
         //if the smallest prime factor of x has not yet been added to pfactors
         //  then set p^1
@@ -291,7 +292,7 @@ void edge(ll originNode, ll destNode)
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
+    g[destNode].pb(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
@@ -1691,6 +1692,476 @@ template <class T> struct BIT {
     }
 };
 
+namespace internal {
+
+// @param m `1 <= m`
+// @return x mod m
+constexpr long long safe_mod(long long x, long long m) {
+    x %= m;
+    if (x < 0) x += m;
+    return x;
+}
+
+// Fast modular multiplication by barrett reduction
+// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
+// NOTE: reconsider after Ice Lake
+struct barrett {
+    unsigned int _m;
+    unsigned long long im;
+
+    // @param m `1 <= m`
+    explicit barrett(unsigned int m) : _m(m), im((unsigned long long)(-1) / m + 1) {}
+
+    // @return m
+    unsigned int umod() const { return _m; }
+
+    // @param a `0 <= a < m`
+    // @param b `0 <= b < m`
+    // @return `a * b % m`
+    unsigned int mul(unsigned int a, unsigned int b) const {
+        // [1] m = 1
+        // a = b = im = 0, so okay
+
+        // [2] m >= 2
+        // im = ceil(2^64 / m)
+        // -> im * m = 2^64 + r (0 <= r < m)
+        // let z = a*b = c*m + d (0 <= c, d < m)
+        // a*b * im = (c*m + d) * im = c*(im*m) + d*im = c*2^64 + c*r + d*im
+        // c*r + d*im < m * m + m * im < m * m + 2^64 + m <= 2^64 + m * (m + 1) < 2^64 * 2
+        // ((ab * im) >> 64) == c or c + 1
+        unsigned long long z = a;
+        z *= b;
+#ifdef _MSC_VER
+        unsigned long long x;
+        _umul128(z, im, &x);
+#else
+        unsigned long long x =
+            (unsigned long long)(((unsigned __int128)(z)*im) >> 64);
+#endif
+        unsigned long long y = x * _m;
+        return (unsigned int)(z - y + (z < y ? _m : 0));
+    }
+};
+
+// @param n `0 <= n`
+// @param m `1 <= m`
+// @return `(x ** n) % m`
+constexpr long long pow_mod_constexpr(long long x, long long n, int m) {
+    if (m == 1) return 0;
+    unsigned int _m = (unsigned int)(m);
+    unsigned long long r = 1;
+    unsigned long long y = safe_mod(x, m);
+    while (n) {
+        if (n & 1) r = (r * y) % _m;
+        y = (y * y) % _m;
+        n >>= 1;
+    }
+    return r;
+}
+
+// Reference:
+// M. Forisek and J. Jancina,
+// Fast Primality Testing for Integers That Fit into a Machine Word
+// @param n `0 <= n`
+constexpr bool is_prime_constexpr(int n) {
+    if (n <= 1) return false;
+    if (n == 2 || n == 7 || n == 61) return true;
+    if (n % 2 == 0) return false;
+    long long d = n - 1;
+    while (d % 2 == 0) d /= 2;
+    constexpr long long bases[3] = {2, 7, 61};
+    for (long long a : bases) {
+        long long t = d;
+        long long y = pow_mod_constexpr(a, t, n);
+        while (t != n - 1 && y != 1 && y != n - 1) {
+            y = y * y % n;
+            t <<= 1;
+        }
+        if (y != n - 1 && t % 2 == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+template <int n> constexpr bool is_prime = is_prime_constexpr(n);
+
+// @param b `1 <= b`
+// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
+constexpr std::pair<long long, long long> inv_gcd(long long a, long long b) {
+    a = safe_mod(a, b);
+    if (a == 0) return {b, 0};
+
+    // Contracts:
+    // [1] s - m0 * a = 0 (mod b)
+    // [2] t - m1 * a = 0 (mod b)
+    // [3] s * |m1| + t * |m0| <= b
+    long long s = b, t = a;
+    long long m0 = 0, m1 = 1;
+
+    while (t) {
+        long long u = s / t;
+        s -= t * u;
+        m0 -= m1 * u;  // |m1 * u| <= |m1| * s <= b
+
+        // [3]:
+        // (s - t * u) * |m1| + t * |m0 - m1 * u|
+        // <= s * |m1| - t * u * |m1| + t * (|m0| + |m1| * u)
+        // = s * |m1| + t * |m0| <= b
+
+        auto tmp = s;
+        s = t;
+        t = tmp;
+        tmp = m0;
+        m0 = m1;
+        m1 = tmp;
+    }
+    // by [3]: |m0| <= b/g
+    // by g != b: |m0| < b/g
+    if (m0 < 0) m0 += b / s;
+    return {s, m0};
+}
+
+// Compile time primitive root
+// @param m must be prime
+// @return primitive root (and minimum in now)
+constexpr int primitive_root_constexpr(int m) {
+    if (m == 2) return 1;
+    if (m == 167772161) return 3;
+    if (m == 469762049) return 3;
+    if (m == 754974721) return 11;
+    if (m == 998244353) return 3;
+    int divs[20] = {};
+    divs[0] = 2;
+    int cnt = 1;
+    int x = (m - 1) / 2;
+    while (x % 2 == 0) x /= 2;
+    for (int i = 3; (long long)(i)*i <= x; i += 2) {
+        if (x % i == 0) {
+            divs[cnt++] = i;
+            while (x % i == 0) {
+                x /= i;
+            }
+        }
+    }
+    if (x > 1) {
+        divs[cnt++] = x;
+    }
+    for (int g = 2;; g++) {
+        bool ok = true;
+        for (int i = 0; i < cnt; i++) {
+            if (pow_mod_constexpr(g, (m - 1) / divs[i], m) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
+template <int m> constexpr int primitive_root = primitive_root_constexpr(m);
+
+// @param n `n < 2^32`
+// @param m `1 <= m < 2^32`
+// @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
+unsigned long long floor_sum_unsigned(unsigned long long n,
+                                      unsigned long long m,
+                                      unsigned long long a,
+                                      unsigned long long b) {
+    unsigned long long ans = 0;
+    while (true) {
+        if (a >= m) {
+            ans += n * (n - 1) / 2 * (a / m);
+            a %= m;
+        }
+        if (b >= m) {
+            ans += n * (b / m);
+            b %= m;
+        }
+
+        unsigned long long y_max = a * n + b;
+        if (y_max < m) break;
+        // y_max < m * (n + 1)
+        // floor(y_max / m) <= n
+        n = (unsigned long long)(y_max / m);
+        b = (unsigned long long)(y_max % m);
+        std::swap(m, a);
+    }
+    return ans;
+}
+
+}  // namespace internal
+
+
+namespace internal {
+
+struct modint_base {};
+struct static_modint_base : modint_base {};
+
+template <class T> using is_modint = std::is_base_of<modint_base, T>;
+template <class T> using is_modint_t = std::enable_if_t<is_modint<T>::value>;
+
+}  // namespace internal
+
+template <int m, std::enable_if_t<(1 <= m)>* = nullptr>
+struct static_modint : internal::static_modint_base {
+    using mint = static_modint;
+
+  public:
+    static constexpr int mod() { return m; }
+    static mint raw(int v) {
+        mint x;
+        x._v = v;
+        return x;
+    }
+
+    static_modint() : _v(0) {}
+    template <class T, internal::is_signed_int_t<T>* = nullptr>
+    static_modint(T v) {
+        long long x = (long long)(v % (long long)(umod()));
+        if (x < 0) x += umod();
+        _v = (unsigned int)(x);
+    }
+    template <class T, internal::is_unsigned_int_t<T>* = nullptr>
+    static_modint(T v) {
+        _v = (unsigned int)(v % umod());
+    }
+
+    unsigned int val() const { return _v; }
+
+    mint& operator++() {
+        _v++;
+        if (_v == umod()) _v = 0;
+        return *this;
+    }
+    mint& operator--() {
+        if (_v == 0) _v = umod();
+        _v--;
+        return *this;
+    }
+    mint operator++(int) {
+        mint result = *this;
+        ++*this;
+        return result;
+    }
+    mint operator--(int) {
+        mint result = *this;
+        --*this;
+        return result;
+    }
+
+    mint& operator+=(const mint& rhs) {
+        _v += rhs._v;
+        if (_v >= umod()) _v -= umod();
+        return *this;
+    }
+    mint& operator-=(const mint& rhs) {
+        _v -= rhs._v;
+        if (_v >= umod()) _v += umod();
+        return *this;
+    }
+    mint& operator*=(const mint& rhs) {
+        unsigned long long z = _v;
+        z *= rhs._v;
+        _v = (unsigned int)(z % umod());
+        return *this;
+    }
+    mint& operator/=(const mint& rhs) { return *this = *this * rhs.inv(); }
+
+    mint operator+() const { return *this; }
+    mint operator-() const { return mint() - *this; }
+
+    mint pow(long long n) const {
+        assert(0 <= n);
+        mint x = *this, r = 1;
+        while (n) {
+            if (n & 1) r *= x;
+            x *= x;
+            n >>= 1;
+        }
+        return r;
+    }
+    mint inv() const {
+        if (prime) {
+            assert(_v);
+            return pow(umod() - 2);
+        } else {
+            auto eg = internal::inv_gcd(_v, m);
+            assert(eg.first == 1);
+            return eg.second;
+        }
+    }
+
+    friend mint operator+(const mint& lhs, const mint& rhs) {
+        return mint(lhs) += rhs;
+    }
+    friend mint operator-(const mint& lhs, const mint& rhs) {
+        return mint(lhs) -= rhs;
+    }
+    friend mint operator*(const mint& lhs, const mint& rhs) {
+        return mint(lhs) *= rhs;
+    }
+    friend mint operator/(const mint& lhs, const mint& rhs) {
+        return mint(lhs) /= rhs;
+    }
+    friend bool operator==(const mint& lhs, const mint& rhs) {
+        return lhs._v == rhs._v;
+    }
+    friend bool operator!=(const mint& lhs, const mint& rhs) {
+        return lhs._v != rhs._v;
+    }
+
+  private:
+    unsigned int _v;
+    static constexpr unsigned int umod() { return m; }
+    static constexpr bool prime = internal::is_prime<m>;
+};
+
+template <int id> struct dynamic_modint : internal::modint_base {
+    using mint = dynamic_modint;
+
+  public:
+    static int mod() { return (int)(bt.umod()); }
+    static void set_mod(int m) {
+        assert(1 <= m);
+        bt = internal::barrett(m);
+    }
+    static mint raw(int v) {
+        mint x;
+        x._v = v;
+        return x;
+    }
+
+    dynamic_modint() : _v(0) {}
+    template <class T, internal::is_signed_int_t<T>* = nullptr>
+    dynamic_modint(T v) {
+        long long x = (long long)(v % (long long)(mod()));
+        if (x < 0) x += mod();
+        _v = (unsigned int)(x);
+    }
+    template <class T, internal::is_unsigned_int_t<T>* = nullptr>
+    dynamic_modint(T v) {
+        _v = (unsigned int)(v % mod());
+    }
+
+    unsigned int val() const { return _v; }
+
+    mint& operator++() {
+        _v++;
+        if (_v == umod()) _v = 0;
+        return *this;
+    }
+    mint& operator--() {
+        if (_v == 0) _v = umod();
+        _v--;
+        return *this;
+    }
+    mint operator++(int) {
+        mint result = *this;
+        ++*this;
+        return result;
+    }
+    mint operator--(int) {
+        mint result = *this;
+        --*this;
+        return result;
+    }
+
+    mint& operator+=(const mint& rhs) {
+        _v += rhs._v;
+        if (_v >= umod()) _v -= umod();
+        return *this;
+    }
+    mint& operator-=(const mint& rhs) {
+        _v += mod() - rhs._v;
+        if (_v >= umod()) _v -= umod();
+        return *this;
+    }
+    mint& operator*=(const mint& rhs) {
+        _v = bt.mul(_v, rhs._v);
+        return *this;
+    }
+    mint& operator/=(const mint& rhs) { return *this = *this * rhs.inv(); }
+
+    mint operator+() const { return *this; }
+    mint operator-() const { return mint() - *this; }
+
+    mint pow(long long n) const {
+        assert(0 <= n);
+        mint x = *this, r = 1;
+        while (n) {
+            if (n & 1) r *= x;
+            x *= x;
+            n >>= 1;
+        }
+        return r;
+    }
+    mint inv() const {
+        auto eg = internal::inv_gcd(_v, mod());
+        assert(eg.first == 1);
+        return eg.second;
+    }
+
+    friend mint operator+(const mint& lhs, const mint& rhs) {
+        return mint(lhs) += rhs;
+    }
+    friend mint operator-(const mint& lhs, const mint& rhs) {
+        return mint(lhs) -= rhs;
+    }
+    friend mint operator*(const mint& lhs, const mint& rhs) {
+        return mint(lhs) *= rhs;
+    }
+    friend mint operator/(const mint& lhs, const mint& rhs) {
+        return mint(lhs) /= rhs;
+    }
+    friend bool operator==(const mint& lhs, const mint& rhs) {
+        return lhs._v == rhs._v;
+    }
+    friend bool operator!=(const mint& lhs, const mint& rhs) {
+        return lhs._v != rhs._v;
+    }
+
+  private:
+    unsigned int _v;
+    static internal::barrett bt;
+    static unsigned int umod() { return bt.umod(); }
+};
+template <int id> internal::barrett dynamic_modint<id>::bt(998244353);
+
+using modint998244353 = static_modint<998244353>;
+using modint1000000007 = static_modint<1000000007>;
+using modint = dynamic_modint<-1>;
+
+namespace internal {
+
+template <class T>
+using is_static_modint = std::is_base_of<internal::static_modint_base, T>;
+
+template <class T>
+using is_static_modint_t = std::enable_if_t<is_static_modint<T>::value>;
+
+template <class> struct is_dynamic_modint : public std::false_type {};
+template <int id>
+struct is_dynamic_modint<dynamic_modint<id>> : public std::true_type {};
+
+template <class T>
+using is_dynamic_modint_t = std::enable_if_t<is_dynamic_modint<T>::value>;
+
+}  // namespace internal
+
+// use instead of pow when dealing with large numbers as pow() uses floating point arithmetic, which will give wrong results for large numbers
+// this allows it to deal with powering decimal numbers etc
+// but if you are powering large integers then use ipow which uses int/long long only for accuracy
+long long ipow(long long base, int exp) {
+    long long result = 1;
+    while (exp > 0) {
+        if (exp & 1) {
+            result *= base;
+        }
+        exp >>= 1;
+        base *= base;
+    }
+    return result;
+}
+
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
 vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
 vector<int> dx_wasd = {1,-1,0,0};
@@ -1700,37 +2171,101 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+using mint = modint998244353;
+long long power_of_3(int exponent) {
+    long long result = 1;
+    for (int i = 0; i < exponent; ++i) {
+        result *= 3;
+    }
+    return result;
+}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    ll n,m;
-    cin >> n >> m;
-     /* vis.assign(n+1, false);
+vector<pair<ll,ll>> generator(){
+    vector<pair<ll,ll>> combinations;
+    ll maxA = 30;
+    ll maxB = 30;
+    for (int a = 0; a <= maxA; ++a) {
+        for (int b = 0; b <= maxB; ++b) {
+            long long value = (1LL << a) * ipow(3,b);
+            if(value<1e18+10&&value>0) combinations.push_back(mp(value,a+b));
+        }
+    }
+
+    // Optional: Sort the vector if needed
+    // combinations.erase(remove_if(all(combinations),[](int value){
+    //     return value<0;
+    // }), combinations.end());
+    std::sort(combinations.begin(), combinations.end());
+    // combinations.erase(combinations.begin(),combinations.begin()+18);
+    cerr << combinations << endl;
+    return combinations;
+
+}
+
+long long solve(int N, const std::vector<long long> &a) {
+    /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    g.assign(n+1, vll());
-
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
+    //if have an even number can always simplify
+    //if have a prime number, cannot simplify, but may still be able to get other nums to become it
+    //if have an odd number, can simplify if divisible by 3 i.e. x%3==0
+    //can you sort the array of numbers and work from biggest to smallest?
+    //all numbers will have to become the gcd of all the numbers
+    ll target=0;
+    spfsieve();
+    // cerr << fact(536870912) << endl;
+    fx(a){
+        target=gcd(target,x);
     }
-
-    ll ans=0;
-    foi(1,n+1){
-        auto temp= bfs_shortest_paths(i);
-        // cerr << temp << endl;
-        fx(temp){
-            if(x>=0) ans++;
+    cerr << target << endl;
+    vector<pair<ll,ll>> combos = generator();
+    // cerr << combos << endl;
+    // cerr << "target: " << target << endl;
+    ans=0;
+    fx(a){
+        // cerr << x << endl;
+        x=x/target;
+    for(auto y: combos){
+        if(y.first>x){
+            cerr << "x: " << x << endl;
+            cerr << "y" << y << endl;
+            return -1;
+        }
+        if(y.first==x){
+            // ll temp=0;
+            // cerr << "y: " << y << " ";
+            // cerr << fact(y) << endl;
+            // for(auto t: fact(y)){
+            //     temp+=t.second;
+            // }
+            ans+=y.second;
+            break;
         }
     }
-    // cerr << ans << endl;
-    cout << ans << endl;
+    }
+    return ans;
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("cpp");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    int N;
+    std::cin >> N;
+    std::vector<long long> a(N);
+    REP (i, N) {
+        std::cin >> a[i];
+    }
+    ll ans = solve(N, a);
+    std::cout << ans << '\n';
+
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

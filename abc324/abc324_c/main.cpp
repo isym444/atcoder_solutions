@@ -291,7 +291,7 @@ void edge(ll originNode, ll destNode)
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
+    g[destNode].pb(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
@@ -1701,36 +1701,101 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
+bool check1(string cur, string og){
+    ll dif = 0;
+    foi(0, cur.length()){
+        if(cur[i]!=og[i]){
+            dif++;
+        }
+        if(dif>1) return false;
+    }
+    return true;
+}
+
+bool check2(string cur, string og){
+    ll pc = 0;
+    ll po = 0;
+    // cerr << "reached" << endl;
+    // cerr << og << endl;
+    // cerr << cur << endl;
+    while(pc<cur.length()&&po<og.length()){
+        if(cur.length()>og.length()){
+            while(pc<cur.length()&&po<og.length()&&cur[pc]!=og[po]){
+                pc++;
+            }
+        }
+        if(og.length()>cur.length()){
+            while(pc<cur.length()&&po<og.length()&&cur[pc]!=og[po]){
+                po++;
+            }
+        }
+        if(pc<cur.length()&&po<og.length()){
+            po++;
+            pc++;
+        }
+    }
+    // cerr << po << " " << pc << endl;
+    // cerr << (po==og.length()) << " " << (pc==cur.length()) << endl;
+    if(pc==cur.length()&&po==og.length()){
+        // cerr << "true " << endl;
+        // cerr << endl;
+        return true;
+    }
+    if(pc==po){
+        // cerr << "true " << endl;
+        // cerr << endl;
+        return true;
+    }
+    // cerr << "false " << endl;
+    // cerr << endl;
+    return false;
+}
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    ll n,m;
-    cin >> n >> m;
-     /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    g.assign(n+1, vll());
-
-    foi(0,m){
-        ll a,b;
-        cin >> a >> b;
-        edge(a,b);
+    int n;
+    std::string og;
+    std::cin >> n;
+    std::vector<std::string> a(n);
+    vector<deque<char>> d(n);
+    vll ans;
+    std::cin >> og;
+    REP (i, n) {
+        std::cin >> a[i];
     }
-
-    ll ans=0;
-    foi(1,n+1){
-        auto temp= bfs_shortest_paths(i);
-        // cerr << temp << endl;
-        fx(temp){
-            if(x>=0) ans++;
+    foi(0,n){
+        string cur = a[i];
+        if(cur==og){
+            // cout << i+1 << " ";
+            ans.pb(i+1);
+            continue;
+        }
+        if(cur.length()==og.length()){
+            if(check1(cur, og)){
+                // cout << i+1 << " ";
+                ans.pb(i+1);
+                continue;
+            }
+        }
+        if(abs((int)cur.length()-(int)og.length())>1){
+            continue;
+        }
+        if(abs((int)cur.length()-(int)og.length())==1){
+        if(check2(cur, og)){
+            // cout << i+1 << " ";
+            ans.pb(i+1);
+            continue;
+        }
         }
     }
-    // cerr << ans << endl;
-    cout << ans << endl;
+    cout << ans.size() << endl;
+    fx(ans){
+        cout << x << " ";
+    }
+
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
