@@ -819,28 +819,54 @@ vector<int> dy_wasd = {0,0,1,-1};
 
 const std::string YES = "Yes";
 const std::string NO = "No";
-bool solve(auto N, auto M, const std::vector<auto> &A, const std::vector<auto> &B, const std::vector<auto> &C, const std::vector<auto> &D) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    auto N, M;
-    std::cin >> N >> M;
-    std::vector<auto> A(M), B(M), C(M), D(M);
-    REP (i, M) {
-        std::cin >> A[i] >> B[i];
+    
+    ll n,m;
+    cin >> n >> m;
+    vvll a(n,vll(n,0));
+    vvll b(n,vll(n,0));
+    foi(0,m){
+        ll t1,t2;
+        cin >> t1 >> t2;
+        t1--;
+        t2--;
+        a[t1][t2]=1;
+        a[t2][t1]=1;
     }
-    REP (i, M) {
-        std::cin >> C[i] >> D[i];
+    foi(0,m){
+        ll t1,t2;
+        cin >> t1 >> t2;
+        t1--;
+        t2--;
+        b[t1][t2]=1;
+        b[t2][t1]=1;
     }
-    auto ans = solve(N, M, A, B, C, D);
-    std::cout << (ans ? YES : NO) << '\n';
+    vll p(n);
+    iota(p.begin(),p.end(),0);
+    // cerr << p << endl;
+    do
+    {
+        bool checker = true;
+        foi(0,n){
+            foj(0,n){
+                if(a[i][j]!=b[p[i]][p[j]]){
+                    checker = false;
+                }
+            }
+        }
+        if(checker == true){
+            cout << "Yes" << endl;
+            return 0;
+        }
+    } while (next_permutation(p.begin(),p.end()));
+    
+    cout << "No" << endl;
+    return 0;
 
     /* genprimes(1e5); */
 

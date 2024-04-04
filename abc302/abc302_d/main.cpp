@@ -792,12 +792,30 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-long long solve(int N, int M, long long D, const std::vector<long long> &A, const std::vector<long long> &B) {
+long long solve(int N, int M, long long D, std::vector<long long> &A, std::vector<long long> &B) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    sort(A.begin(), A.end());
+    sort(B.begin(), B.end());
+    ll ans=-1;
+    foi(0,N){
+        ll a = B[upper_bound(B.begin(), B.end(),A[i]+D)-B.begin()-1];
+        // ll b = B[lower_bound(B.begin(), B.end(),A[i])-B.begin()];
+        // ll c = B[lower_bound(B.begin(), B.end(),A[i+1])-B.begin()];
+        // cerr << a << endl;
+        if(abs(a-A[i])<=D){
+            ans=max(ans,A[i]+a);
+        }
+        // if(abs(b-A[i])<=D){
+        //     ans=max(ans,A[i]+b);
+        // }
+        // if(abs(c-A[i])<=D){
+        //     ans=max(ans,A[i]+c);
+        // }
+    }
+    return ans;
 }
 
 int main() {
