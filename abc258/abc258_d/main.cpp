@@ -69,7 +69,7 @@ typedef std::vector<std::vector<long long>> vvll;
 
 #define pb push_back
 
-ll INF=1e18;
+ll INF=LLONG_MAX;
 
 
 /*/---------------------------IO(Debugging)----------------------/*/
@@ -804,6 +804,24 @@ long long solve(int N, long long X, const std::vector<long long> &A, const std::
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    vll C(N);
+    ll ans = INF;
+    ll tt = min((ll)N,X);
+    foi(0,tt){
+        if(i>0){
+            C[i]=C[i-1]+A[i]+B[i];
+        }
+        else{
+            C[i]=A[i]+B[i];
+        }
+        // cerr << C[i] << " " << X-(i+1) << endl;
+        // if(log10(B[i])+log10(X-(i+1))>19) continue;
+        ll temp = C[i]+B[i]*(X-(i+1));
+        ans=min(ans,temp);
+        // cerr << ans << endl;
+    }
+    // cerr << C << endl;
+    return ans;
 }
 
 int main() {
