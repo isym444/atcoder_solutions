@@ -1818,13 +1818,63 @@ vector<int> dy_wasd = {0,0,1,-1};
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
+ll N;
 
-const std::string NO = "NO";
-std::string solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+ll funcx(ll vi){
+    //as verteces are 1 indexed
+    // vi++;
+    foi(1,N+1){
+
+    }
+    return 0;
+}
+
+
+const int maxn = 200010;
+
+int n;
+vector<int> adj[maxn];
+int subtree_size[maxn];
+
+int get_subtree_size(int node, int parent = -1) {
+	int &res = subtree_size[node];
+	res = 1;
+	for (int i : adj[node]) {
+		if (i == parent) { continue; }
+		res += get_subtree_size(i, node);
+	}
+	return res;
+}
+vector<int> centroids;
+
+
+int get_centroid(int node, int parent = -1) {
+	for (int i : adj[node]) {
+		if (i == parent) { continue; }
+
+		if (subtree_size[i] * 2 > n) { return get_centroid(i, node); }
+	}
+	return node;
+}
+
+void find_centroids(int node, int parent = -1) {
+    bool is_centroid = true;
+    int heaviest_child_size = 0;
+
+    for (int child : adj[node]) {
+        if (child == parent) continue;
+
+        find_centroids(child, node);
+
+        if (subtree_size[child] > n / 2) {
+            is_centroid = false;
+        }
+        heaviest_child_size = max(heaviest_child_size, subtree_size[child]);
+    }
+
+    if (is_centroid && n - subtree_size[node] <= n / 2) {
+        centroids.push_back(node);
+    }
 }
 
 int main() {
@@ -1833,17 +1883,54 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
     std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
+    std::vector<long long> A(n), B(n), C(n);
+    for (int i = 0; i < n - 1; i++) {
+		int a, b;
+		cin >> a >> b;
+		a--;
+		b--;
+        A[i]=a;
+        B[i]=b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
 
+	// get_subtree_size(0);
+	// find_centroids(0);
+    // dbg(centroids);
+    UndirectedWeightedTree tt(n);
+
+
+    REP (i, n - 1) {
+        ll a,b;
+        a=A[i];
+        b=B[i];
+        tt.add_edge(a,b,1);
+    }
+    ll finans=INF;
+    foi(0,n){
+        cin >> C[i];
+    }
+    // sort(C.rbegin(),C.rend());
+    tt.fix_root(0);
+    tt.doubling_precalc();
+    vll memo(n);
+    foi(0,n){
+        ll temp = tt.path_length(0,i);
+        memo[i] = temp;
+    }
+    foj(0,n){
+        ll ans=0;
+        foi(0, n) {
+            dbg(tt.path_length(j,i));
+            ans+=C[i]*(memo[i]+memo[j]-2*memo[tt.lowest_common_ancestor(i,j)]);
+        }
+        dbg(ans);
+        finans=min(finans,ans);
+    }
+    
+    cout << finans << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

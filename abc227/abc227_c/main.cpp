@@ -23,6 +23,8 @@
 #include <cmath> // For std::ceil
 #include <iomanip>
 #include <unordered_set>
+#include <functional>
+#include <type_traits>
 
 using namespace std;
 
@@ -97,59 +99,13 @@ typedef multiset<ll> msll;
 int digit_to_int(char c) { return c - '0'; }
 int lowercase_to_int(char c) { return c - 'a'; }
 int uppercase_to_int(char c) { return c - 'A'; }
-
-
-ll INF=1e18;
-
-
+ll INF=LLONG_MAX;
 /*/---------------------------IO(Debugging)----------------------/*/
 template<class T> istream& operator >> (istream &is, vector<T>& V) {
     for(auto &e : V)
         is >> e;
     return is;
 }
-
-// template<typename CharT, typename Traits, typename T>
-// ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, T const &val) {
-//     return (out << val << " ");
-// }
-// template<typename CharT, typename Traits, typename T1, typename T2>
-// ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, pair<T1, T2> const &val) {
-//     return (out << "(" << val.first << "," << val.second << ") ");
-// }
-// template<typename CharT, typename Traits, template<typename, typename...> class TT, typename... Args>
-// ostream& operator << (std::basic_ostream<CharT, Traits> &out, TT<Args...> const &cont) {
-//     out << "[ ";
-//     for(auto&& elem : cont) _containerprint(out, elem);
-//     return (out << "]");
-// }
-// template<class L, class R> ostream& operator << (ostream& out, pair<L, R> const &val){
-//     return (out << "(" << val.first << "," << val.second << ") ");
-// }
-// template<class P, class Q = vector<P>, class R = less<P> > ostream& operator << (ostream& out, priority_queue<P, Q, R> const& M){
-//     static priority_queue<P, Q, R> U;
-//     U = M;
-//     out << "{ ";
-//     while(!U.empty())
-//         out << U.top() << " ", U.pop();
-//     return (out << "}");
-// }
-// template<class P> ostream& operator << (ostream& out, queue<P> const& M){
-//     static queue<P> U;
-//     U = M;
-//     out << "{ ";
-//     while(!U.empty())
-//         out << U.front() << " ", U.pop();
-//     return (out << "}");
-// }
-// template<typename CharT, typename Traits>
-// ostream& operator << (std::basic_ostream<CharT, Traits> &out, vector<vector<ll>> const &matrix) {
-//     for (auto &row : matrix) {
-//         out << row << "\n";
-//     }
-//     return out;
-// }
-
 template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec);
 template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr);
 template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec);
@@ -628,6 +584,8 @@ struct UndirectedWeightedTree {
         _fix_root_dfs(root, INVALID, INVALID);
     }
 
+    //this does binary lifting precalculation -> gives powers of 2 ancestors of every node
+    //as every number can be represented in binary, you can find any kth ancestor of any node in logarithmic time if you precalculate above
     std::vector<std::vector<int>> doubling;
     void doubling_precalc() {
         doubling.assign(lgV, std::vector<int>(V));
@@ -807,6 +765,7 @@ struct RangeSet : public std::map<T, T> {
             auto it = get_containing_range(x);
             return it != this->end() and it->first <= y and y <= it->second;
         }
+
 
         // inserts the range [x, x] and returns the number of integers inserted to this set. O(log N)
         T insert(T x) {
@@ -1167,22 +1126,13 @@ std::vector<std::string> split(const char* s, char delim) {
     return split(std::string(s), delim);
 }
 
-
-#include <functional>
-
 #if __cplusplus >= 202002L
 #include <bit>
 #endif
-
 namespace internal {
-
 #if __cplusplus >= 202002L
-
 using std::bit_ceil;
-
 #else
-
-// @return same with std::bit::bit_ceil
 unsigned int bit_ceil(unsigned int n) {
     unsigned int x = 1;
     while (x < (unsigned int)(n)) x *= 2;
@@ -1190,9 +1140,6 @@ unsigned int bit_ceil(unsigned int n) {
 }
 
 #endif
-
-// @param n `1 <= n`
-// @return same with std::bit::countr_zero
 int countr_zero(unsigned int n) {
 #ifdef _MSC_VER
     unsigned long index;
@@ -1202,9 +1149,6 @@ int countr_zero(unsigned int n) {
     return __builtin_ctz(n);
 #endif
 }
-
-// @param n `1 <= n`
-// @return same with std::bit::countr_zero
 constexpr int countr_zero_constexpr(unsigned int n) {
     int x = 0;
     while (!(n & (1 << x))) x++;
@@ -1212,13 +1156,6 @@ constexpr int countr_zero_constexpr(unsigned int n) {
 }
 
 }  // namespace internal
-
-
-
-
-#include <type_traits>
-
-
 namespace internal {
 
 #ifndef _MSC_VER
@@ -1354,58 +1291,6 @@ template <class T> struct fenwick_tree {
     }
 };
 
-
-//Use fenwick_tree above instead
-template <class T> struct BIT {
-    T UNITY_SUM = 0;
-    vector<T> dat;
-    
-    // [0, n)
-    // Declare BIT (N elements initialized to 0) by doing:
-    // BIT< long  long > bit (N);
-    // fenwick tree is held in a vector<T> called dat
-    BIT(int n, T unity = 0) : UNITY_SUM(unity), dat(n, unity) { }
-    
-    //allows reinitialization of the tree resetting all elements to unity sum
-    void init(int n) {
-        dat.assign(n, UNITY_SUM);
-    }
-    
-    // a is 0-indexed
-    // use add to add array item 'x' to index 'a' in Fenwick tree
-    // n.b. index 'a' in Fenwick tree represents a range of responsibility
-    // i.e. holds a prefix sum for a particular range of original array
-    // this range of responsibility is determined by index 'a's binary representation
-    // it is responsible for E elements below it
-    // where E is the index of its LSB where index is from R->L of binary number
-    // e.g. 11010 LSB index is 2
-    inline void add(int a, T x) {
-        for (int i = a; i < (int)dat.size(); i |= i + 1)
-            dat[i] = dat[i] + x;
-    }
-    
-    // Get sum over range [0, a), where a is 0-indexed
-    inline T sum(int a) {
-        T res = UNITY_SUM;
-        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
-            res = res + dat[i];
-        return res;
-    }
-    
-    // Get sum over range [a, b), where a and b are 0-indexed
-    inline T sum(int a, int b) {
-        return sum(b) - sum(a);
-    }
-    
-    // debug
-    // prints the values of original array after modifications
-    void print() {
-        for (int i = 0; i < (int)dat.size(); ++i)
-            cerr << sum(i, i + 1) << ",";
-        cerr << endl;
-    }
-};
-
 namespace internal {
 
 // @param m `1 <= m`
@@ -1433,16 +1318,6 @@ struct barrett {
     // @param b `0 <= b < m`
     // @return `a * b % m`
     unsigned int mul(unsigned int a, unsigned int b) const {
-        // [1] m = 1
-        // a = b = im = 0, so okay
-
-        // [2] m >= 2
-        // im = ceil(2^64 / m)
-        // -> im * m = 2^64 + r (0 <= r < m)
-        // let z = a*b = c*m + d (0 <= c, d < m)
-        // a*b * im = (c*m + d) * im = c*(im*m) + d*im = c*2^64 + c*r + d*im
-        // c*r + d*im < m * m + m * im < m * m + 2^64 + m <= 2^64 + m * (m + 1) < 2^64 * 2
-        // ((ab * im) >> 64) == c or c + 1
         unsigned long long z = a;
         z *= b;
 #ifdef _MSC_VER
@@ -1457,9 +1332,6 @@ struct barrett {
     }
 };
 
-// @param n `0 <= n`
-// @param m `1 <= m`
-// @return `(x ** n) % m`
 constexpr long long pow_mod_constexpr(long long x, long long n, int m) {
     if (m == 1) return 0;
     unsigned int _m = (unsigned int)(m);
@@ -1499,16 +1371,9 @@ constexpr bool is_prime_constexpr(int n) {
 }
 template <int n> constexpr bool is_prime = is_prime_constexpr(n);
 
-// @param b `1 <= b`
-// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
 constexpr std::pair<long long, long long> inv_gcd(long long a, long long b) {
     a = safe_mod(a, b);
     if (a == 0) return {b, 0};
-
-    // Contracts:
-    // [1] s - m0 * a = 0 (mod b)
-    // [2] t - m1 * a = 0 (mod b)
-    // [3] s * |m1| + t * |m0| <= b
     long long s = b, t = a;
     long long m0 = 0, m1 = 1;
 
@@ -1517,11 +1382,6 @@ constexpr std::pair<long long, long long> inv_gcd(long long a, long long b) {
         s -= t * u;
         m0 -= m1 * u;  // |m1 * u| <= |m1| * s <= b
 
-        // [3]:
-        // (s - t * u) * |m1| + t * |m0 - m1 * u|
-        // <= s * |m1| - t * u * |m1| + t * (|m0| + |m1| * u)
-        // = s * |m1| + t * |m0| <= b
-
         auto tmp = s;
         s = t;
         t = tmp;
@@ -1529,8 +1389,7 @@ constexpr std::pair<long long, long long> inv_gcd(long long a, long long b) {
         m0 = m1;
         m1 = tmp;
     }
-    // by [3]: |m0| <= b/g
-    // by g != b: |m0| < b/g
+
     if (m0 < 0) m0 += b / s;
     return {s, m0};
 }
@@ -1966,6 +1825,7 @@ long long solve(long long N) {
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    return 0;
 }
 
 int main() {

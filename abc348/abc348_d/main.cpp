@@ -1819,8 +1819,9 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-const std::string NO = "NO";
-std::string solve(int n, const std::vector<int64_t> &a) {
+const std::string YES = "Yes";
+const std::string NO = "No";
+bool solve(auto H, auto W, const std::vector<std::vector<auto> > &A, auto N, const std::vector<auto> &R, const std::vector<auto> &C, const std::vector<auto> &E) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
@@ -1833,16 +1834,21 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    auto H, W, N;
+    std::cin >> H >> W;
+    std::vector<std::vector<auto> > A(H + W + 4, std::vector<auto>((H + W + 4)));
+    REP (j, H + 4) {
+        REP (i, W) {
+            std::cin >> A[i + j][i + j];
+        }
     }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
+    std::cin >> N;
+    std::vector<auto> R(N), C(N), E(N);
+    REP (i, N) {
+        std::cin >> R[i] >> C[i] >> E[i];
+    }
+    auto ans = solve(H, W, A, N, R, C, E);
+    std::cout << (ans ? YES : NO) << '\n';
 
     /* genprimes(1e5); */
 

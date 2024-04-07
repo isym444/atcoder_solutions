@@ -1819,12 +1819,15 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-const std::string NO = "NO";
-std::string solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+
+
+ll distance(ll x1, ll y1, ll x2, ll y2){
+    ll xdif=x2-x1;
+    ll ydif=y2-y1;
+    xdif=xdif*xdif;
+    ydif=ydif*ydif;
+    ll temp = xdif+ydif;
+    return temp;
 }
 
 int main() {
@@ -1833,16 +1836,32 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    int N;
+    std::cin >> N;
+    std::vector<long long> X(N), Y(N);
+    REP (i, N) {
+        std::cin >> X[i] >> Y[i];
     }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
+    foi(0,N){
+        //index
+        ll tempi=0;
+        //dist
+        ll disti=0;
+        //x, y
+        ll xx, yy;
+        foj(0,N){
+            if(distance(X[i],Y[i],X[j],Y[j])==disti){
+                continue;
+            }
+            if(distance(X[i],Y[i],X[j],Y[j])>disti){
+                tempi=j;
+                disti=distance(X[i],Y[i],X[j],Y[j]);
+                xx = X[j];
+                yy = Y[j];
+            }
+        }
+        cout << tempi+1 << endl;
+    }
 
     /* genprimes(1e5); */
 

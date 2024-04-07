@@ -1819,12 +1819,16 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-const std::string NO = "NO";
-std::string solve(int n, const std::vector<int64_t> &a) {
+
+void solve(long long N) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    foi(1,N+1){
+        if(i%3==0) cout << "x";
+        else cout << "o";
+    }
 }
 
 int main() {
@@ -1833,16 +1837,9 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
+    long long N;
+    std::cin >> N;
+    solve(N);
 
     /* genprimes(1e5); */
 
