@@ -1825,7 +1825,13 @@ long long solve(long long N) {
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    return 0;
+    ll ans=0;
+    for(ll i = 1; i*i*i<=N; i++){
+        for(ll j=i; j*j*i<=N;j++){
+            ans+=floordiv(N,i*j)-j+1;
+        }
+    }
+    return ans;
 }
 
 int main() {
@@ -1836,6 +1842,7 @@ int main() {
     cout << fixed << setprecision(11);
     long long N;
     std::cin >> N;
+    dbg(N);
     auto ans = solve(N);
     std::cout << ans << '\n';
 
