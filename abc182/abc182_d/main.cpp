@@ -1847,21 +1847,23 @@ long long solve(int N, const std::vector<long long> &A) {
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
     // ll gps=0;
-    pair<ll,ll> gps=mp(0,0);
-    ll tempsum=0;
-    ll i=0;
-    fx(A){
-        tempsum+=x;
-        if(gps.first<x){
-            gps=mp(x,i);
-        }
-        i++;
+    // vll psum(N+1,0);
+    ll psum=0;
+    ll bp=0;
+    ll ans=0;
+    ll ss=0;
+    ans=max(ans,A[0]);
+    foi(0,N){
+        psum+=A[i];
+        bp=max(bp,psum);
+        ans=max(ans,ss+bp);
+        ss+=psum;
+        dbg(psum);
+        dbg(ss);
     }
-    pair<ll,ll> gpl=gps;
-    for(int i = gps.second; i<A.size(); i++){
-        
-    }
-    return r;
+    // ans=max(ans,ss[N-1]+bp);
+    dbg(psum);
+    return ans;
 }
 
 int main() {

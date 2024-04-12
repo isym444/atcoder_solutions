@@ -818,11 +818,24 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
+
+set<pair<ll,ll>> ms;
+
 long long solve(int N, const std::vector<long long> &x, const std::vector<long long> &y) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    foi(0,N){
+        foj(0,N){
+            if(i==j) continue;
+            ll a,b;
+            a=x[j]-x[i];
+            b=y[j]-y[i];
+            ll gg = ;
+
+        }
+    }
 }
 
 int main() {
