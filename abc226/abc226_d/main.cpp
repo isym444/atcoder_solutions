@@ -826,16 +826,21 @@ long long solve(int N, const std::vector<long long> &x, const std::vector<long l
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    ll ans = 0;
     foi(0,N){
         foj(0,N){
             if(i==j) continue;
             ll a,b;
             a=x[j]-x[i];
             b=y[j]-y[i];
-            ll gg = ;
-
+            ll gg = gcd(a,b);
+            if(ms.find(mp(a/gg,b/gg))==ms.end()){
+                ans++;
+            }
+            ms.insert(mp(a/gg,b/gg));
         }
     }
+    return ans;
 }
 
 int main() {
