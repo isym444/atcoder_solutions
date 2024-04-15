@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 #include <string>
 #include <vector>
 #include <cstdio>
@@ -265,18 +266,18 @@ vector<bool> vis;
 map<ll,ll> depth;
 
 //initialize graph as adjacency list
-vector<vector<ll> > g;
+vector<multiset<ll> > g;
 //initialize weighted graph as adjacency list
 vector<vector<pair<ll,ll>>> wg;
 //for building the adjacency list by adding edges info
 ll totalEdges = 0;
 void edge(ll originNode, ll destNode)
 {
-    g[originNode].pb(destNode);
+    g[originNode].insert(destNode);
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
+    g[destNode].insert(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
@@ -445,16 +446,17 @@ vector<ll> bfs(ll start, ll end) {
 
 //dfs traversal from start node, in process keeping track of max depth & keeping track of each node's depth & printing order of traversal
 ll maxDepth = 0;
-void dfs(ll startNode, ll startDepth){
+void dfs(ll startNode){
     vis[startNode] = true;
-    depth[startNode]=startDepth;
-    maxDepth=max(maxDepth, startDepth);
     cerr << startNode << " ";
     for(auto adjNode : g[startNode]){
-        if(!vis[adjNode]) dfs(adjNode, startDepth+1);
+        if(!vis[adjNode]){
+            dfs(adjNode);
+        }
     }
 }
 
+stack<ll> s;
 map<ll,ll>subtreeSizes; //Map to store subtree sizes for each child of the start node
 ll dfsSubtreesHelper(ll startNode){
     vis[startNode] = true;
@@ -792,12 +794,16 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+vll ans;
 
-auto solve(int N, const std::vector<long long> &A, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+void ddfs(ll v, ll p){
+    ans.pb(v);
+    for(auto u:g[v]){
+        if(u!=p){
+            ddfs(u,v);
+            // ans.pb(v);
+        }
+    }
 }
 
 int main() {
@@ -806,15 +812,28 @@ int main() {
     std::cin.tie(nullptr);
     int N;
     std::cin >> N;
-    std::vector<long long> A(N - 1), B(N - 1);
-    REP (i, N - 1) {
-        std::cin >> A[i] >> B[i];
+    vis.assign(N+1, false);
+    g.assign(N+1, multiset<ll>());
+    parent.assign(N+1,-1);
+    foi(0,N-1){
+        ll a,b;
+        cin >> a >> b;
+        // a--;
+        // b--;
+        edge(a,b);
     }
-    auto ans = solve(N, A, B);
-    REP (i, N) {
-        std::cout << d[i] << ' ' << e[i] << ' ';
+    fx(g){
+        cerr << x << endl;
     }
-    std::cout << f << '\n';
+    // dfs(1);
+    ddfs(1,-1);
+    fx(ans){
+        cout << x << " ";
+    }
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<int>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
 
     /* genprimes(1e5); */
 
