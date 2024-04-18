@@ -793,33 +793,25 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(long long N) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    std::cin >> N;
-    auto ans = solve(N);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    ll n;
+    cin >> n;
+    ll n2 = n*2;
+    int ans = 0;
+    auto check = [&](ll x, ll y) {
+        ll L = x-y+1;
+        ll R = x+y-1;
+        if(L%2==0 && R%2==0){
+            cerr << "L & R: " << L << " " << R << endl;
+            ans+=2;
+        }
+    };
+    for (ll x = 1; x*x <= n2; x++) {
+        if (n2%x) continue;
+        ll y = n2/x;
+        cerr << "x and y: " << x << " " << y << endl;
+        check(x,y);
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << ans << endl;
     return 0;
 }
