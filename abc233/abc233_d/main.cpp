@@ -1692,6 +1692,19 @@ long long solve(int N, long long K, const std::vector<long long> &A) {
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    map<ll,ll> mm;
+    ll cursum=0;
+    ll ans = 0;
+    foi(0,N){
+        cursum+=A[i];
+        if(cursum==K) ans++;
+        // cerr << "cursum: " << cursum << endl;
+        // cerr << "target: " << K-cursum << endl;
+        // cerr << "map: " << mm << endl;
+        ans+=(mm[cursum-K]);
+        mm[cursum]++;
+    }
+    return ans;
 }
 
 int main() {
@@ -1701,6 +1714,7 @@ int main() {
     int N;
     long long K;
     std::cin >> N;
+
     std::vector<long long> A(N);
     std::cin >> K;
     REP (i, N) {
