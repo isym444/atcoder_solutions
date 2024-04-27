@@ -1846,25 +1846,8 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-constexpr long long MOD = 1000000007;
-long long solve(long long X, long long Y, long long A, long long B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    ll ans = 0;
-    while(X<ceildiv(B,A)&&X<ceildiv(Y,A)){
-        X*=A;
-        ans++;
-        dbg(X);
-        dbg(ans);
-    }
-    ll temp = 0;
-    temp = floordiv(Y-X-1,B);
-    dbg(temp);
-    ans+=temp;
-    return ans;
-}
+
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1873,10 +1856,32 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long X, Y, A, B;
-    std::cin >> X >> Y >> A >> B;
-    auto ans = solve(X, Y, A, B);
-    std::cout << ans << '\n';
+    int N;
+    std::cin >> N;
+    vector<long long> A(N);
+    REP (i, N) {
+        std::cin >> A[i];
+    }
+    deque<ll> B;
+    B.pb(A[0]);
+    foi(1,N){
+        B.pb(A[i]);
+        ll top;
+        ll second;
+        top = B.back();
+        second = B[B.size() - 2];
+        while(B.size()>1 && top==second){
+            B.pop_back();
+            B.pop_back();
+            B.pb(top+1);
+            if(B.size()>1){
+                top = B.back();
+                second = B[B.size() - 2];
+            }
+        }
+    }
+    cout << B.size() << endl;
+
 
     /* genprimes(1e5); */
 

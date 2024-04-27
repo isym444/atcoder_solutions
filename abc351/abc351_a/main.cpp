@@ -1846,25 +1846,8 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-constexpr long long MOD = 1000000007;
-long long solve(long long X, long long Y, long long A, long long B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    ll ans = 0;
-    while(X<ceildiv(B,A)&&X<ceildiv(Y,A)){
-        X*=A;
-        ans++;
-        dbg(X);
-        dbg(ans);
-    }
-    ll temp = 0;
-    temp = floordiv(Y-X-1,B);
-    dbg(temp);
-    ans+=temp;
-    return ans;
-}
+
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1873,11 +1856,31 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long X, Y, A, B;
-    std::cin >> X >> Y >> A >> B;
-    auto ans = solve(X, Y, A, B);
-    std::cout << ans << '\n';
-
+    // failed to analyze input format
+    ll a=0;
+    ll b=0;
+    foi(0,9){
+        ll t;
+        cin >> t;
+        a+=t;
+    }
+    foi(0,8){
+        ll t;
+        cin >> t;
+        b+=t;
+    }
+    if(b>a){
+        cout << 0 << endl;
+        return 0;
+    }
+    else if(b==a){
+        cout << 1 << endl;
+        return 0;
+    }
+    else{
+        cout << (a-b+1) << endl;
+        return 0;
+    }
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

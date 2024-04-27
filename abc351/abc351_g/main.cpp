@@ -1846,24 +1846,12 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-constexpr long long MOD = 1000000007;
-long long solve(long long X, long long Y, long long A, long long B) {
+constexpr long long MOD = 998244353;
+auto solve(auto a, auto b, const std::vector<auto> &c, const std::vector<auto> &d, const std::vector<auto> &e, const std::vector<auto> &f) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    ll ans = 0;
-    while(X<ceildiv(B,A)&&X<ceildiv(Y,A)){
-        X*=A;
-        ans++;
-        dbg(X);
-        dbg(ans);
-    }
-    ll temp = 0;
-    temp = floordiv(Y-X-1,B);
-    dbg(temp);
-    ans+=temp;
-    return ans;
 }
 
 int main() {
@@ -1873,9 +1861,23 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long X, Y, A, B;
-    std::cin >> X >> Y >> A >> B;
-    auto ans = solve(X, Y, A, B);
+    auto a, b;
+    std::cin >> a;
+    std::vector<auto> c(a), d(a);
+    std::cin >> b;
+    std::vector<auto> e(b), f(b);
+    REP (i, a) {
+        std::cin >> c[i];
+    }
+    REP (i, a) {
+        std::cin >> d[i];
+    }
+    REP (i, b) {
+        std::cin >> e[i] >> f[i];
+    }
+    auto ans = solve(a, b, c, d, e, f);
+    // failed to analyze output format
+    // TODO: edit here
     std::cout << ans << '\n';
 
     /* genprimes(1e5); */

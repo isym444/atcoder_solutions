@@ -1846,23 +1846,62 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-constexpr long long MOD = 1000000007;
-long long solve(long long X, long long Y, long long A, long long B) {
+vvll visited1;
+ll H,W;
+vector<string> S;
+ll curvis;
+void dfs(ll i, ll j){
+    // visited2[i][j]=1;
+    visited1[i][j]=1;
+    curvis++;
+    if(isvalid(i+1,H,j,W) && S[i+1][j]=='#') return ;
+    if(isvalid(i-1,H,j,W) && S[i-1][j]=='#') return ;
+    if(isvalid(i,H,j+1,W) && S[i][j+1]=='#') return ;
+    if(isvalid(i,H,j-1,W) && S[i][j-1]=='#') return ;
+
+    if(isvalid(i+1,H,j,W) && !visited1[i+1][j]){
+        dfs(i+1,j);
+    }
+    if(isvalid(i-1,H,j,W) && !visited1[i-1][j]){
+        dfs(i-1,j);
+    }
+    if(isvalid(i,H,j+1,W) && !visited1[i][j+1]){
+        dfs(i,j+1);
+    }
+    if(isvalid(i,H,j-1,W) && !visited1[i][j-1]){
+        dfs(i,j-1);
+    }
+    return ;
+}
+
+long long solve() {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    ll ans = 0;
-    while(X<ceildiv(B,A)&&X<ceildiv(Y,A)){
-        X*=A;
-        ans++;
-        dbg(X);
-        dbg(ans);
+    visited1.resize(H, vll(W,0));
+    // ll checker = 0;
+    ll ans=1;
+    foi(0,H){
+        foj(0,W){
+            if(S[i][j]=='#') continue;
+            if(isvalid(i+1,H,j,W) && S[i+1][j]=='#') continue ;
+            if(isvalid(i-1,H,j,W) && S[i-1][j]=='#') continue ;
+            if(isvalid(i,H,j+1,W) && S[i][j+1]=='#') continue;
+            if(isvalid(i,H,j-1,W) && S[i][j-1]=='#') continue;
+            if(!visited1[i][j]){
+                dbg("reached");
+                curvis=0;
+                dfs(i, j);
+                dbg(ans);
+                ans=max(ans,curvis);
+                dbg(visited1);
+                dbg(curvis);
+            }
+            // dbg(visited1);
+        }
     }
-    ll temp = 0;
-    temp = floordiv(Y-X-1,B);
-    dbg(temp);
-    ans+=temp;
+    dbg(ans);
     return ans;
 }
 
@@ -1873,9 +1912,13 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long X, Y, A, B;
-    std::cin >> X >> Y >> A >> B;
-    auto ans = solve(X, Y, A, B);
+    std::cin >> H;
+    S.resize(H);
+    std::cin >> W;
+    REP (i, H) {
+        std::cin >> S[i];
+    }
+    auto ans = solve();
     std::cout << ans << '\n';
 
     /* genprimes(1e5); */
