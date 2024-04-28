@@ -1649,6 +1649,14 @@ long long solve(int N, long long K, const std::vector<long long> &A) {
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    ll count = 0;
+    ll prev = -1;
+    ll cur = 1;
+    while(true){
+        cur = A[cur];
+        count ++;
+    }
+
 }
 
 int main() {
@@ -1658,10 +1666,10 @@ int main() {
     int N;
     long long K;
     std::cin >> N;
-    std::vector<long long> A(N);
+    std::vector<long long> A(N+1,0);
     std::cin >> K;
     REP (i, N) {
-        std::cin >> A[i];
+        std::cin >> A[i+1];
     }
     auto ans = solve(N, K, A);
     std::cout << ans << '\n';
