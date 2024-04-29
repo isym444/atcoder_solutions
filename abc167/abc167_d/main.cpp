@@ -1650,12 +1650,56 @@ long long solve(int N, long long K, const std::vector<long long> &A) {
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
     ll count = 0;
+    set<ll> cyclechecker;
+    cyclechecker.insert(1);
     ll prev = -1;
     ll cur = 1;
+    ll loopy = -1;
     while(true){
+        prev = cur;
         cur = A[cur];
         count ++;
+        if(cyclechecker.find(cur)!=cyclechecker.end()){
+            loopy=cur;
+            break;
+        }
+        cyclechecker.insert(cur);
+        if(count == K){
+            return cur;
+        }
+        else if(cur==prev){
+            return cur;
+        }
+        else if(cur==1){
+            break;
+        }
     }
+    if(loopy!=-1){
+        cur = 1;
+        ll dtoloopstart = 0;
+        while(cur!=loopy){
+            cur=A[cur];
+            dtoloopstart++;
+        }
+        // cerr << "reached" << endl;
+        // cerr << dtoloopstart << endl;
+        ll dofloop = count-dtoloopstart;
+        ll final = (K-dtoloopstart)%(dofloop);
+        // cerr << final << endl;
+        ll cur = loopy;
+        // cerr << cur << endl;
+        foi(0,final){
+            cur = A[cur];
+        }
+        return cur;
+    }
+    ll final = K%count;
+    // cerr << final << endl;
+    cur = 1;
+    foi(0,final){
+        cur = A[cur];
+    }
+    return cur;
 
 }
 
