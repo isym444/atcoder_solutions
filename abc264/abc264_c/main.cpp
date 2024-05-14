@@ -690,17 +690,30 @@ ll lcs(string s, string t){
     }
     return dp[s.size()][t.size()];
 }
-
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
-bool solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+std::vector<ll> getSetBitPositions(ll num) {
+    std::vector<ll> setBitPositions;
+    ll position = 0;
+
+    while (num != 0) {
+        if (num & 1) {
+            setBitPositions.push_back(position);
+        }
+        num >>= 1;
+        position++;
+    }
+
+    return setBitPositions;
 }
 
 int main() {
@@ -709,15 +722,57 @@ int main() {
     std::cin.tie(nullptr);
     // failed to analyze input format
     // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll h1,w1;
+    std::cin >> h1 >> w1;
+    vector<vector<ll>> A(h1, vector<ll>(w1,0));
+    foi(0,h1) foj(0,w1){
+        ll t;
+        cin >> t;
+        A[i][j]=t;
     }
-    auto ans = solve(n, a);
-    std::cout << (ans ? YES : NO) << '\n';
+    ll h2,w2;
+    cin >> h2 >> w2;
+    vector<vector<ll>> B(h2, vector<ll>(w2,0));
+    foi(0,h2) foj(0,w2){
+        ll t;
+        cin >> t;
+        B[i][j]=t;
+    }
+    dbg(A);
+    dbg(B);
+    // cerr << A << endl;
+    // cerr << B << endl;
+    // vector<vector<ll>> temp;
+    vector<ll> hbits;
+    vector<ll> wbits;
+    for(int bi = 0; bi<(1<<h1); bi++){
+        if(setbits(bi)!=h2) continue;
+        vector<ll> hbs = getSetBitPositions(bi);
+            for(int bj = 0; bj<(1<<w1); bj++){
+                if(setbits(bj)!=w2) continue;
+                vector<ll> wbs = getSetBitPositions(bj);
+                vector<vector<ll>> ttt(h2, vector<ll>(w2,0));
+                foi(0,h2) foj(0,w2){
+                    ttt[i][j]=A[hbs[i]][wbs[j]];
+                }
+                if(ttt==B){
+                    cout << "Yes" << endl;
+                    return 0;
+                }
+            }
+    }
+    cout << "No" << endl;
+    // ll hi,wi=0;
+    // ll hf,wf=0;
+    // while(true){
+    //     if(hi==h2-1&&wi==w2-1) break;
+    //     ll checker = B[hi][wi];
+    //     while(hf<h1&&wf<w2){
 
+    //     }
+    //     if(hi+1<h2)hi++;
+    //     if(wi+1<h2) wi++;
+    // }
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

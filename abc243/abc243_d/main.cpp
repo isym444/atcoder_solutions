@@ -48,7 +48,7 @@ using namespace std;
 //#define itobin(x) bitset<32> bin(x)
 #define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
-#define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define binstoi(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 #define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
 #define setbits(decimalnumber) __builtin_popcount(decimalnumber)
 #define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
@@ -520,7 +520,7 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
-string itobins(int n) {
+string itobins(ll n) {
     if (n == 0) return "0";
 
     string binary = "";
@@ -652,12 +652,27 @@ ll lcs(string s, string t){
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 long long solve(long long N, long long X, std::string S) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    dbg(itobins(X));
+    string xb = itobins(X);
+    for(auto x:S){
+        if(x=='U') xb.pop_back();
+        else if(x=='L') xb.append("0");
+        else xb.append("1");
+    }
+    return binstoi(xb);
 }
 
 int main() {

@@ -89,29 +89,56 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 
 using ll = long long;
 
-int main() {
-    const int M = 1e8;
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    rep(i,n) cin >> a[i];
-    sort(a.begin(), a.end());
-    dbg(a);
-    ll ans = 0;
-    rep(i,n) ans += a[i]*ll(n-1);
-    dbg(ans);
+// int main() {
+//     const int M = 1e8;
+//     int n;
+//     cin >> n;
+//     vector<int> a(n);
+//     rep(i,n) cin >> a[i];
+//     sort(a.begin(), a.end());
+//     dbg(a);
+//     ll ans = 0;
+//     rep(i,n) ans += a[i]*ll(n-1);
+//     dbg(ans);
 
-    int r = n-1;
-    dbg(r);
-    rep(i,n) {
-        while (r >= 0 && a[i]+a[r] >= M) r--;
-        dbg(make_tuple(i,r));
-        dbg(ll(n-max(r,i)-1));
-        // max(r,i) < j < n
-        // max(r,i) is needed because if r has gone to left of i, the pairs from r to i will have already been removed from ans as problem states i<j
-        ans -= ll(n-max(r,i)-1)*M;
+//     int r = n-1;
+//     dbg(r);
+//     rep(i,n) {
+//         while (r >= 0 && a[i]+a[r] >= M) r--;
+//         dbg(make_tuple(i,r));
+//         dbg(ll(n-max(r,i)-1));
+//         // max(r,i) < j < n
+//         // max(r,i) is needed because if r has gone to left of i, the pairs from r to i will have already been removed from ans as problem states i<j
+//         ans -= ll(n-max(r,i)-1)*M;
+//     }
+//     dbg(ans);
+//     cout << ans << endl;
+//     return 0;
+// }
+
+int main() {
+    ll n;
+    cin >> n;
+    const ll M = 1e8;
+    vector<long long> A(n);
+    for(int i = 0; i<n; i++){
+        ll temp;
+        cin >> temp;
+        A[i] = temp;
+    }
+    sort(A.begin(), A.end());
+    dbg(A);
+    ll ans = 0;
+    for(auto x:A){
+        ans+=x*(n-1);
     }
     dbg(ans);
+    ll r = n-1;
+    for(int i = 0; i<n; i++){
+        while(r>0&&A[i]+A[r]>=M) r--;
+        dbg(make_tuple(i,r));
+        ans-=(n-1-max((ll)i,r))*M;
+    }
     cout << ans << endl;
     return 0;
 }
