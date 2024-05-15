@@ -17,9 +17,15 @@
 #include <deque>
 #include <numeric>
 #include <assert.h>
+#include <cassert>
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
+#include <iomanip>
+#include <unordered_set>
+#include <functional>
+#include <type_traits>
+#include <chrono>
 
 using namespace std;
 
@@ -42,9 +48,12 @@ using namespace std;
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+#define isvalid(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
+#define iv(value, min_valid, max_valid) (value>=min_valid and value<=max_valid)
 //#define gcd __gcd
 #define mp make_pair
+#define mt make_tuple
 //Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
 // #define print(p) cout<<p<<endl
@@ -57,6 +66,7 @@ using namespace std;
 #define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
 #define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 #define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
 #define setbits(decimalnumber) __builtin_popcount(decimalnumber)
 #define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
@@ -71,8 +81,49 @@ typedef std::vector<std::vector<long long>> vvll;
 
 #define pb push_back
 
-ll INF=1e18;
+//max heap priority queue i.e. top() gives largest value
+typedef priority_queue<ll> maxpq;
+//min heap priority queue i.e. top() gives smallest value
+typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
 
+//multiset provides automatic ordering on insertion but unlike set, keeps duplicate/multiple items of same value
+//n.b. set also provides autoamtic ordering on insertion
+//.count(x) O(num_of_x+logN)
+//.find(x) O(logN) -> so use find over count if possible
+//.insert(x) O(logN) -> inserts s.t. sorted order is maintained
+//.erase(x) O(logN)
+//begin() O(logN)
+typedef multiset<ll> msll;
+//doing mymultiset.erase(x) will erase all
+#define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
+#define mseraseall(mymultiset, x) mymultiset.erase(x)
+//find smallest and biggest elements O(1)
+#define msmin(mymultiset) *mymultiset.begin()
+#define msmax(mymultiset) *mymultiset.rbegin()
+
+int digit_to_int(char c) { return c - '0'; }
+int lowercase_to_int(char c) { return c - 'a'; }
+int uppercase_to_int(char c) { return c - 'A'; }
+ll INF=LLONG_MAX;
+
+
+// gp_hash_table<long long, int, custom_hash> safe_hash_table;
+
+
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
 /*/---------------------------IO(Debugging)----------------------/*/
 template<class T> istream& operator >> (istream &is, vector<T>& V) {
@@ -80,47 +131,32 @@ template<class T> istream& operator >> (istream &is, vector<T>& V) {
         is >> e;
     return is;
 }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec);
+template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr);
+template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec);
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const pair<T, U> &pa);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec);
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa);
+template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp);
+template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp);
+template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl);
 
-template<typename CharT, typename Traits, typename T>
-ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, T const &val) {
-    return (out << val << " ");
-}
-template<typename CharT, typename Traits, typename T1, typename T2>
-ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, pair<T1, T2> const &val) {
-    return (out << "(" << val.first << "," << val.second << ") ");
-}
-template<typename CharT, typename Traits, template<typename, typename...> class TT, typename... Args>
-ostream& operator << (std::basic_ostream<CharT, Traits> &out, TT<Args...> const &cont) {
-    out << "[ ";
-    for(auto&& elem : cont) _containerprint(out, elem);
-    return (out << "]");
-}
-template<class L, class R> ostream& operator << (ostream& out, pair<L, R> const &val){
-    return (out << "(" << val.first << "," << val.second << ") ");
-}
-template<class P, class Q = vector<P>, class R = less<P> > ostream& operator << (ostream& out, priority_queue<P, Q, R> const& M){
-    static priority_queue<P, Q, R> U;
-    U = M;
-    out << "{ ";
-    while(!U.empty())
-        out << U.top() << " ", U.pop();
-    return (out << "}");
-}
-template<class P> ostream& operator << (ostream& out, queue<P> const& M){
-    static queue<P> U;
-    U = M;
-    out << "{ ";
-    while(!U.empty())
-        out << U.front() << " ", U.pop();
-    return (out << "}");
-}
-template<typename CharT, typename Traits>
-ostream& operator << (std::basic_ostream<CharT, Traits> &out, vector<vector<ll>> const &matrix) {
-    for (auto &row : matrix) {
-        out << row << "\n";
-    }
-    return out;
-}
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec) { os << '['; for (auto v : vec) os << v << ','; os << ']'; return os; }
+template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr) { os << '['; for (auto v : arr) os << v << ','; os << ']'; return os; }
+template <class... T> std::istream &operator>>(std::istream &is, std::tuple<T...> &tpl) { std::apply([&is](auto &&... args) { ((is >> args), ...);}, tpl); return is; }
+template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl) { os << '('; std::apply([&os](auto &&... args) { ((os << args << ','), ...);}, tpl); return os << ')'; }
+template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec) { os << "deq["; for (auto v : vec) os << v << ','; os << ']'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa) { return os << '(' << pa.first << ',' << pa.second << ')'; }
+template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+
 
 void setIO(string name = "")
 { // name is nonempty for USACO file I/O
@@ -153,65 +189,101 @@ void gen_primes() {
     }
 }
 
-const int MAXN = 2 * 100000 + 10; // Adjust the size as per the problem constraints
-//smallest prime factor
-std::vector<int> spf(MAXN);
+//actually make the list of primes only not just the list of all numbers indicating which are prime and which are not
+vll GenListOfPrimesOnly(){
+    gen_primes();
+    vll allprimes;
+    for(int i = 0; i<MAXA; i++){
+        if(prime[i]==1){
+            allprimes.pb(i);
+        }
+    }
+    return allprimes;
+}
 
-//Sieve of Eratosthenes to precompute the smallest prime factor of each number
-void spfsieve() {
-    //initializes smallest prime factor for 1 as 1
-    spf[1] = 1;
-    //initially treats every number as a prime and assigns the smallest prime factor as itself
-    for (int i = 2; i < MAXN; ++i) {
-        spf[i] = i;
+bool IsPrime(int num)
+{
+    if (num < 2) return false;
+    else if (num == 2) return true;
+    else if (num % 2 == 0) return false; // 偶数はあらかじめ除く
+
+    double sqrtNum = sqrt(num);
+    for (int i = 3; i <= sqrtNum; i += 2)
+    {
+        if (num % i == 0)
+        {
+            // 素数ではない
+            return false;
+        }
     }
-    //all even numbers' smallest prime factor is 2. This sets this for all even numbers
-    for (int i = 4; i < MAXN; i += 2) {
-        spf[i] = 2;
-    }
-    //calculates upper limit to which we need to check for primes (optimization)
-    //because factors come in pairs e.g. N = 36, its factors are (1, 36), (2, 18), (3, 12), (4, 9), and (6, 6)
-    //so after sqrt(N) the pairs will switch and and won't find any further new factors
-    //Factors of a number come in pairs, with one factor being less than or equal to the square root of the number,
-    //and the other being greater than or equal to the square root.
-    int limit = std::ceil(std::sqrt(MAXN));
-    for (int i = 3; i < limit; i+=2) {
-        //checks if i is still marked as it's own smallest prime factor
-        //indicating that it is still prime 
-        //because we have iterated through all smaller numbers beforehand so if not a multiple of any of those
-        //then by definition it must be prime
-        if (spf[i] == i) {
-            //start from i*i as spf for smaller numbers than this would be marked by smaller numbers than i (if not prime)
-            for (int j = i * i; j < MAXN; j += i) {
-                //if smallest prime factor of j is still set as itself i.e. spf not yet been set
-                //then set spf as i
-                if (spf[j] == j) {
-                    spf[j] = i;
-                }
+    return true;
+}
+
+// To get prime factorization:
+// SieveOfEratosthenes sieve(1000000);
+// auto facs = sieve.Factorize(N);
+struct SieveOfEratosthenes : std::vector<int>
+{
+    std::vector<int> primes;
+    SieveOfEratosthenes(int MAXN) : std::vector<int>(MAXN + 1) {
+        std::iota(begin(), end(), 0);
+        for (int i = 2; i <= MAXN; i++) {
+            if ((*this)[i] == i) {
+                primes.push_back(i);
+                for (int j = i; j <= MAXN; j += i) (*this)[j] = i;
             }
         }
     }
-}
-
-//Function to return the prime factorization of a number (is unique for every number)
-//make sure to call spfsieve() before calling this function so spf values are prepopulated
-std::unordered_map<int, int> fact(int x) {
-    std::unordered_map<int, int> pfactors;
-    while (x != 1) {
-        //if the smallest prime factor of x has not yet been added to pfactors
-        //  then set p^1
-        //if the smallest prime factor of x has already been added to pfactors
-        //  then set p^(prev exponent+1)
-        if (pfactors.find(spf[x]) == pfactors.end()) {
-            pfactors[spf[x]] = 1;
-        } else {
-            pfactors[spf[x]] += 1;
+    using T = long long int;
+    // Prime factorization for x <= MAXN^2
+    // Complexity: O(log x)          (x <= MAXN)
+    //             O(MAXN / logMAXN) (MAXN < x <= MAXN^2)
+    std::map<T, int> Factorize(T x) {
+        assert(x <= 1LL * (int(size()) - 1) * (int(size()) - 1));
+        std::map<T, int> ret;
+        if (x < int(size())) {
+            while (x > 1) {
+                ret[(*this)[x]]++;
+                x /= (*this)[x];
+            }
         }
-        //while x!=1, divide x by its smallest prime factor
-        x = x / spf[x];
+        else {
+            for (auto p : primes) {
+                while (!(x % p)) x /= p, ret[p]++;
+                if (x == 1) break;
+            }
+            if (x > 1) ret[x]++;
+        }
+        return ret;
     }
-    return pfactors;
-}
+    std::vector<T> Divisors(T x) {
+        std::vector<T> ret{1};
+        for (auto p : Factorize(x)) {
+            int n = ret.size();
+            for (int i = 0; i < n; i++) {
+                for (T a = 1, d = 1; d <= p.second; d++) {
+                    a *= p.first;
+                    ret.push_back(ret[i] * a);
+                }
+            }
+        }
+        return ret; // Not sorted
+    }
+    // Moebius function Table
+    // return: [0=>0, 1=>1, 2=>-1, 3=>-1, 4=>0, 5=>-1, 6=>1, 7=>-1, 8=>0, ...]
+    std::vector<int> GenerateMoebiusFunctionTable() {
+        std::vector<int> ret(size());
+        for (int i = 1; i < int(size()); i++) {
+            if (i == 1) ret[i] = 1;
+            else if ((i / (*this)[i]) % (*this)[i] == 0) ret[i] = 0;
+            else ret[i] = -ret[i / (*this)[i]];
+        }
+        return ret;
+    }
+};
+SieveOfEratosthenes sieve(1000000);
+
+
 
 ll mod=1e9+7;
 //ll mod=1000;
@@ -278,14 +350,14 @@ void edge(ll originNode, ll destNode)
     totalEdges++;
  
     // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
+    g[destNode].pb(originNode);
 }
 
 void edge(ll originNode, ll destNode, ll weight){
     wg[originNode].emplace_back(destNode, weight);
     totalEdges++;
     // For an undirected graph e.g., tree, add this line:
-    // wg[destNode].emplace_back(originNode, weight);
+    wg[destNode].emplace_back(originNode, weight);
 }
 
 //returns vector where each index is the shortest distance between the start node and node i
@@ -416,6 +488,7 @@ vector<ll> bfs_shortest_paths(ll start) {
 }
 
 //return a vector containing bfs path from start to end nodes specified
+//don't forget to initialize parent with parent.assign(n+1, -1);
 vector<ll> bfs(ll start, ll end) {
     queue<ll> q;
     q.push(start);
@@ -492,6 +565,99 @@ void dfsSubtrees(ll startNode){
         minSubtreeSize=min(minSubtreeSize,subtreeSizes[adjNode]);
     }
 }
+
+// lowest common ancestor (LCA) class for undirected weighted tree
+struct UndirectedWeightedTree {
+    using T = long long; // Arbitrary data structure (operator+, operator- must be defined)
+    int INVALID = -1;
+    int V, lgV;
+    int E;
+    int root;
+    std::vector<std::vector<std::pair<int, int>>> adj; // (nxt_vertex, edge_id)
+    // vector<pint> edge; // edges[edge_id] = (vertex_id, vertex_id)
+    std::vector<T> weight;     // w[edge_id]
+    std::vector<int> par;      // parent_vertex_id[vertex_id]
+    std::vector<int> depth;    // depth_from_root[vertex_id]
+    std::vector<T> acc_weight; // w_sum_from_root[vertex_id]
+
+    void _fix_root_dfs(int now, int prv, int prv_edge_id) {
+        par[now] = prv;
+        if (prv_edge_id != INVALID) acc_weight[now] = acc_weight[prv] + weight[prv_edge_id];
+        for (auto nxt : adj[now])
+            if (nxt.first != prv) {
+                depth[nxt.first] = depth[now] + 1;
+                _fix_root_dfs(nxt.first, now, nxt.second);
+            }
+    }
+
+    UndirectedWeightedTree() = default;
+    UndirectedWeightedTree(int N) : V(N), E(0), adj(N) {
+        lgV = 1;
+        while (1 << lgV < V) lgV++;
+    }
+
+    void add_edge(int u, int v, T w) {
+        adj[u].emplace_back(v, E);
+        adj[v].emplace_back(u, E);
+        // edge.emplace_back(u, v);
+        weight.emplace_back(w);
+        E++;
+    }
+
+    //Have to set which node you want to consider as root. This function will then run dfs to calculate depth for every node
+    void fix_root(int r) {
+        root = r;
+        par.resize(V);
+        depth.resize(V);
+        depth[r] = 0;
+        acc_weight.resize(V);
+        acc_weight[r] = 0;
+        _fix_root_dfs(root, INVALID, INVALID);
+    }
+
+    //this does binary lifting precalculation -> gives powers of 2 ancestors of every node
+    //as every number can be represented in binary, you can find any kth ancestor of any node in logarithmic time if you precalculate above
+    std::vector<std::vector<int>> doubling;
+    void doubling_precalc() {
+        doubling.assign(lgV, std::vector<int>(V));
+        doubling[0] = par;
+        for (int d = 0; d < lgV - 1; d++)
+            for (int i = 0; i < V; i++) {
+                if (doubling[d][i] == INVALID)
+                    doubling[d + 1][i] = INVALID;
+                else
+                    doubling[d + 1][i] = doubling[d][doubling[d][i]];
+            }
+    }
+
+    int kth_parent(int x, int k) {
+        if (depth[x] < k) return INVALID;
+        for (int d = 0; d < lgV; d++) {
+            if (x == INVALID) return INVALID;
+            if (k & (1 << d)) x = doubling[d][x];
+        }
+        return x;
+    }
+
+    //returns the lca of 2 nodes
+    int lowest_common_ancestor(int u, int v) {
+        if (depth[u] > depth[v]) std::swap(u, v);
+
+        v = kth_parent(v, depth[v] - depth[u]);
+        if (u == v) return u;
+        for (int d = lgV - 1; d >= 0; d--) {
+            if (doubling[d][u] != doubling[d][v]) u = doubling[d][u], v = doubling[d][v];
+        }
+        return par[u];
+    }
+
+    //uses LCA to calculate distance between 2 nodes in O(log N) time
+    T path_length(int u, int v) {
+        // Not distance, but the sum of weights
+        int r = lowest_common_ancestor(u, v);
+        return (acc_weight[u] - acc_weight[r]) + (acc_weight[v] - acc_weight[r]);
+    }
+};
 
 vector<vector<ll> >ddist;
 
@@ -631,6 +797,7 @@ struct RangeSet : public std::map<T, T> {
             return it != this->end() and it->first <= y and y <= it->second;
         }
 
+
         // inserts the range [x, x] and returns the number of integers inserted to this set. O(log N)
         T insert(T x) {
             return insert(x, x);
@@ -710,7 +877,7 @@ struct RangeSet : public std::map<T, T> {
         }
 };
 
-string itobins(int n) {
+string itobins(ll n) {
     if (n == 0) return "0";
 
     string binary = "";
@@ -723,7 +890,7 @@ string itobins(int n) {
     return binary;
 }
 
-string dtobx(int decimalNumber, int base) {
+string dtobx(ll decimalNumber, ll base) {
     if (base < 2 || base > 36) {
         return "Invalid base";
     }
@@ -858,28 +1025,7 @@ vector<char> genAlphabet(){
     return alphabet;
 }
 
-const ll LCSN = 1000 + 20;
-//dp holds the longest common subsequence (LCS) for the 2 substrings to index i & j
-//e.g. for s = "hleloworld", t = "thequickbrown"
-//i=3 j=4 i.e. dp[3][4]=2 as s[0toi]="hle" & t[0toj]="theq" -> LCS is "he"
-ll dp[LCSN][LCSN];
-//outputs the value of the longest common subsequence between 2 strings s & t
-ll lcs(string s, string t){
-    for(ll i = 0; i <= s.size(); i++){
-        for(ll j = 0; j <= t.size(); j++){
-            //if either s or t is empty then LCS = 0
-            if(!i || !j) dp[i][j] = 0;
-            //else if cur letters being compared i.e. s[i] or t[i] are the same
-            //then dp[i][j] is 1 more than dp[i-1][j-1]
-            else if (s[i-1] == t[j-1]) dp[i][j]=dp[i-1][j-1]+1;
-            //else if cur letters being compared i.e. s[i] or t[i] are not the same
-            //then dp[i][j] is max of dp[i-1][j] (comparing cur longest t to s-1)
-            //and dp[i][j-1] (comparing cur longest s to t-1)
-            else if (s[i-1] != t[j-1]) dp[i][j]=max(dp[i-1][j], dp[i][j-1]);
-        }
-    }
-    return dp[s.size()][t.size()];
-}
+
 
 // Helper function to convert a number to a vector of its digits
 std::vector<ll> numberToVector(ll number) {
@@ -969,30 +1115,6 @@ bool isPalindrome(long long n) {
     return original == reversed;
 }
 
-//max heap priority queue i.e. top() gives largest value
-typedef priority_queue<ll> maxpq;
-//min heap priority queue i.e. top() gives smallest value
-typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
-
-//multiset provides automatic ordering on insertion but unlike set, keeps duplicate/multiple items of same value
-//n.b. set also provides autoamtic ordering on insertion
-//.count(x) O(num_of_x+logN)
-//.find(x) O(logN) -> so use find over count if possible
-//.insert(x) O(logN) -> inserts s.t. sorted order is maintained
-//.erase(x) O(logN)
-//begin() O(logN)
-typedef multiset<ll> msll;
-//doing mymultiset.erase(x) will erase all
-#define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
-#define mseraseall(mymultiset, x) mymultiset.erase(x)
-//find smallest and biggest elements O(1)
-#define msmin(mymultiset) *mymultiset.begin()
-#define msmax(mymultiset) *mymultiset.rbegin()
-
-int digit_to_int(char c) { return c - '0'; }
-int lowercase_to_int(char c) { return c - 'a'; }
-int uppercase_to_int(char c) { return c - 'A'; }
-
 
 template <typename Func, typename Seq>
 auto transform_to_vector(const Func &f, const Seq &s) {
@@ -1035,22 +1157,13 @@ std::vector<std::string> split(const char* s, char delim) {
     return split(std::string(s), delim);
 }
 
-
-#include <functional>
-
 #if __cplusplus >= 202002L
 #include <bit>
 #endif
-
 namespace internal {
-
 #if __cplusplus >= 202002L
-
 using std::bit_ceil;
-
 #else
-
-// @return same with std::bit::bit_ceil
 unsigned int bit_ceil(unsigned int n) {
     unsigned int x = 1;
     while (x < (unsigned int)(n)) x *= 2;
@@ -1058,9 +1171,6 @@ unsigned int bit_ceil(unsigned int n) {
 }
 
 #endif
-
-// @param n `1 <= n`
-// @return same with std::bit::countr_zero
 int countr_zero(unsigned int n) {
 #ifdef _MSC_VER
     unsigned long index;
@@ -1070,9 +1180,6 @@ int countr_zero(unsigned int n) {
     return __builtin_ctz(n);
 #endif
 }
-
-// @param n `1 <= n`
-// @return same with std::bit::countr_zero
 constexpr int countr_zero_constexpr(unsigned int n) {
     int x = 0;
     while (!(n & (1 << x))) x++;
@@ -1080,416 +1187,6 @@ constexpr int countr_zero_constexpr(unsigned int n) {
 }
 
 }  // namespace internal
-
-
-
-
-#if __cplusplus >= 201703L
-
-template <class S,
-          auto op,
-          auto e,
-          class F,
-          auto mapping,
-          auto composition,
-          auto id>
-struct lazy_segtree {
-    static_assert(std::is_convertible_v<decltype(op), std::function<S(S, S)>>,
-                  "op must work as S(S, S)");
-    static_assert(std::is_convertible_v<decltype(e), std::function<S()>>,
-                  "e must work as S()");
-    static_assert(
-        std::is_convertible_v<decltype(mapping), std::function<S(F, S)>>,
-        "mapping must work as F(F, S)");
-    static_assert(
-        std::is_convertible_v<decltype(composition), std::function<F(F, F)>>,
-        "compostiion must work as F(F, F)");
-    static_assert(std::is_convertible_v<decltype(id), std::function<F()>>,
-                  "id must work as F()");
-
-#else
-
-template <class S,
-          S (*op)(S, S),
-          S (*e)(),
-          class F,
-          S (*mapping)(F, S),
-          F (*composition)(F, F),
-          F (*id)()>
-struct lazy_segtree {
-
-#endif
-
-  public:
-    lazy_segtree() : lazy_segtree(0) {}
-    explicit lazy_segtree(int n) : lazy_segtree(std::vector<S>(n, e())) {}
-    explicit lazy_segtree(const std::vector<S>& v) : _n(int(v.size())) {
-        size = (int)internal::bit_ceil((unsigned int)(_n));
-        log = internal::countr_zero((unsigned int)size);
-        d = std::vector<S>(2 * size, e());
-        lz = std::vector<F>(size, id());
-        for (int i = 0; i < _n; i++) d[size + i] = v[i];
-        for (int i = size - 1; i >= 1; i--) {
-            update(i);
-        }
-    }
-
-    void set(int p, S x) {
-        assert(0 <= p && p < _n);
-        p += size;
-        for (int i = log; i >= 1; i--) push(p >> i);
-        d[p] = x;
-        for (int i = 1; i <= log; i++) update(p >> i);
-    }
-
-    S get(int p) {
-        assert(0 <= p && p < _n);
-        p += size;
-        for (int i = log; i >= 1; i--) push(p >> i);
-        return d[p];
-    }
-
-    S prod(int l, int r) {
-        assert(0 <= l && l <= r && r <= _n);
-        if (l == r) return e();
-
-        l += size;
-        r += size;
-
-        for (int i = log; i >= 1; i--) {
-            if (((l >> i) << i) != l) push(l >> i);
-            if (((r >> i) << i) != r) push((r - 1) >> i);
-        }
-
-        S sml = e(), smr = e();
-        while (l < r) {
-            if (l & 1) sml = op(sml, d[l++]);
-            if (r & 1) smr = op(d[--r], smr);
-            l >>= 1;
-            r >>= 1;
-        }
-
-        return op(sml, smr);
-    }
-
-    S all_prod() { return d[1]; }
-
-    void apply(int p, F f) {
-        assert(0 <= p && p < _n);
-        p += size;
-        for (int i = log; i >= 1; i--) push(p >> i);
-        d[p] = mapping(f, d[p]);
-        for (int i = 1; i <= log; i++) update(p >> i);
-    }
-    void apply(int l, int r, F f) {
-        assert(0 <= l && l <= r && r <= _n);
-        if (l == r) return;
-
-        l += size;
-        r += size;
-
-        for (int i = log; i >= 1; i--) {
-            if (((l >> i) << i) != l) push(l >> i);
-            if (((r >> i) << i) != r) push((r - 1) >> i);
-        }
-
-        {
-            int l2 = l, r2 = r;
-            while (l < r) {
-                if (l & 1) all_apply(l++, f);
-                if (r & 1) all_apply(--r, f);
-                l >>= 1;
-                r >>= 1;
-            }
-            l = l2;
-            r = r2;
-        }
-
-        for (int i = 1; i <= log; i++) {
-            if (((l >> i) << i) != l) update(l >> i);
-            if (((r >> i) << i) != r) update((r - 1) >> i);
-        }
-    }
-
-    template <bool (*g)(S)> int max_right(int l) {
-        return max_right(l, [](S x) { return g(x); });
-    }
-    template <class G> int max_right(int l, G g) {
-        assert(0 <= l && l <= _n);
-        assert(g(e()));
-        if (l == _n) return _n;
-        l += size;
-        for (int i = log; i >= 1; i--) push(l >> i);
-        S sm = e();
-        do {
-            while (l % 2 == 0) l >>= 1;
-            if (!g(op(sm, d[l]))) {
-                while (l < size) {
-                    push(l);
-                    l = (2 * l);
-                    if (g(op(sm, d[l]))) {
-                        sm = op(sm, d[l]);
-                        l++;
-                    }
-                }
-                return l - size;
-            }
-            sm = op(sm, d[l]);
-            l++;
-        } while ((l & -l) != l);
-        return _n;
-    }
-
-    template <bool (*g)(S)> int min_left(int r) {
-        return min_left(r, [](S x) { return g(x); });
-    }
-    template <class G> int min_left(int r, G g) {
-        assert(0 <= r && r <= _n);
-        assert(g(e()));
-        if (r == 0) return 0;
-        r += size;
-        for (int i = log; i >= 1; i--) push((r - 1) >> i);
-        S sm = e();
-        do {
-            r--;
-            while (r > 1 && (r % 2)) r >>= 1;
-            if (!g(op(d[r], sm))) {
-                while (r < size) {
-                    push(r);
-                    r = (2 * r + 1);
-                    if (g(op(d[r], sm))) {
-                        sm = op(d[r], sm);
-                        r--;
-                    }
-                }
-                return r + 1 - size;
-            }
-            sm = op(d[r], sm);
-        } while ((r & -r) != r);
-        return 0;
-    }
-
-  private:
-    int _n, size, log;
-    std::vector<S> d;
-    std::vector<F> lz;
-
-    void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
-    void all_apply(int k, F f) {
-        d[k] = mapping(f, d[k]);
-        if (k < size) lz[k] = composition(f, lz[k]);
-    }
-    void push(int k) {
-        all_apply(2 * k, lz[k]);
-        all_apply(2 * k + 1, lz[k]);
-        lz[k] = id();
-    }
-};
-
-//h S represents a node in the tree i.e. a segment in the original array
-// struct S {
-//     int upper, lower;
-// };
-
-// using F = int;
-
-//h defines how to merge 2 segments of the tree to build up the tree & to query a range
-// S op(S l, S r) { return S{l.upper + r.upper, l.lower + r.lower}; }
-
-//h identity element for operation that combines segments
-//h segment that doesn't change anything when combined with another segment "identity element". Needed for things like initialization or when updating bits of segment tree that don't need to be changed
-//h e comes from German Einheit = unit/unity i.e. unifying/neutral element
-//h in this case, the function initializes S upper and lower to 0 and 0
-// S e() { return S{0, 0}; }
-
-//h defines how a function/operation is applied to a segment
-// S mapping(F l, S r) {
-//     if(l == 0) {
-//         return r;
-//     } else if(l == 2) {
-//         return S{0, r.upper + r.lower};
-//     } else if(l == 3) {
-//         return S{r.upper + r.lower, 0};
-//     }
-// }
-
-//h defines how to combine 2 updates into one
-// F composition(F l, F r) { return l ? l : r; }
-
-//h identity element for operation that updates elements
-// F id() { return 0; }
-
-// int main() {
-//     int N, Q;
-//     string s;
-//     cin >> N >> s >> Q;
-    
-//     vector<S> v(N);
-//     for (int i = 0; i < N; ++i) {
-//         v[i] = islower(s[i]) ? S{0, 1} : S{1, 0};
-//     }
-
-//     lazy_segtree<S, op, e, F, mapping, composition, id> seg(v);
-//     for(int _ = 0; _ < Q; ++_) {
-//         int t, x;
-//         char c;
-//         cin >> t >> x >> c, --x;
-//         if (t == 1) {
-//             seg.apply(x, islower(c) ? 2 : 3);
-//             s[x] = c;
-//         } else if (t == 2) {
-//             seg.apply(0, N, 2);
-//         } else {
-//             seg.apply(0, N, 3);
-//         }
-//     }
-
-//     for(int i = 0; i < N; ++i) {
-//         s[i] = seg.get(i).lower ? tolower(s[i]) : toupper(s[i]);
-//     }
-//     cout << s << endl;
-// }
-
-
-#if __cplusplus >= 201703L
-
-template <class S, auto op, auto e> struct segtree {
-    static_assert(std::is_convertible_v<decltype(op), std::function<S(S, S)>>,
-                  "op must work as S(S, S)");
-    static_assert(std::is_convertible_v<decltype(e), std::function<S()>>,
-                  "e must work as S()");
-
-#else
-
-template <class S, S (*op)(S, S), S (*e)()> struct segtree {
-//initialize as follows:
-// struct S {
-//     int a;
-// };
-// S op(S l, S r){
-//     return S{max(l.a,r.a)};
-// }
-// S e(){
-//     return S{-1};
-// }
-// segtree<S, op, e> mysegtree(a);
-#endif
-
-  public:
-    segtree() : segtree(0) {}
-    explicit segtree(int n) : segtree(std::vector<S>(n, e())) {}
-    explicit segtree(const std::vector<S>& v) : _n(int(v.size())) {
-        size = (int)internal::bit_ceil((unsigned int)(_n));
-        log = internal::countr_zero((unsigned int)size);
-        d = std::vector<S>(2 * size, e());
-        for (int i = 0; i < _n; i++) d[size + i] = v[i];
-        for (int i = size - 1; i >= 1; i--) {
-            update(i);
-        }
-    }
-    //update value at position p with value x
-    //remember 0-indexed so will likely have to do p--
-    void set(int p, S x) {
-        assert(0 <= p && p < _n);
-        p += size;
-        d[p] = x;
-        for (int i = 1; i <= log; i++) update(p >> i);
-    }
-
-    S get(int p) const {
-        assert(0 <= p && p < _n);
-        return d[p + size];
-    }
-
-    //query seg tree in range l->r
-    //remember 0-indexed so will likely have to do l-- (note r not inclusive i.e. < rather than <= so no need to do r--)
-    S prod(int l, int r) const {
-        assert(0 <= l && l <= r && r <= _n);
-        S sml = e(), smr = e();
-        l += size;
-        r += size;
-
-        while (l < r) {
-            if (l & 1) sml = op(sml, d[l++]);
-            if (r & 1) smr = op(d[--r], smr);
-            l >>= 1;
-            r >>= 1;
-        }
-        return op(sml, smr);
-    }
-
-    S all_prod() const { return d[1]; }
-
-    template <bool (*f)(S)> int max_right(int l) const {
-        return max_right(l, [](S x) { return f(x); });
-    }
-    //binary search. Initially considers aggregate of segment from l to end of array
-    //looks for FIRST/leftmost index r where condition given by f transitions from true to false
-    //i.e. returns left-most index where condition false
-    //n.b. can use lambda for f e.g.:
-    //cout << mysegtree.max_right(x,[&](S b){return b.a<v;})+1<<endl;
-    template <class F> int max_right(int l, F f) const {
-        assert(0 <= l && l <= _n);
-        assert(f(e()));
-        if (l == _n) return _n;
-        l += size;
-        S sm = e();
-        do {
-            while (l % 2 == 0) l >>= 1;
-            if (!f(op(sm, d[l]))) {
-                while (l < size) {
-                    l = (2 * l);
-                    if (f(op(sm, d[l]))) {
-                        sm = op(sm, d[l]);
-                        l++;
-                    }
-                }
-                return l - size;
-            }
-            sm = op(sm, d[l]);
-            l++;
-        } while ((l & -l) != l);
-        return _n;
-    }
-
-    template <bool (*f)(S)> int min_left(int r) const {
-        return min_left(r, [](S x) { return f(x); });
-    }
-    template <class F> int min_left(int r, F f) const {
-        assert(0 <= r && r <= _n);
-        assert(f(e()));
-        if (r == 0) return 0;
-        r += size;
-        S sm = e();
-        do {
-            r--;
-            while (r > 1 && (r % 2)) r >>= 1;
-            if (!f(op(d[r], sm))) {
-                while (r < size) {
-                    r = (2 * r + 1);
-                    if (f(op(d[r], sm))) {
-                        sm = op(d[r], sm);
-                        r--;
-                    }
-                }
-                return r + 1 - size;
-            }
-            sm = op(d[r], sm);
-        } while ((r & -r) != r);
-        return 0;
-    }
-
-  private:
-    int _n, size, log;
-    std::vector<S> d;
-
-    void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
-};
-
-
-#include <type_traits>
-
-
 namespace internal {
 
 #ifndef _MSC_VER
@@ -1625,66 +1322,517 @@ template <class T> struct fenwick_tree {
     }
 };
 
+namespace internal {
 
-//Use fenwick_tree above instead
-template <class T> struct BIT {
-    T UNITY_SUM = 0;
-    vector<T> dat;
-    
-    // [0, n)
-    // Declare BIT (N elements initialized to 0) by doing:
-    // BIT< long  long > bit (N);
-    // fenwick tree is held in a vector<T> called dat
-    BIT(int n, T unity = 0) : UNITY_SUM(unity), dat(n, unity) { }
-    
-    //allows reinitialization of the tree resetting all elements to unity sum
-    void init(int n) {
-        dat.assign(n, UNITY_SUM);
-    }
-    
-    // a is 0-indexed
-    // use add to add array item 'x' to index 'a' in Fenwick tree
-    // n.b. index 'a' in Fenwick tree represents a range of responsibility
-    // i.e. holds a prefix sum for a particular range of original array
-    // this range of responsibility is determined by index 'a's binary representation
-    // it is responsible for E elements below it
-    // where E is the index of its LSB where index is from R->L of binary number
-    // e.g. 11010 LSB index is 2
-    inline void add(int a, T x) {
-        for (int i = a; i < (int)dat.size(); i |= i + 1)
-            dat[i] = dat[i] + x;
-    }
-    
-    // Get sum over range [0, a), where a is 0-indexed
-    inline T sum(int a) {
-        T res = UNITY_SUM;
-        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
-            res = res + dat[i];
-        return res;
-    }
-    
-    // Get sum over range [a, b), where a and b are 0-indexed
-    inline T sum(int a, int b) {
-        return sum(b) - sum(a);
-    }
-    
-    // debug
-    // prints the values of original array after modifications
-    void print() {
-        for (int i = 0; i < (int)dat.size(); ++i)
-            cerr << sum(i, i + 1) << ",";
-        cerr << endl;
+// @param m `1 <= m`
+// @return x mod m
+constexpr long long safe_mod(long long x, long long m) {
+    x %= m;
+    if (x < 0) x += m;
+    return x;
+}
+
+// Fast modular multiplication by barrett reduction
+// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
+// NOTE: reconsider after Ice Lake
+struct barrett {
+    unsigned int _m;
+    unsigned long long im;
+
+    // @param m `1 <= m`
+    explicit barrett(unsigned int m) : _m(m), im((unsigned long long)(-1) / m + 1) {}
+
+    // @return m
+    unsigned int umod() const { return _m; }
+
+    // @param a `0 <= a < m`
+    // @param b `0 <= b < m`
+    // @return `a * b % m`
+    unsigned int mul(unsigned int a, unsigned int b) const {
+        unsigned long long z = a;
+        z *= b;
+#ifdef _MSC_VER
+        unsigned long long x;
+        _umul128(z, im, &x);
+#else
+        unsigned long long x =
+            (unsigned long long)(((unsigned __int128)(z)*im) >> 64);
+#endif
+        unsigned long long y = x * _m;
+        return (unsigned int)(z - y + (z < y ? _m : 0));
     }
 };
 
-//for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
-vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
-vector<int> dx_wasd = {1,-1,0,0};
-vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
-vector<int> dy_wasd = {0,0,1,-1};
+constexpr long long pow_mod_constexpr(long long x, long long n, int m) {
+    if (m == 1) return 0;
+    unsigned int _m = (unsigned int)(m);
+    unsigned long long r = 1;
+    unsigned long long y = safe_mod(x, m);
+    while (n) {
+        if (n & 1) r = (r * y) % _m;
+        y = (y * y) % _m;
+        n >>= 1;
+    }
+    return r;
+}
 
-//Graph visualizer:
-//https://csacademy.com/app/graph_editor/
+// Reference:
+// M. Forisek and J. Jancina,
+// Fast Primality Testing for Integers That Fit into a Machine Word
+// @param n `0 <= n`
+constexpr bool is_prime_constexpr(int n) {
+    if (n <= 1) return false;
+    if (n == 2 || n == 7 || n == 61) return true;
+    if (n % 2 == 0) return false;
+    long long d = n - 1;
+    while (d % 2 == 0) d /= 2;
+    constexpr long long bases[3] = {2, 7, 61};
+    for (long long a : bases) {
+        long long t = d;
+        long long y = pow_mod_constexpr(a, t, n);
+        while (t != n - 1 && y != 1 && y != n - 1) {
+            y = y * y % n;
+            t <<= 1;
+        }
+        if (y != n - 1 && t % 2 == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+template <int n> constexpr bool is_prime = is_prime_constexpr(n);
+
+constexpr std::pair<long long, long long> inv_gcd(long long a, long long b) {
+    a = safe_mod(a, b);
+    if (a == 0) return {b, 0};
+    long long s = b, t = a;
+    long long m0 = 0, m1 = 1;
+
+    while (t) {
+        long long u = s / t;
+        s -= t * u;
+        m0 -= m1 * u;  // |m1 * u| <= |m1| * s <= b
+
+        auto tmp = s;
+        s = t;
+        t = tmp;
+        tmp = m0;
+        m0 = m1;
+        m1 = tmp;
+    }
+
+    if (m0 < 0) m0 += b / s;
+    return {s, m0};
+}
+
+// Compile time primitive root
+// @param m must be prime
+// @return primitive root (and minimum in now)
+constexpr int primitive_root_constexpr(int m) {
+    if (m == 2) return 1;
+    if (m == 167772161) return 3;
+    if (m == 469762049) return 3;
+    if (m == 754974721) return 11;
+    if (m == 998244353) return 3;
+    int divs[20] = {};
+    divs[0] = 2;
+    int cnt = 1;
+    int x = (m - 1) / 2;
+    while (x % 2 == 0) x /= 2;
+    for (int i = 3; (long long)(i)*i <= x; i += 2) {
+        if (x % i == 0) {
+            divs[cnt++] = i;
+            while (x % i == 0) {
+                x /= i;
+            }
+        }
+    }
+    if (x > 1) {
+        divs[cnt++] = x;
+    }
+    for (int g = 2;; g++) {
+        bool ok = true;
+        for (int i = 0; i < cnt; i++) {
+            if (pow_mod_constexpr(g, (m - 1) / divs[i], m) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
+template <int m> constexpr int primitive_root = primitive_root_constexpr(m);
+
+// @param n `n < 2^32`
+// @param m `1 <= m < 2^32`
+// @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
+unsigned long long floor_sum_unsigned(unsigned long long n,
+                                      unsigned long long m,
+                                      unsigned long long a,
+                                      unsigned long long b) {
+    unsigned long long ans = 0;
+    while (true) {
+        if (a >= m) {
+            ans += n * (n - 1) / 2 * (a / m);
+            a %= m;
+        }
+        if (b >= m) {
+            ans += n * (b / m);
+            b %= m;
+        }
+
+        unsigned long long y_max = a * n + b;
+        if (y_max < m) break;
+        // y_max < m * (n + 1)
+        // floor(y_max / m) <= n
+        n = (unsigned long long)(y_max / m);
+        b = (unsigned long long)(y_max % m);
+        std::swap(m, a);
+    }
+    return ans;
+}
+
+}  // namespace internal
+
+
+namespace internal {
+
+struct modint_base {};
+struct static_modint_base : modint_base {};
+
+template <class T> using is_modint = std::is_base_of<modint_base, T>;
+template <class T> using is_modint_t = std::enable_if_t<is_modint<T>::value>;
+
+}  // namespace internal
+
+template <int m, std::enable_if_t<(1 <= m)>* = nullptr>
+struct static_modint : internal::static_modint_base {
+    using mint = static_modint;
+
+  public:
+    static constexpr int mod() { return m; }
+    static mint raw(int v) {
+        mint x;
+        x._v = v;
+        return x;
+    }
+
+    static_modint() : _v(0) {}
+    template <class T, internal::is_signed_int_t<T>* = nullptr>
+    static_modint(T v) {
+        long long x = (long long)(v % (long long)(umod()));
+        if (x < 0) x += umod();
+        _v = (unsigned int)(x);
+    }
+    template <class T, internal::is_unsigned_int_t<T>* = nullptr>
+    static_modint(T v) {
+        _v = (unsigned int)(v % umod());
+    }
+
+    unsigned int val() const { return _v; }
+
+    mint& operator++() {
+        _v++;
+        if (_v == umod()) _v = 0;
+        return *this;
+    }
+    mint& operator--() {
+        if (_v == 0) _v = umod();
+        _v--;
+        return *this;
+    }
+    mint operator++(int) {
+        mint result = *this;
+        ++*this;
+        return result;
+    }
+    mint operator--(int) {
+        mint result = *this;
+        --*this;
+        return result;
+    }
+
+    mint& operator+=(const mint& rhs) {
+        _v += rhs._v;
+        if (_v >= umod()) _v -= umod();
+        return *this;
+    }
+    mint& operator-=(const mint& rhs) {
+        _v -= rhs._v;
+        if (_v >= umod()) _v += umod();
+        return *this;
+    }
+    mint& operator*=(const mint& rhs) {
+        unsigned long long z = _v;
+        z *= rhs._v;
+        _v = (unsigned int)(z % umod());
+        return *this;
+    }
+    mint& operator/=(const mint& rhs) { return *this = *this * rhs.inv(); }
+
+    mint operator+() const { return *this; }
+    mint operator-() const { return mint() - *this; }
+
+    mint pow(long long n) const {
+        assert(0 <= n);
+        mint x = *this, r = 1;
+        while (n) {
+            if (n & 1) r *= x;
+            x *= x;
+            n >>= 1;
+        }
+        return r;
+    }
+    mint inv() const {
+        if (prime) {
+            assert(_v);
+            return pow(umod() - 2);
+        } else {
+            auto eg = internal::inv_gcd(_v, m);
+            assert(eg.first == 1);
+            return eg.second;
+        }
+    }
+
+    friend mint operator+(const mint& lhs, const mint& rhs) {
+        return mint(lhs) += rhs;
+    }
+    friend mint operator-(const mint& lhs, const mint& rhs) {
+        return mint(lhs) -= rhs;
+    }
+    friend mint operator*(const mint& lhs, const mint& rhs) {
+        return mint(lhs) *= rhs;
+    }
+    friend mint operator/(const mint& lhs, const mint& rhs) {
+        return mint(lhs) /= rhs;
+    }
+    friend bool operator==(const mint& lhs, const mint& rhs) {
+        return lhs._v == rhs._v;
+    }
+    friend bool operator!=(const mint& lhs, const mint& rhs) {
+        return lhs._v != rhs._v;
+    }
+
+  private:
+    unsigned int _v;
+    static constexpr unsigned int umod() { return m; }
+    static constexpr bool prime = internal::is_prime<m>;
+};
+
+template <int id> struct dynamic_modint : internal::modint_base {
+    using mint = dynamic_modint;
+
+  public:
+    static int mod() { return (int)(bt.umod()); }
+    static void set_mod(int m) {
+        assert(1 <= m);
+        bt = internal::barrett(m);
+    }
+    static mint raw(int v) {
+        mint x;
+        x._v = v;
+        return x;
+    }
+
+    dynamic_modint() : _v(0) {}
+    template <class T, internal::is_signed_int_t<T>* = nullptr>
+    dynamic_modint(T v) {
+        long long x = (long long)(v % (long long)(mod()));
+        if (x < 0) x += mod();
+        _v = (unsigned int)(x);
+    }
+    template <class T, internal::is_unsigned_int_t<T>* = nullptr>
+    dynamic_modint(T v) {
+        _v = (unsigned int)(v % mod());
+    }
+
+    unsigned int val() const { return _v; }
+
+    mint& operator++() {
+        _v++;
+        if (_v == umod()) _v = 0;
+        return *this;
+    }
+    mint& operator--() {
+        if (_v == 0) _v = umod();
+        _v--;
+        return *this;
+    }
+    mint operator++(int) {
+        mint result = *this;
+        ++*this;
+        return result;
+    }
+    mint operator--(int) {
+        mint result = *this;
+        --*this;
+        return result;
+    }
+
+    mint& operator+=(const mint& rhs) {
+        _v += rhs._v;
+        if (_v >= umod()) _v -= umod();
+        return *this;
+    }
+    mint& operator-=(const mint& rhs) {
+        _v += mod() - rhs._v;
+        if (_v >= umod()) _v -= umod();
+        return *this;
+    }
+    mint& operator*=(const mint& rhs) {
+        _v = bt.mul(_v, rhs._v);
+        return *this;
+    }
+    mint& operator/=(const mint& rhs) { return *this = *this * rhs.inv(); }
+
+    mint operator+() const { return *this; }
+    mint operator-() const { return mint() - *this; }
+
+    mint pow(long long n) const {
+        assert(0 <= n);
+        mint x = *this, r = 1;
+        while (n) {
+            if (n & 1) r *= x;
+            x *= x;
+            n >>= 1;
+        }
+        return r;
+    }
+    mint inv() const {
+        auto eg = internal::inv_gcd(_v, mod());
+        assert(eg.first == 1);
+        return eg.second;
+    }
+
+    friend mint operator+(const mint& lhs, const mint& rhs) {
+        return mint(lhs) += rhs;
+    }
+    friend mint operator-(const mint& lhs, const mint& rhs) {
+        return mint(lhs) -= rhs;
+    }
+    friend mint operator*(const mint& lhs, const mint& rhs) {
+        return mint(lhs) *= rhs;
+    }
+    friend mint operator/(const mint& lhs, const mint& rhs) {
+        return mint(lhs) /= rhs;
+    }
+    friend bool operator==(const mint& lhs, const mint& rhs) {
+        return lhs._v == rhs._v;
+    }
+    friend bool operator!=(const mint& lhs, const mint& rhs) {
+        return lhs._v != rhs._v;
+    }
+
+  private:
+    unsigned int _v;
+    static internal::barrett bt;
+    static unsigned int umod() { return bt.umod(); }
+};
+template <int id> internal::barrett dynamic_modint<id>::bt(998244353);
+
+using modint998244353 = static_modint<998244353>;
+using modint1000000007 = static_modint<1000000007>;
+using modint = dynamic_modint<-1>;
+
+namespace internal {
+
+template <class T>
+using is_static_modint = std::is_base_of<internal::static_modint_base, T>;
+
+template <class T>
+using is_static_modint_t = std::enable_if_t<is_static_modint<T>::value>;
+
+template <class> struct is_dynamic_modint : public std::false_type {};
+template <int id>
+struct is_dynamic_modint<dynamic_modint<id>> : public std::true_type {};
+
+template <class T>
+using is_dynamic_modint_t = std::enable_if_t<is_dynamic_modint<T>::value>;
+
+}  // namespace internal
+
+// use instead of pow when dealing with large numbers as pow() uses floating point arithmetic, which will give wrong results for large numbers
+// this allows it to deal with powering decimal numbers etc
+// but if you are powering large integers then use ipow which uses int/long long only for accuracy
+long long ipow(long long base, int exp) {
+    long long result = 1;
+    while (exp > 0) {
+        if (exp & 1) {
+            result *= base;
+        }
+        exp >>= 1;
+        base *= base;
+    }
+    return result;
+}
+
+
+bool isBitSet(int number, int bitPosition) {
+    return (number & (1 << bitPosition)) != 0;
+}
+
+vector<ll> getSetBitPositions(ll num) {
+    std::vector<ll> setBitPositions;
+    ll position = 0;
+
+    while (num != 0) {
+        if (num & 1) {
+            setBitPositions.push_back(position);
+        }
+        num >>= 1;
+        position++;
+    }
+
+    return setBitPositions;
+}
+
+int countUniqueSubstrings(const string& s) {
+    set<string> unique_substrings;
+    for (size_t i = 0; i < s.size(); ++i) {
+        for (size_t j = 1; j <= s.size() - i; ++j) {
+            unique_substrings.insert(s.substr(i, j));
+        }
+    }
+    return unique_substrings.size();
+}
+
+const ll LCSN = 1000 + 20;
+//dp holds the longest common subsequence (LCS) for the 2 substrings to index i & j
+//e.g. for s = "hleloworld", t = "thequickbrown"
+//i=3 j=4 i.e. dp[3][4]=2 as s[0toi]="hle" & t[0toj]="theq" -> LCS is "he"
+ll dp[LCSN][LCSN];
+//outputs the value of the longest common subsequence between 2 strings s & t
+ll lcs(string s, string t){
+    for(ll i = 0; i <= s.size(); i++){
+        for(ll j = 0; j <= t.size(); j++){
+            //if either s or t is empty then LCS = 0
+            if(!i || !j) dp[i][j] = 0;
+            //else if cur letters being compared i.e. s[i] or t[i] are the same
+            //then dp[i][j] is 1 more than dp[i-1][j-1]
+            else if (s[i-1] == t[j-1]) dp[i][j]=dp[i-1][j-1]+1;
+            //else if cur letters being compared i.e. s[i] or t[i] are not the same
+            //then dp[i][j] is max of dp[i-1][j] (comparing cur longest t to s-1)
+            //and dp[i][j-1] (comparing cur longest s to t-1)
+            else if (s[i-1] != t[j-1]) dp[i][j]=max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[s.size()][t.size()];
+}
+
+//["abc", "def"]
+//becomes
+//["da", "eb", "fc"]
+vector<string> rotate90(const vector<string>& matrix) {
+    int n = matrix.size();
+    int m = matrix[0].size();
+    vector<string> rotated(m, string(n, '.'));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            rotated[j][n - 1 - i] = matrix[i][j];
+        }
+    }
+    return rotated;
+}
 
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
@@ -1695,8 +1843,18 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 #define dbgif(cond, x) ((void)0)
 #endif
 
-// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
-#define iv(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
+template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.begin(), vec.end()), vec.erase(unique(vec.begin(), vec.end()), vec.end()); return vec; }
+//index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
+template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
+//index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
+template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
+
+
+//for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
+vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
+vector<int> dx_wasd = {1,-1,0,0};
+vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
+vector<int> dy_wasd = {0,0,1,-1};
 
 //Takes in a point and returns vector<pair<int, int>> containing all points relative to og point that form a square given an initial dx & dy between og_point and one other point n.b. always rotating in same direction
 vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
@@ -1716,62 +1874,53 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
     return points;
 }
 
+//Graph visualizer:
+//https://csacademy.com/app/graph_editor/
 
-long long solve(std::vector<std::string> &S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    dbg(S);
-    ll ans = 0;
-    for(int x=0; x<9; x++) for(int y=0; y<9; y++){
-        for(int dx=-10; dx<=10; dx++){
-            for(int dy=-10; dy<=10; dy++){
-                pair<int,int> p1,p2,p3,p4;
-                p1 = mp(x,y);
-                p2 = mp(x+dx,y+dy);
-                p3 = mp(x+dx-dy,y+dy+dx);
-                p4 = mp(x-dy,y+dx);
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+using mint = modint998244353;
 
-                p1 = mp(x,y);
-                p2 = mp(p1.first+dx, p1.second+dy);
-                p3 = mp(p2.first-dy, p2.second+dx);
-                p4 = mp(p3.first-dx, p3.second-dy);
 
-                auto temp = generateSquarePoints(x,y, dx, dy);
-                p1 = temp[0];
-                p2 = temp[1];
-                p3 = temp[2];
-                p4 = temp[3];
-
-                if(!iv(p1.first,p1.second,0,8,0,8)) continue;
-                if(!iv(p2.first,p2.second,0,8,0,8)) continue;
-                if(!iv(p3.first,p3.second,0,8,0,8)) continue;
-                if(!iv(p4.first,p4.second,0,8,0,8)) continue;
-                set<pair<int,int>> checker;
-                checker.insert(p1);
-                checker.insert(p2);
-                checker.insert(p3);
-                checker.insert(p4);
-                if(checker.size()!=4) continue;
-                if(S[p1.first][p1.second]!='#'||S[p2.first][p2.second]!='#'||S[p3.first][p3.second]!='#'||S[p4.first][p4.second]!='#') continue;
-                ans++;
-            }
-        }
-    }
-    return ans/4;
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    std::vector<std::string> S(9);
-    REP (i, 9) {
-        std::cin >> S[i];
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    ll N;
+    cin >> N;
+    ll l,r;
+    l=0;
+    r=N-1;
+    vll ch(N,-1);
+    while(l<=r){
+        ll m = midpoint(l,r);
+        cout << "? " << m+1 << endl;
+        ll t;
+        cin >> t;
+        ch[m]=t;
+        if(iv(m+1,0,N-1) and ch[m+1]!=-1 and ch[m+1]!=t){
+            cout << "! " << m+1 << endl;
+            return 0;
+        }
+        if(iv(m-1,0,N-1) and ch[m-1]!=-1 and ch[m-1]!=t){
+            cout << "! " << m << endl;
+            return 0;
+        }
+        if(t==0){
+            l=m;
+        }
+        else{
+            r=m;
+        }
+
     }
-    auto ans = solve(S);
-    std::cout << ans << '\n';
+
 
     /* genprimes(1e5); */
 
