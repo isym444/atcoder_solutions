@@ -50,7 +50,6 @@ using namespace std;
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 // #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
 #define isvalid(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
-#define iv(value, min_valid, max_valid) (value>=min_valid and value<=max_valid)
 //#define gcd __gcd
 #define mp make_pair
 #define mt make_tuple
@@ -1883,7 +1882,14 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-
+const std::string YES = "Yes";
+const std::string NO = "No";
+bool solve(int H, long long W, const std::vector<std::string> &S, const std::vector<std::string> &T) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1892,34 +1898,19 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    ll N;
-    cin >> N;
-    ll l,r;
-    l=1;
-    r=N;
-    // vll ch(N+1,-1);
-    while(r-l>1){
-        ll m = midpoint(l,r);
-        cout << "? " << m << endl;
-        ll t;
-        cin >> t;
-        // ch[m]=t;
-        // if(iv(m+1,1,N) and ch[m+1]!=-1 and ch[m+1]!=t){
-        //     cout << "! " << m << endl;
-        //     return 0;
-        // }
-        // if(iv(m-1,1,N) and ch[m-1]!=-1 and ch[m-1]!=t){
-        //     cout << "! " << m-1 << endl;
-        //     return 0;
-        // }
-        if(t==0){
-            l=m;
-        }
-        else{
-            r=m;
-        }
+    int H;
+    long long W;
+    std::cin >> H;
+    std::vector<std::string> S(H), T(H);
+    std::cin >> W;
+    REP (i, H) {
+        std::cin >> S[i];
     }
-    cout << "! " << l << endl;
+    REP (i, H) {
+        std::cin >> T[i];
+    }
+    auto ans = solve(H, W, S, T);
+    std::cout << (ans ? YES : NO) << '\n';
 
     /* genprimes(1e5); */
 
