@@ -1006,6 +1006,19 @@ long long solve(int N, const std::vector<std::string> &S) {
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    ll dp0=1;
+    ll dp1=1;
+    fx(S){
+        if(x=="AND"){
+            dp0=dp0+dp0+dp1;
+            dp1=dp1;
+        }
+        else{
+            dp1=dp1+dp0+dp1;
+            dp0=dp0;
+        }
+    }
+    return dp1;
 }
 
 int main() {

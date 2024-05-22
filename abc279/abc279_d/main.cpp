@@ -1888,10 +1888,11 @@ double solve(long long A, long long B) {
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    ll x = pow(A,2./3)/(pow(2,2./3)*pow(B,2./3))-1;
+    double x = pow(A,2./3)/(pow(2,2./3)*pow(B,2./3))-1;
     double ans = (double) LLONG_MAX;
-    for(ll i=x-100; i<x+100; i++){
-        ans = min(ans, (A/(sqrt(1+x))+B*x));
+    for(ll i=(ll)x-2; i<(ll)x+2; i++){
+        if(i<0) continue;
+        ans = min(ans, (A/(sqrt(1.+i))+B*i));
     }
     return ans;
 }
@@ -1901,7 +1902,7 @@ int main() {
     setIO("");
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
+    cout << fixed << setprecision(10);
     unordered_map<long long, int, custom_hash> safe_map;
     long long A, B;
     std::cin >> A >> B;
