@@ -794,12 +794,7 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-std::vector<auto> solve(int N, const std::vector<long long> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -808,14 +803,17 @@ int main() {
     int N;
     std::cin >> N;
     std::vector<long long> a(N);
-    REP (i, N) {
-        std::cin >> a[i];
+    ll S=0;
+    foi(0,N){
+        ll t;
+        cin >> t;
+        a[i]=t;
+        S^=t;
+        // cout << t << " ";
     }
-    auto ans = solve(N, a);
-    REP (i, (int)ans.size()) {
-        std::cout << b[i] << ' ';
+    fx(a){
+        cout << (x^S) << " ";
     }
-    std::cout << '\n';
 
     /* genprimes(1e5); */
 

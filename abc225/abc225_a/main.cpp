@@ -1883,39 +1883,11 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 using mint = modint998244353;
 
 
-long long solve(long long X, long long Y, long long Z, std::string S) {
+long long solve(std::string S) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    vvll dp(S.length()+1,vll(2,0));
-    // dbg(X);
-    // dbg(Y);
-    // dbg(Z);
-    dp[0][0]=0;
-    dp[0][1]=1e9+100;
-    // dbg(dp);
-    for(ll i = 0; i<S.length(); i++){
-        if(S[i]=='a'){
-            dp[i+1][0]=min({dp[i][0]+X,(dp[i][1]+Z+X)});
-            dp[i+1][1]=min(dp[i][1]+Y,(dp[i][0]+Z+Y));
-        }
-        else{
-            // dbg(dp[i][0]);
-            // dbg(Y);
-            // dbg(dp[i][0]+Y);
-            // dbg(dp[i][0]+Z+Y);
-            // dbg(dp[i][1]);
-            dp[i+1][0]=min(dp[i][0]+Y,(dp[i][1]+Z+Y));
-            dp[i+1][1]=min((dp[i][0]+Z+X),dp[i][1]+X);
-        }
-        // dbg(dp[i+1][0]);
-        // dbg(dp[i+1][1]);
-        // dbg(dp);
-    }
-    // dbg(dp);
-    return(min(dp[S.length()][0],dp[S.length()][1]));
-
 }
 
 int main() {
@@ -1925,11 +1897,9 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long X, Y, Z;
     std::string S;
-    std::cin >> X >> Y >> Z >> S;
-    // dbg(S);
-    auto ans = solve(X, Y, Z, S);
+    std::cin >> S;
+    auto ans = solve(S);
     std::cout << ans << '\n';
 
     /* genprimes(1e5); */
