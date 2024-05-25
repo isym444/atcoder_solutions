@@ -1003,12 +1003,6 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 constexpr long long MOD = 998244353;
-auto solve(int N, int Q, const std::vector<long long> &A, const std::vector<long long> &X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1017,19 +1011,38 @@ int main() {
     int N, Q;
     std::cin >> N;
     std::vector<long long> A(N);
+    vll psum;
+    psum.pb(0);
     std::cin >> Q;
     std::vector<long long> X(Q);
     REP (i, N) {
         std::cin >> A[i];
     }
-    REP (i, Q) {
-        std::cin >> X[i];
+    foi(0,Q){
+        cin >> X[i];
     }
-    auto ans = solve(N, Q, A, X);
-    REP (i, Q) {
-        std::cout << a[i] << '\n';
+    sort(all(A));
+    cerr << A << endl;
+    for(auto x:A){
+        psum.pb(psum[psum.size()-1]+x);
     }
-
+    cerr << psum << endl;
+    for(auto t:X){
+        cerr << t << endl;
+        if(t==0){
+            cout << psum[N] << endl;
+            continue;
+        }
+        // cerr << "hello" << endl;
+        ll u=upper_bound(all(A),t)-A.begin();
+        cerr << "boundary: " << u << endl;
+        ll ans=0;
+        // numbers lower than x
+        ans+=(t*u-(psum[u]));
+        // numbers higher than x
+        ans+=(psum[N]-psum[u])-(N-u)*t;
+        cout << ans << endl;
+    }
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
