@@ -1883,12 +1883,7 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 using mint = modint998244353;
 
 
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1896,21 +1891,27 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    // unordered_map<long long, int, custom_hash> safe_map;
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    // dbg(A);
+    vvll ai(N+10);
+    for(ll i = 0; i<N; i++){
+        ai[A[i]].pb(i+1);
     }
-    auto ans = solve(n, a);
-    std::cout << a << '\n';
-    REP (i, a) {
-        std::cout << b[i] << '\n';
+    // dbg(ai);
+    ll q;
+    cin >> q;
+    foi(0,q){
+        ll a,b,c;
+        cin >> a >> b >> c;
+        ll lb,ub;
+        lb = indlb(ai[c],a);
+        ub = indub(ai[c],b);
+        cout << ub-lb << endl;
     }
-
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
