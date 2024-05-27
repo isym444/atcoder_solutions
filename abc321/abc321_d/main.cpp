@@ -1308,12 +1308,7 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, int M, long long P, const std::vector<long long> &A, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1332,9 +1327,25 @@ int main() {
     REP (i, M) {
         std::cin >> B[i];
     }
-    auto ans = solve(N, M, P, A, B);
-    std::cout << ans << '\n';
-
+    sort(all(A));
+    sort(all(B));
+    vll psumb(M+1);
+    psumb[0]=0;
+    foi(0,M){
+        psumb[i+1]=psumb[i]+B[i];
+    }
+    cerr << psumb << endl;
+    ll ans = 0;
+    foi(0,N){
+        ll t = A[i];
+        ll target = P-t;
+        ll border = indub(B,target);
+        cerr << border << endl;
+        ans+=t*(M-(M-border));
+        ans+=psumb[border];
+        ans+=P*(M-border);
+    }
+    cout << ans << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

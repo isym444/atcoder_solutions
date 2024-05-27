@@ -731,26 +731,43 @@ void lexperm(vector<ll> vec){
 //https://csacademy.com/app/graph_editor/
 
 
-std::pair<long long, long long> solve(auto N, auto M, const std::vector<auto> &A, const std::vector<auto> &B, const std::vector<auto> &C, const std::vector<auto> &D) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
+
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    auto N, M;
-    std::cin >> N >> M;
-    std::vector<auto> A(M), B(M), C(M), D(M);
-    REP (i, M) {
-        std::cin >> A[i] >> B[i] >> C[i] >> D[i];
+    ll N,M;
+    cin >> N >> M;
+    dsu u(N);
+    vector<ll> inacycle(N,0);
+    ll cycles=0;
+    foi(0,M){
+        ll a,c;
+        char b,d;
+        cin >> a >> b >> c >> d;
+        dbg(a);
+        dbg(b);
+        dbg(c);
+        dbg(d);
+        // cerr << endl;
+        a--;
+        c--;
+        if(u.same(a,c)){
+            cycles++;
+        }
+        u.merge(a,c);
     }
-    auto [c, d] = solve(N, M, A, B, C, D);
-    std::cout << c << ' ' << d << '\n';
-
+    cout << cycles << " " << u.groups().size()-cycles << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

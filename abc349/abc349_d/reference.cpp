@@ -1840,28 +1840,59 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
+
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+
 vector<pair<ll,ll>> aans;
-ll L,R;
+ll L, R;
 
-void recur(ll l, ll r){
-    if(L<=l&&r<=R){
-        aans.pb(mp(l,r));
-        return;
-    }
-    ll m = midpoint(l,r);
-    if(L<m) recur(l,m);
-    if(R>m) recur(m,r);
-}
+//top down approach
+// void segRecur(ll l, ll r){
+//     //if current top-down segment being considered fits within L->R range exactly then return
+//     if (L <= l && r <= R) {
+//         aans.emplace_back(l,r);
+//         return;
+//     }
+//     //split l->r into 2 halves left and right
+//     ll m = (l+r)>>1;
+//     //if desired range overlaps with l->m, segRecur
+//     if (L < m) segRecur(l,m);
+//     //if desired range overlaps with m->r, segRecur
+//     if (m < R) segRecur(m,r);
+// }
 
-int main(){
+// int main() {
+//     cin >> L >> R;
+//     segRecur(0,1ll<<60);
+
+//     cout << aans.size() << endl;
+//     for (auto [l,r] : aans) cout << l << ' ' << r << '\n';
+//     return 0;
+// }
+
+//bottom up approach
+int main() {
+    ll L, R;
     cin >> L >> R;
-    ll l=0;
-    ll r=1ll<<60;
-    recur(l,r);
-    cerr << "Reached" << endl;
-    cout << aans.size() << endl;
-    fx(aans){
-        cout << x.first << " " << x.second << endl;
+    vector<pair<ll,ll>> ans;
+
+    int i = 0;
+    while (L < R) {
+        dbg(make_tuple(L,R));
+        //Checking if odd or not is equivalent to checking whether there are larger segments above
+        //that start/end on L/R respectively...if there are, want to keep moving up before adding segment to answer
+        if (L&1) ans.emplace_back(L<<i, (L+1)<<i), L++;
+        if (R&1) ans.emplace_back((R-1)<<i, R<<i), R--;
+        dbg(ans);
+        // dbg(L);
+        //divide L&R by 2 because i is being increased i.e. moving one step up in segment tree
+        //so L&R are the index of the segment at a particular segment tree level (but R is index+1 because of problem statement)
+        L >>= 1; R >>= 1; i++;
     }
+
+    sort(ans.begin(), ans.end());
+    cout << ans.size() << endl;
+    for (auto [l,r] : ans) cout << l << ' ' << r << '\n';
+    //   dbg(3>>1);
     return 0;
 }

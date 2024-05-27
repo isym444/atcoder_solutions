@@ -48,9 +48,11 @@ using namespace std;
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+#define isvalid(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
 //#define gcd __gcd
 #define mp make_pair
+#define mt make_tuple
 //Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
 // #define print(p) cout<<p<<endl
@@ -63,6 +65,7 @@ using namespace std;
 #define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
 #define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 #define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
 #define setbits(decimalnumber) __builtin_popcount(decimalnumber)
 #define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
@@ -166,6 +169,23 @@ void setIO(string name = "")
     }
 }
 
+//C / A = B where each is a vector representing coefficients of polynomial including the x^0 coefficient i.e. the c in mx+c
+vector<long long> polynomialDivision(const vector<long long>& c, const vector<long long>& a) {
+    int n = a.size() - 1;  // Degree of A(x)
+    int m = c.size() - n - 1;  // Degree of B(x)
+    vector<long long> b(m + 1);
+    vector<long long> temp_c = c;  // Copy of c to modify during the process
+
+    for (int i = m; i >= 0; --i) {
+        b[i] = temp_c[i + n] / a[n];
+        for (int j = 0; j <= n; ++j) {
+            temp_c[i + j] -= b[i] * a[j];
+        }
+    }
+
+    return b;
+}
+
 const int MAXA = 5000006;
 bool prime[MAXA];
 
@@ -215,65 +235,71 @@ bool IsPrime(int num)
     return true;
 }
 
-const int MAXN = 2 * 100000 + 10; // Adjust the size as per the problem constraints
-//smallest prime factor
-std::vector<int> spf(MAXN);
-
-//Sieve of Eratosthenes to precompute the smallest prime factor of each number
-void spfsieve() {
-    //initializes smallest prime factor for 1 as 1
-    spf[1] = 1;
-    //initially treats every number as a prime and assigns the smallest prime factor as itself
-    for (int i = 2; i < MAXN; ++i) {
-        spf[i] = i;
-    }
-    //all even numbers' smallest prime factor is 2. This sets this for all even numbers
-    for (int i = 4; i < MAXN; i += 2) {
-        spf[i] = 2;
-    }
-    //calculates upper limit to which we need to check for primes (optimization)
-    //because factors come in pairs e.g. N = 36, its factors are (1, 36), (2, 18), (3, 12), (4, 9), and (6, 6)
-    //so after sqrt(N) the pairs will switch and and won't find any further new factors
-    //Factors of a number come in pairs, with one factor being less than or equal to the square root of the number,
-    //and the other being greater than or equal to the square root.
-    int limit = std::ceil(std::sqrt(MAXN));
-    for (int i = 3; i < limit; i+=2) {
-        //checks if i is still marked as it's own smallest prime factor
-        //indicating that it is still prime 
-        //because we have iterated through all smaller numbers beforehand so if not a multiple of any of those
-        //then by definition it must be prime
-        if (spf[i] == i) {
-            //start from i*i as spf for smaller numbers than this would be marked by smaller numbers than i (if not prime)
-            for (int j = i * i; j < MAXN; j += i) {
-                //if smallest prime factor of j is still set as itself i.e. spf not yet been set
-                //then set spf as i
-                if (spf[j] == j) {
-                    spf[j] = i;
-                }
+// To get prime factorization:
+// SieveOfEratosthenes sieve(1000000);
+// auto facs = sieve.Factorize(N);
+struct SieveOfEratosthenes : std::vector<int>
+{
+    std::vector<int> primes;
+    SieveOfEratosthenes(int MAXN) : std::vector<int>(MAXN + 1) {
+        std::iota(begin(), end(), 0);
+        for (int i = 2; i <= MAXN; i++) {
+            if ((*this)[i] == i) {
+                primes.push_back(i);
+                for (int j = i; j <= MAXN; j += i) (*this)[j] = i;
             }
         }
     }
-}
-
-//Function to return the prime factorization of a number (is unique for every number)
-//make sure to call spfsieve() before calling this function so spf values are prepopulated
-std::unordered_map<int, int> fact(int x) {
-    std::unordered_map<int, int> pfactors;
-    while (x != 1) {
-        //if the smallest prime factor of x has not yet been added to pfactors
-        //  then set p^1
-        //if the smallest prime factor of x has already been added to pfactors
-        //  then set p^(prev exponent+1)
-        if (pfactors.find(spf[x]) == pfactors.end()) {
-            pfactors[spf[x]] = 1;
-        } else {
-            pfactors[spf[x]] += 1;
+    using T = long long int;
+    // Prime factorization for x <= MAXN^2
+    // Complexity: O(log x)          (x <= MAXN)
+    //             O(MAXN / logMAXN) (MAXN < x <= MAXN^2)
+    std::map<T, int> Factorize(T x) {
+        assert(x <= 1LL * (int(size()) - 1) * (int(size()) - 1));
+        std::map<T, int> ret;
+        if (x < int(size())) {
+            while (x > 1) {
+                ret[(*this)[x]]++;
+                x /= (*this)[x];
+            }
         }
-        //while x!=1, divide x by its smallest prime factor
-        x = x / spf[x];
+        else {
+            for (auto p : primes) {
+                while (!(x % p)) x /= p, ret[p]++;
+                if (x == 1) break;
+            }
+            if (x > 1) ret[x]++;
+        }
+        return ret;
     }
-    return pfactors;
-}
+    std::vector<T> Divisors(T x) {
+        std::vector<T> ret{1};
+        for (auto p : Factorize(x)) {
+            int n = ret.size();
+            for (int i = 0; i < n; i++) {
+                for (T a = 1, d = 1; d <= p.second; d++) {
+                    a *= p.first;
+                    ret.push_back(ret[i] * a);
+                }
+            }
+        }
+        return ret; // Not sorted
+    }
+    // Moebius function Table
+    // return: [0=>0, 1=>1, 2=>-1, 3=>-1, 4=>0, 5=>-1, 6=>1, 7=>-1, 8=>0, ...]
+    std::vector<int> GenerateMoebiusFunctionTable() {
+        std::vector<int> ret(size());
+        for (int i = 1; i < int(size()); i++) {
+            if (i == 1) ret[i] = 1;
+            else if ((i / (*this)[i]) % (*this)[i] == 0) ret[i] = 0;
+            else ret[i] = -ret[i / (*this)[i]];
+        }
+        return ret;
+    }
+};
+SieveOfEratosthenes sieve(1000000);
+
+
 
 ll mod=1e9+7;
 //ll mod=1000;
@@ -867,7 +893,7 @@ struct RangeSet : public std::map<T, T> {
         }
 };
 
-string itobins(int n) {
+string itobins(ll n) {
     if (n == 0) return "0";
 
     string binary = "";
@@ -880,7 +906,7 @@ string itobins(int n) {
     return binary;
 }
 
-string dtobx(int decimalNumber, int base) {
+string dtobx(ll decimalNumber, ll base) {
     if (base < 2 || base > 36) {
         return "Invalid base";
     }
@@ -1761,6 +1787,21 @@ bool isBitSet(int number, int bitPosition) {
     return (number & (1 << bitPosition)) != 0;
 }
 
+vector<ll> getSetBitPositions(ll num) {
+    std::vector<ll> setBitPositions;
+    ll position = 0;
+
+    while (num != 0) {
+        if (num & 1) {
+            setBitPositions.push_back(position);
+        }
+        num >>= 1;
+        position++;
+    }
+
+    return setBitPositions;
+}
+
 int countUniqueSubstrings(const string& s) {
     set<string> unique_substrings;
     for (size_t i = 0; i < s.size(); ++i) {
@@ -1831,6 +1872,24 @@ vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
 vector<int> dy_wasd = {0,0,1,-1};
 
+//Takes in a point and returns vector<pair<int, int>> containing all points relative to og point that form a square given an initial dx & dy between og_point and one other point n.b. always rotating in same direction
+vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
+    pair<int, int> p1, p2, p3, p4;
+    
+    p1 = mp(x, y);
+    p2 = mp(p1.first + dx, p1.second + dy);
+    p3 = mp(p2.first - dy, p2.second + dx);
+    p4 = mp(p3.first - dx, p3.second - dy);
+    
+    // p1 = mp(x,y);
+    // p2 = mp(x+dx,y+dy);
+    // p3 = mp(x+dx-dy,y+dy+dx);
+    // p4 = mp(x-dy,y+dx);
+
+    vector<pair<int, int>> points = {p1, p2, p3, p4};
+    return points;
+}
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
@@ -1840,28 +1899,41 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-vector<pair<ll,ll>> aans;
-ll L,R;
-
-void recur(ll l, ll r){
-    if(L<=l&&r<=R){
-        aans.pb(mp(l,r));
-        return;
-    }
-    ll m = midpoint(l,r);
-    if(L<m) recur(l,m);
-    if(R>m) recur(m,r);
+constexpr long long MOD = 998244353;
+long long solve(int N, const std::vector<long long> &U, const std::vector<long long> &V) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
 }
 
-int main(){
-    cin >> L >> R;
-    ll l=0;
-    ll r=1ll<<60;
-    recur(l,r);
-    cerr << "Reached" << endl;
-    cout << aans.size() << endl;
-    fx(aans){
-        cout << x.first << " " << x.second << endl;
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    int N;
+    std::cin >> N;
+    std::vector<long long> U(N - 1), V(N - 1);
+    REP (i, N - 1) {
+        std::cin >> U[i] >> V[i];
     }
+    auto ans = solve(N, U, V);
+    std::cout << ans << '\n';
+
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
     return 0;
 }

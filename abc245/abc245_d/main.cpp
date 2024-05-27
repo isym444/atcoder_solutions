@@ -29,17 +29,25 @@ using namespace std;
 #define ll long long
 #define sz(x) (int)(x).size()
 #define fo(from_0_to_non_incl_to) for(int i=0;i<from_0_to_non_incl_to;i++)
-#define foi(from,non_incl_to) for(int i=from;i<non_incl_to;i++)
-#define foj(from,non_incl_to) for(int j=from;j<non_incl_to;j++)
-#define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
+//h CAREFUL if you put an expression as an argument it will give bugs, better assign expression to variable then put that in the foi() as argument
+#define foi(from,non_incl_to) for(int i=from;i<(non_incl_to);i++)
+#define foii(non_incl_to) for(int i=0;i<(non_incl_to);i++)
+#define foj(from,non_incl_to) for(int j=from;j<(non_incl_to);j++)
+#define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
+#define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
+#define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
+#define fa(x, dataStructure) for(auto x : dataStructure)
+#define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+#define isvalid(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
 //#define gcd __gcd
 #define mp make_pair
+#define mt make_tuple
 //Makes % get floor remainder (towards -INF) and make it always positive
 #define MOD(x,y) (x%y+y)%y
-#define print(p) cout<<p<<endl
+// #define print(p) cout<<p<<endl
 #define fi first
 #define sec second
 #define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
@@ -49,17 +57,48 @@ using namespace std;
 #define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
 #define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 #define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
 #define setbits(decimalnumber) __builtin_popcount(decimalnumber)
 #define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
 #define string_pop_back(str) (str).pop_back()
 #define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
+#define rng(a) a.begin(),a.end()
+#define all(a) a.begin(),a.end()
 
 typedef pair<ll, ll> pl;
+typedef vector<long long> vll;
+typedef std::vector<std::vector<long long>> vvll;
 
 #define pb push_back
 
-ll mod=1e9+7,INF=1e18;
+//max heap priority queue i.e. top() gives largest value
+typedef priority_queue<ll> maxpq;
+//min heap priority queue i.e. top() gives smallest value
+typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
+
+//multiset provides automatic ordering on insertion but unlike set, keeps duplicate/multiple items of same value
+//n.b. set also provides autoamtic ordering on insertion
+//.count(x) O(num_of_x+logN)
+//.find(x) O(logN) -> so use find over count if possible
+//.insert(x) O(logN) -> inserts s.t. sorted order is maintained
+//.erase(x) O(logN)
+//begin() O(logN)
+typedef multiset<ll> msll;
+//doing mymultiset.erase(x) will erase all
+#define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
+#define mseraseall(mymultiset, x) mymultiset.erase(x)
+//find smallest and biggest elements O(1)
+#define msmin(mymultiset) *mymultiset.begin()
+#define msmax(mymultiset) *mymultiset.rbegin()
+
+int digit_to_int(char c) { return c - '0'; }
+int lowercase_to_int(char c) { return c - 'a'; }
+int uppercase_to_int(char c) { return c - 'A'; }
+ll INF=LLONG_MAX;
+
+
+// gp_hash_table<long long, int, custom_hash> safe_hash_table;
 
 
 /*/---------------------------IO(Debugging)----------------------/*/
@@ -122,549 +161,59 @@ void setIO(string name = "")
     }
 }
 
+
 const int MAXA = 5000006;
 bool prime[MAXA];
 
-void gen_primes() {
-    fill(prime, prime+MAXA, true);
-    prime[0] = 0;
-    // prime[1] = 1 for our purposes
-    for (int i = 4; i < MAXA; i += 2) {
-        prime[i] = 0;
-    }
 
-    for (int p = 3; p*p < MAXA; p += 2) {
-        if (!prime[p]) continue;
-        for (int x = p*p; x < MAXA; x += p) {
-            prime[x] = 0;
-        }
-    }
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-const int MAXN = 2 * 100000 + 10; // Adjust the size as per the problem constraints
-//smallest prime factor
-std::vector<int> spf(MAXN);
-
-//Sieve of Eratosthenes to precompute the smallest prime factor of each number
-void spfsieve() {
-    //initializes smallest prime factor for 1 as 1
-    spf[1] = 1;
-    //initially treats every number as a prime and assigns the smallest prime factor as itself
-    for (int i = 2; i < MAXN; ++i) {
-        spf[i] = i;
-    }
-    //all even numbers' smallest prime factor is 2. This sets this for all even numbers
-    for (int i = 4; i < MAXN; i += 2) {
-        spf[i] = 2;
-    }
-    //calculates upper limit to which we need to check for primes (optimization)
-    //because factors come in pairs e.g. N = 36, its factors are (1, 36), (2, 18), (3, 12), (4, 9), and (6, 6)
-    //so after sqrt(N) the pairs will switch and and won't find any further new factors
-    //Factors of a number come in pairs, with one factor being less than or equal to the square root of the number,
-    //and the other being greater than or equal to the square root.
-    int limit = std::ceil(std::sqrt(MAXN));
-    for (int i = 3; i < limit; i+=2) {
-        //checks if i is still marked as it's own smallest prime factor
-        //indicating that it is still prime 
-        //because we have iterated through all smaller numbers beforehand so if not a multiple of any of those
-        //then by definition it must be prime
-        if (spf[i] == i) {
-            //start from i*i as spf for smaller numbers than this would be marked by smaller numbers than i (if not prime)
-            for (int j = i * i; j < MAXN; j += i) {
-                //if smallest prime factor of j is still set as itself i.e. spf not yet been set
-                //then set spf as i
-                if (spf[j] == j) {
-                    spf[j] = i;
-                }
-            }
-        }
-    }
-}
-
-//Function to return the prime factorization of a number (is unique for every number)
-//make sure to call spfsieve() before calling this function so spf values are prepopulated
-std::unordered_map<int, int> fact(int x) {
-    std::unordered_map<int, int> pfactors;
-    while (x != 1) {
-        //if the smallest prime factor of x has not yet been added to pfactors
-        //  then set p^1
-        //if the smallest prime factor of x has already been added to pfactors
-        //  then set p^(prev exponent+1)
-        if (pfactors.find(spf[x]) == pfactors.end()) {
-            pfactors[spf[x]] = 1;
-        } else {
-            pfactors[spf[x]] += 1;
-        }
-        //while x!=1, divide x by its smallest prime factor
-        x = x / spf[x];
-    }
-    return pfactors;
-}
-
-//use if possible as faster than nCx
-long long nC2(int n) {
-    return static_cast<long long>(n) * (n - 1) / 2;
-}
-
-//order matters so larger than nCx
-long long nPx(int n, int x) {
-    if (x > n) return 0;
-    
-    long long result = 1;
-    for (int i = n; i > n - x; --i) {
-        result *= i;
-    }
-    return result;
-}
-
-//order doesn't matter so smaller than nPx
-long long nCx(int n, int x) {
-    if (x > n) return 0;
-    if (x * 2 > n) x = n - x; // Take advantage of symmetry, nCx == nC(n-x)
-    if (x == 0) return 1;
-
-    long long result = 1;
-    for (int i = 1; i <= x; ++i) {
-        result *= n - (x - i);
-        result /= i;
-    }
-    return result;
-}
-
-vector<ll> parent; // To store parent information
-//visited nodes
-vector<bool> vis;
-//bool vis[61][61][61][61]={0};
-map<ll,ll> depth;
-
-//initialize graph as adjacency list
-vector<vector<ll> > g;
-//initialize weighted graph as adjacency list
-vector<vector<pair<ll,ll>>> wg;
-//for building the adjacency list by adding edges info
-ll totalEdges = 0;
-void edge(ll originNode, ll destNode)
-{
-    g[originNode].pb(destNode);
-    totalEdges++;
- 
-    // for undirected graph e.g. tree, add this line:
-    // g[destNode].pb(originNode);
-}
-
-void edge(ll originNode, ll destNode, ll weight){
-    wg[originNode].emplace_back(destNode, weight);
-    totalEdges++;
-    // For an undirected graph e.g., tree, add this line:
-    // g[destNode].emplace_back(originNode, weight);
-}
-
-//returns vector where each index is the shortest distance between the start node and node i
-vector<ll> dijkstra(ll start) {
-    vector<ll> dist(wg.size(), INF);  // Distance from start to each node
-    //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
-    //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
-    dist[start] = 0;
-    pq.push({0, start});  // {distance, node}
-
-    while (!pq.empty()) {
-        //cerr << "pq" << pq << endl;
-        ll currentDist = pq.top().first;
-        ll currentNode = pq.top().second;
-        pq.pop();
-
-        // If the distance in priority queue is larger, we have already found a better path
-        if (currentDist > dist[currentNode]) {
-            continue;
-        }
-        /* Optimization to try if TLEing instead of if statement above
-        if (cdist != dist[node]) { continue; }*/
-    
-        for (auto &neighbor : wg[currentNode]) {
-            ll nextNode = neighbor.first;
-            ll weight = neighbor.second;
-            ll newDist = currentDist + weight;
-
-            if (newDist < dist[nextNode]) {
-                dist[nextNode] = newDist;
-                pq.push({newDist, nextNode});
-            }
-        }
-    }
-
-    return dist;
-}
-
-//Bellman Ford Graph: L node, R node, weight of edge between L&R
-vector<tuple<int, int, ll>> bfg;
-
-vector<ll> bellmanDistances;
-// Function to run Bellman-Ford algorithm given start node and # vertices, saves min distances in bellmanDistances vector
-bool bellmanFord(ll start, ll V) {
-    vector<ll> distance(V, INF);
-    bellmanDistances.resize(V, INF);
-    bellmanDistances[start] = 0;
-    ll a,b,w;
-    for (ll i = 1; i <= V - 1; i++) {
-        for (const auto& e : bfg) {
-            tie(a, b, w) = e;
-            bellmanDistances[b]=min(bellmanDistances[b],bellmanDistances[a]+w);
-            /* if (bellmanDistances[a] + w < bellmanDistances[b]) {
-                bellmanDistances[b] = bellmanDistances[a] + w;
-            } */
-        }
-    }
-
-    // Check for negative-weight cycles (negative sum of edges in a cycle)
-    for (const auto& e : bfg) {
-        tie(a, b, w) = e;
-        if (bellmanDistances[a] + w < bellmanDistances[b]) {
-            cout << "Graph contains negative weight cycle" << endl;
-            return false;
-        }
-    }
-
-/*     // Print the distances
-    for (int i = 0; i < V; i++)
-        cout << "Distance from " << start << " to " << i << " is " << (distance[i] == INF ? "INF" : to_string(distance[i])) << endl;
- */
-    return true;
-}
-
-
-//traverse a graph using bfs from the specified start node to all other nodes, in the process printing the order the nodes are visited in
-void bfs(ll start)
-{
-    queue<ll> q;
- 
-    q.push(start);
-    vis[start] = true;
-    depth[start] = 1; // Depth of starting node is 1
-    //If want first time something happens/node reached then break when that happens
-    while (!q.empty()) {
-        ll f = q.front();
-        q.pop();
- 
-        cerr << f << " ";
-        
-        // Enqueue all adjacent of f and mark them visited 
-        ll counter = 0;
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!vis[*i]) {
-                counter++;
-                q.push(*i);
-                vis[*i] = true;
-                depth[*i] = depth[f] + 1; // Set the depth of the neighboring node
-            }
-        }
-        /* if(counter==0){
-            cerr << "depths to leafs: " << depth[f] << endl;
-        } */
-    }
-}
-
-//bfs function returning vector with the shortest paths from start node to every other node
-vector<ll> bfs_shortest_paths(ll start) {
-    vector<long long> distances(g.size()+1, -1);
-    queue<int> q;
-
-    distances[start] = 0;
-    q.push(start);
-
-    while (!q.empty()) {
-        int node = q.front();
-        q.pop();
-
-        for (int neighbor : g[node]) {
-            if (distances[neighbor] == -1) {
-                distances[neighbor] = distances[node] + 1;
-                q.push(neighbor);
-            }
-        }
-    }
-    return distances;
-}
-
-//return a vector containing bfs path from start to end nodes specified
-vector<ll> bfs(ll start, ll end) {
-    queue<ll> q;
-    q.push(start);
-    vis[start] = true;
-    parent[start] = -1; // Start node has no parent
-
-    while (!q.empty()) {
-        ll f = q.front();
-        q.pop();
-
-        if (f == end) break; // Stop if we reach the end node
-
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!vis[*i]) {
-                q.push(*i);
-                vis[*i] = true;
-                parent[*i] = f; // Set parent
-            }
-        }
-    }
-
-    vector<ll> path;
-    for (ll i = end; i != -1; i = parent[i]) {
-        path.push_back(i);
-    }
-    reverse(path.begin(), path.end()); // Reverse to get the correct order
-    return path;
-}
-
-//dfs traversal from start node, in process keeping track of max depth & keeping track of each node's depth & printing order of traversal
-ll maxDepth = 0;
-void dfs(ll startNode, ll startDepth){
-    vis[startNode] = true;
-    depth[startNode]=startDepth;
-    maxDepth=max(maxDepth, startDepth);
-    cerr << startNode << " ";
-    for(auto adjNode : g[startNode]){
-        if(!vis[adjNode]) dfs(adjNode, startDepth+1);
-    }
-}
-
-map<ll,ll>subtreeSizes; //Map to store subtree sizes for each child of the start node
-ll dfsSubtreesHelper(ll startNode){
-    vis[startNode] = true;
-    ll subtreeSize = 1;
-    //cerr << startNode << " ";
-    for(auto adjNode : g[startNode]){
-        if(!vis[adjNode]){
-            subtreeSize+=dfsSubtreesHelper(adjNode);
-        }
-    }
-    return subtreeSize;
-}
-//main function to call to populate subtreeSizes
-ll minSubtreeSize = 3*pow(10,5)+1; //Adjust this to the max given boundary of the problem
-void dfsSubtrees(ll startNode){
-    vis[startNode] = true;
-    for(auto adjNode : g[startNode]){
-        subtreeSizes[adjNode]=dfsSubtreesHelper(adjNode); //+1 if want to include startNode in size of subtrees
-        minSubtreeSize=min(minSubtreeSize,subtreeSizes[adjNode]);
-    }
-}
-
-
-//disjoint set union/union find
-struct dsu {
-  public:
-    dsu() : _n(0) {}
-    //constructor for dsu. Initialize as "dsu name_of_object(x);"
-    //creates an undirected graph with n vertices and 0 edges
-    //N.b. if initializing for HxW grid then = HxW
-    explicit dsu(int n) : _n(n), parent_or_size(n, -1) {}
-
-    //returns representative of component if a&b already in component or else joins them into a new component and selects one as representative
-    int merge(int a, int b) {
-        assert(0 <= a && a < _n);
-        assert(0 <= b && b < _n);
-        int x = leader(a), y = leader(b);
-        if (x == y) return x;
-        if (-parent_or_size[x] < -parent_or_size[y]) std::swap(x, y);
-        parent_or_size[x] += parent_or_size[y];
-        parent_or_size[y] = x;
-        return x;
-    }
-
-    //returns whether a&b in same component
-    //N.b. if for HxW grid then have to convert ij 2d coordinate to 1d representation:
-    //v = i*W+j
-    bool same(int a, int b) {
-        assert(0 <= a && a < _n);
-        assert(0 <= b && b < _n);
-        return leader(a) == leader(b);
-    }
-
-    //returns representative of connected component in which a resides
-    int leader(int a) {
-        assert(0 <= a && a < _n);
-        if (parent_or_size[a] < 0) return a;
-        return parent_or_size[a] = leader(parent_or_size[a]);
-    }
-
-    //returns size of connected component in which a resides
-    int size(int a) {
-        assert(0 <= a && a < _n);
-        return -parent_or_size[leader(a)];
-    }
-
-    //returns a list of the nodes of each connected component
-    std::vector<std::vector<int>> groups() {
-        std::vector<int> leader_buf(_n), group_size(_n);
-        for (int i = 0; i < _n; i++) {
-            leader_buf[i] = leader(i);
-            group_size[leader_buf[i]]++;
-        }
-        std::vector<std::vector<int>> result(_n);
-        for (int i = 0; i < _n; i++) {
-            result[i].reserve(group_size[i]);
-        }
-        for (int i = 0; i < _n; i++) {
-            result[leader_buf[i]].push_back(i);
-        }
-        result.erase(
-            std::remove_if(result.begin(), result.end(),[&](const std::vector<int>& v) { return v.empty(); }),result.end());
-        return result;
-    }
-
-  private:
-    int _n;
-    // root node: -1 * component size
-    // otherwise: parent
-    std::vector<int> parent_or_size;
-};
-
-string itobins(int n) {
-    if (n == 0) return "0";
-
-    string binary = "";
-    while (n > 0) {
-        binary += (n % 2) ? '1' : '0';
-        n /= 2;
-    }
-
-    reverse(binary.begin(), binary.end()); // Reverse to get the correct order
-    return binary;
-}
-
-string dtobx(int decimalNumber, int base) {
-    if (base < 2 || base > 36) {
-        return "Invalid base";
-    }
-
-    string result = "";
-    while (decimalNumber > 0) {
-        int remainder = decimalNumber % base;
-
-        // Convert remainder to corresponding character
-        if (remainder >= 10) {
-            result += 'A' + (remainder - 10);
-        } else {
-            result += '0' + remainder;
-        }
-
-        decimalNumber /= base;
-    }
-
-    // Reverse the string as the result is calculated in reverse order
-    reverse(result.begin(), result.end());
-
-    return result.empty() ? "0" : result;
-}
-
-ll ceildiv(ll n, ll d){
-    return((n+d-1)/d);
-}
-
-ll floordiv(ll n, ll d){
-    ll x = (n%d+d)%d;
-    return ((n-x)/d);
-}
-
-ll midpoint(ll L, ll R){
-    return (L+(R-L)/2);
-}
-
-ll lcm(ll a, ll b) {
-    return std::abs(a * b) / std::gcd(a, b);
-}
-
-
-int stringToBinary(const std::string& s, char charAsOne) {
-    int x = 0;
-    for (int j = 0; j < s.length(); j++) {
-        x = 2 * x + (s[j] == charAsOne);
-    }
-    return x;
-}
-
-//returns index of first element greater than or equal to target
-ll findGreaterEqual(vector<ll> sortedVector, ll target){
-    auto it = lower_bound(sortedVector.begin(), sortedVector.end(), target);
-    return it-sortedVector.begin();
-}
-
-//returns index of first element less than or equal to target
-//if all elements are greater than target returns -1
-//if all elements are smaller than target, returns last element
-ll findLessEqual(vector<ll> sortedVector, ll target){
-    auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
-    if(it != sortedVector.begin()){
-        --it;
-        if(*it<=target){
-            return it-sortedVector.begin()+1;
-        }
-    }
-    else{
-        return -1;
-    }
-}
-
-struct loc
-{
-    inline static ll x=0;
-    inline static ll y=0;
-    inline static char dir='r';
-    //loc::x to access or modify x
-};
-
-vector<ll> genAlphabetPlaceholder(){
-    vector<ll> f(26);
-    iota(f.begin(), f.end(), 0);
-    return f;
-}
-
-vector<char> genAlphabet(){
-    vector<char> alphabet(26);
-    iota(alphabet.begin(), alphabet.end(), 'a');
-    return alphabet;
-}
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+//C / A = B where each is a vector representing coefficients of polynomial including the x^0 coefficient i.e. the c in mx+c
+vector<long long> polynomialDivision(const vector<long long>& c, const vector<long long>& a) {
+    int n = a.size() - 1;  // Degree of A(x)
+    int m = c.size() - n - 1;  // Degree of B(x)
+    vector<long long> b(m + 1);
+    vector<long long> temp_c = c;  // Copy of c to modify during the process
+
+    for (int i = m; i >= 0; --i) {
+        b[i] = temp_c[i + n] / a[n];
+        for (int j = 0; j <= n; ++j) {
+            temp_c[i + j] -= b[i] * a[j];
+        }
+    }
+
+    return b;
 }
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+int main(){
+    ll N, M;
+    cin >> N >> M;
+    vll A(N+1);
+    cin >> A;
+    vll C(N+M+1);
+    cin >> C;
+    dbg(A);
+    dbg(C);
+    vll B(M+1);
+    B = polynomialDivision(C,A);
+    fx(B){
+        cout << x << " ";
     }
-    auto ans = solve(n, a);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }

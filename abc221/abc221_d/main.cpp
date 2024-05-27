@@ -17,22 +17,25 @@
 #include <deque>
 #include <numeric>
 #include <assert.h>
+#include <cassert>
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
+#include <iomanip>
 #include <unordered_set>
+#include <functional>
+#include <type_traits>
 #include <chrono>
 
 using namespace std;
 
-
-/*/---------------------------Looping helpers----------------------/*/
-#define rep(i,n) for(int i = 0; i < (n); ++i)
-#define rrep(i,n) for(int i = 1; i <= (n); ++i)
 #define REP(i, n) for (int i = 0; (i) < (int)(n); ++ (i))
 #define REP3(i, m, n) for (int i = (m); (i) < (int)(n); ++ (i))
 #define REP_R(i, n) for (int i = (int)(n) - 1; (i) >= 0; -- (i))
 #define REP3R(i, m, n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
+#define ALL(x) ::std::begin(x), ::std::end(x)
+#define ll long long
+#define sz(x) (int)(x).size()
 #define fo(from_0_to_non_incl_to) for(int i=0;i<from_0_to_non_incl_to;i++)
 //h CAREFUL if you put an expression as an argument it will give bugs, better assign expression to variable then put that in the foi() as argument
 #define foi(from,non_incl_to) for(int i=from;i<(non_incl_to);i++)
@@ -44,30 +47,34 @@ using namespace std;
 #define fa(x, dataStructure) for(auto x : dataStructure)
 #define fx(dataStructure) for(auto x : dataStructure)
 
-/*/---------------------------Abbreviations----------------------/*/
-#define ll long long
-#define sz(x) (int)(x).size()
-#define fi first
-#define sec second
-#define se second
-
-#define ALL(x) ::std::begin(x), ::std::end(x)
-#define all(a) a.begin(),a.end()
-#define rng(a) a.begin(),a.end()
-//#define gcd __gcd
 #define mp make_pair
 #define mt make_tuple
-#define pb push_back
-ll INF=LLONG_MAX;
+//Makes % get floor remainder (towards -INF) and make it always positive
+#define MOD(x,y) (x%y+y)%y
+// #define print(p) cout<<p<<endl
+#define fi first
+#define sec second
+#define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
+#define pra(a) {for(auto i: a) cout<<i<<endl;}
+#define prm(a) {for(auto i: a) pra(i) cout<<endl;}
+//#define itobin(x) bitset<32> bin(x)
+#define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
+#define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
+#define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
+#define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
+#define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
+#define setbits(decimalnumber) __builtin_popcount(decimalnumber)
+#define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
+#define string_pop_back(str) (str).pop_back()
+#define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
+#define rng(a) a.begin(),a.end()
+#define all(a) a.begin(),a.end()
 
-/*/---------------------------Data Structures----------------------/*/
 typedef pair<ll, ll> pl;
 typedef vector<long long> vll;
 typedef std::vector<std::vector<long long>> vvll;
 
-template<typename T> using vc = vector<T>;
-template<typename T> using vc = vector<T>;
-using vl = vc<ll>;
+#define pb push_back
 
 //max heap priority queue i.e. top() gives largest value
 typedef priority_queue<ll> maxpq;
@@ -75,7 +82,7 @@ typedef priority_queue<ll> maxpq;
 typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
 
 //multiset provides automatic ordering on insertion but unlike set, keeps duplicate/multiple items of same value
-//n.b. set also provides autoamtic ordering on insertion n.b. maps are also sorted automatically on insertion according to key order
+//n.b. set also provides autoamtic ordering on insertion
 //.count(x) O(num_of_x+logN)
 //.find(x) O(logN) -> so use find over count if possible
 //.insert(x) O(logN) -> inserts s.t. sorted order is maintained
@@ -89,33 +96,12 @@ typedef multiset<ll> msll;
 #define msmin(mymultiset) *mymultiset.begin()
 #define msmax(mymultiset) *mymultiset.rbegin()
 
-/*/---------------------------Misc----------------------/*/
-//Makes % get floor remainder (towards -INF) and make it always positive
-#define MOD(x,y) (x%y+y)%y
-// #define print(p) cout<<p<<endl
-#define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
-#define pra(a) {for(auto i: a) cout<<i<<endl;}
-#define prm(a) {for(auto i: a) pra(i) cout<<endl;}
-#define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
 
-/*/---------------------------Base Conversions----------------------/*/
-//#define itobin(x) bitset<32> bin(x)
-#define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
-#define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
-#define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
-#define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
-
-/*/---------------------------Bits----------------------/*/
-#define setbits(decimalnumber) __builtin_popcount(decimalnumber)
+ll INF=LLONG_MAX;
 
 
-/*/---------------------------Strings----------------------/*/
-#define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
-#define string_pop_back(str) (str).pop_back()
-#define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
-
-/*/---------------------------Custom Hash----------------------/*/
 // gp_hash_table<long long, int, custom_hash> safe_hash_table;
+
 
 struct custom_hash {
     static uint64_t splitmix64(uint64_t x) {
@@ -177,7 +163,7 @@ void setIO(string name = "")
     }
 }
 
-/*/---------------------------Custom library - most used only----------------------/*/
+
 //disjoint set union/union find
 //consider using coordinate compression!
 struct dsu {
@@ -249,6 +235,8 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
+
+
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
 #define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
@@ -257,6 +245,12 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 #define dbg(x) ((void)0)
 #define dbgif(cond, x) ((void)0)
 #endif
+
+template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.begin(), vec.end()), vec.erase(unique(vec.begin(), vec.end()), vec.end()); return vec; }
+//index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
+template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
+//index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
+template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
 
 ll midpoint(ll L, ll R){
     return (L+(R-L)/2);
@@ -300,87 +294,122 @@ auto floordiv(T n, U d) -> decltype(n / d + 0) {
     }
 }
 
-template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.begin(), vec.end()), vec.erase(unique(vec.begin(), vec.end()), vec.end()); return vec; }
-//index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
-template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
-//index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
-template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
-
-/*/---------------------------Useful Graph Visualizer----------------------/*/
+//Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-//h INSERT CODE SNIPPETS HERE
-/*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
-
-
-/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
 //n.b. it is a data type so declare variablesas: mint x;
 // to convert any other data type such as int or ll to mint, do: mint(x);
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 
-map<ll,pair<ll,ll>> mm;
+// int main() {
+//     std::ios::sync_with_stdio(false);
+//     setIO("");
+//     std::cin.tie(nullptr);
+//     // sets precision of output of floating point numbers to x number of decimal places
+//     cout << fixed << setprecision(11);
+//     unordered_map<long long, int, custom_hash> safe_map;
+//     int N;
+//     std::cin >> N;
+//     std::vector<long long> A(N), B(N);
+//     REP (i, N) {
+//         std::cin >> A[i] >> B[i];
+//     }
+//     /* genprimes(1e5); */
 
-long long solve(int N, const std::vector<long long> &T, const std::vector<long long> &X, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    ll ans = 0;
-    // vvll dp((ll)1e5+1, vll(5,0));
-    ll lmax = (ll)1e5+3;
-    vvll dp(lmax, vll(5,0));
-    // dbg(dp);
-    foi(0,lmax){
-        foj(0,5){
-            // if(j>i) continue;
-            if(j<=i && j-1>=0&&i+1<=lmax-1) dp[i+1][j-1]=max(dp[i+1][j-1],dp[i][j]);
-            if(j<=i && i+1<=lmax-1) dp[i+1][j]=max(dp[i+1][j],dp[i][j]);
-            if(j<=i && j+1<=4&&i+1<=lmax-1) dp[i+1][j+1]=max(dp[i+1][j+1],dp[i][j]);
-        }
-        if(i+1<=lmax-1 && mm.find(i+1) != mm.end()){
-            // cerr << "reached" << endl;
-            dp[i+1][mm[i+1].first]+=mm[i+1].second;
-            // dbg(dp);
-        }
-    }
-    fx(dp[lmax-1]){
-        ans=max(ans,x);
-    }
-    return ans;
+//     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+//     for (int i = 0; i < n; i++) {
+//         if (!v[i])
+//             bfs(i);
+//     }
     
-}
+//     //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+//     wasd(
+//         //cout << "Use this for problems where you have to go up, down, left right" << endl;
+//     ) */
+//     return 0;
+// }
+// #define fi first
+// #define se second
+// #define rep(i,n) for(int i = 0; i < (n); ++i)
+// #define rrep(i,n) for(int i = 1; i <= (n); ++i)
+// template<typename T> using vc = vector<T>;
+// template<typename T> using vc = vector<T>;
+// using vl = vc<ll>;
+// struct Solver {
+//     void solve() {
+//         int n;
+//         scanf("%d",&n);
+//         map<int,int> mp;
+//         rep(i,n) {
+//             int a,b;
+//             scanf("%d%d",&a,&b);
+//             //at day/time t -> y players joined/left
+//             mp[a]++;
+//             mp[a+b]--;
+//         }
+//         dbg(mp);
+//         int simulPlayers = 0, pre = 0;
+//         vl ans(n+1);
+//         dbg(ans);
+//         cerr << endl;
+//         for (auto p : mp) {
+//             //ans[simulPlayers] is number of days on which "simulPlayers" number of players playing together
+//             ans[simulPlayers] += p.fi-pre; //add time difference from now to when last player joined/left -> as this indicates the number of days when same number of players were logged in
+//             dbg(ans);
+//             simulPlayers += p.se; //set next number of players playing simultaneously to modify to be += the number of players joined/left at this time
+//             pre = p.fi; //pre set to last time considered when players joined/left
+//             dbg(simulPlayers);
+//             dbg(pre);
+//             cerr << endl;
+//         }
+//         ans.erase(ans.begin());
+//         cout<<ans<<endl;
+//         // fx(ans){
+//         //     cout << x << " ";
+//         // }
+//     }
+//     };
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    std::cin >> N;
-    std::vector<long long> T(N), X(N), A(N);
-    REP (i, N) {
-        std::cin >> T[i] >> X[i] >> A[i];
-        mm[T[i]]=mp(X[i],A[i]);
+//     int main() {
+//     int ts = 1;
+//     // scanf("%d",&ts);
+//     rrep(ti,ts) {
+//         Solver solver;
+//         solver.solve();
+//     }
+//     return 0;
+// }
+
+int main(){
+    ll N;
+    cin >> N;
+    map<ll,ll> mp;
+    foi(0,N){
+        ll a,b;
+        cin >> a >> b;
+        //at day key, value players joined or left
+        mp[a]++;
+        mp[a+b]--;
     }
-    // dbg(mm);
-    // dbg(T);
-    // dbg(X);
-    // dbg(A);
-    auto ans = solve(N, T, X, A);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    dbg(mp);
+    ll prev=0;
+    ll i=0;
+    //value = number of days when index players are logged in
+    vll ans(N+1);
+    fx(mp){
+        ll k,v;
+        k = x.first;
+        v = x.second;
+        ans[i]+=k-prev;
+        prev=k;
+        i+=v;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    dbg(ans);
+    foi(1,N+1){
+        cout << ans[i] << " ";
+    }
+
     return 0;
 }
