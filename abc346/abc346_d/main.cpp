@@ -996,44 +996,49 @@ vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
 vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
 vector<int> dy_wasd = {0,0,1,-1};
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-long long solve(int N, std::string S, const std::vector<long long> &C) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
+ll con=15;
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
     int N;
-    std::string S;
-    std::cin >> N;
-    std::vector<long long> C(N);
-    std::cin >> S;
-    REP (i, N) {
-        std::cin >> C[i];
-    }
-    auto ans = solve(N, S, C);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-    return 0;
+    string S;
+    // long L[con][2],R[con][2];
+	cin>>N>>S;
+    vll C(N);
+    vll L(N), R
+	for(int i=0;i<N;i++)cin>>C[i];
+    dbg(C);
+	for(int i=0;i<N;i++)
+	{
+		L[i+1][0]=L[i][1];
+		L[i+1][1]=L[i][0];
+		L[i+1]['1'-S[i]]+=C[i];
+	}
+	for(int i=N;i--;)
+	{
+		R[i][0]=R[i+1][1];
+		R[i][1]=R[i+1][0];
+		R[i]['1'-S[i]]+=C[i];
+	}
+	long ans=1e18;
+	for(int i=0;i+1<N;i++)
+	{
+		ans=min(ans,L[i+1][0]+R[i+1][0]);
+		ans=min(ans,L[i+1][1]+R[i+1][1]);
+	}
+	cout<<ans+10<<endl;
 }

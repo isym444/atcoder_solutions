@@ -115,29 +115,47 @@ using ll = long long;
 //     cout << ans << endl;
 //     return 0;
 // }
+ll midpoint(ll L, ll R){
+    return (L+(R-L)/2);
+}
 
 int main() {
     ll n;
     cin >> n;
     const ll M = 1e8;
     vector<long long> A(n);
-    for(int i = 0; i<n; i++){
-        ll temp;
-        cin >> temp;
-        A[i] = temp;
-    }
+    cin >> A;
     sort(A.begin(), A.end());
-    dbg(A);
+    // dbg(A);
     ll ans = 0;
     for(auto x:A){
+        //every element in A will contribute n-1 to sum (think it through - will contribute most when it itself is "i" in i&j)
         ans+=x*(n-1);
     }
-    dbg(ans);
+    // dbg(ans);
     ll r = n-1;
+    // for(int i = 0; i<n; i++){
+    //     while(r>0&&A[i]+A[r]>=M) r--;
+    //     dbg(make_tuple(i,r));
+    //     ans-=(n-1-max((ll)i,r))*M;
+    // }
     for(int i = 0; i<n; i++){
-        while(r>0&&A[i]+A[r]>=M) r--;
-        dbg(make_tuple(i,r));
-        ans-=(n-1-max((ll)i,r))*M;
+        ll target = M-A[i];
+        // dbg(target);
+        ll l,r;
+        l=i+1;
+        r=n-1;
+        ll ans2=-1;
+        while(l<=r){
+            ll m = midpoint(l,r);
+            // dbg(m);
+            if(A[m]>=target) ans2=m,r=m-1;
+            else l=m+1;
+        }
+        // dbg(make_tuple(i,ans2,ans2-i));
+        // dbg(ans2);
+        // dbg(ans2-i);
+        if(ans2!=-1) ans-=M*(n-ans2);
     }
     cout << ans << endl;
     return 0;

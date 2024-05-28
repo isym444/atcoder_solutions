@@ -1844,43 +1844,85 @@ vector<int> dy_wasd = {0,0,1,-1};
 // to convert any other data type such as int or ll to mint, do: mint(x);
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-using mint = modint998244353;
 
 constexpr long long MOD = 998244353;
-long long solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+using mint = modint998244353;
+
+// int main() {
+//     int N;
+//     cin >> N;
+//     vector<int> A(N);
+//     cin >> A;
+
+//     mint ret = 0;
+
+//     mint coeffs = 0;
+
+//     for(int i = N-1; i>=0; i--) {
+//         ret += A[i] * mint(i);
+//         ret += coeffs * A[i];
+//         dbg(make_tuple(i, A[i],coeffs.val()));
+//         dbg(to_string(A[i]));
+//         coeffs += mint(10).pow(std::to_string(A[i]).size());
+//         dbg(coeffs.val());
+//         cerr << endl;
+//     }
+
+//     cout << ret.val()+10 << '\n';
+// }
+
+// int main() {
+//     int n;
+//     cin >> n;
+//     vector<int> a(n);
+//     cin >> a;
+//     dbg(a);
+//     mint ans;
+//     //number of times contributing to "units" i.e. right most column
+//     foi(0,n) ans += mint(a[i])*i;
+//     dbg(ans.val());
+
+//     //b holds the units a number will shift any number placed to its left by
+//     vector<ll> b(n);
+//     foi(0,n) {
+//         b[i] = 1;
+//         int x = a[i];
+//         while (x) b[i] *= 10, x /= 10;
+//     }
+//     dbg(b);
+
+//     //s holds the cumulative decimal shifting contributions from numbers to the right of a particular number
+//     mint s = 0;
+//     for (int i = n-1; i >= 0; i--) {
+//         ans += s*a[i];
+//         s += b[i];
+//     }
+
+//     cout << ans.val()+10 << endl;
+//     return 0;
+// }
+
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    mint ans=0;
+    //contributions in units position
+    foi(0,N){
+        ans+=A[i]*mint(i);
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    vll disp(N);
+    foi(0,N){
+        disp[i]=pow(10,to_string(A[i]).length());
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    ll cumdisp=0;
+    //contributions by displacements
+    for(int i = N-1; i>=0; i--){
+        ans+=A[i]*mint(cumdisp);
+        cumdisp+=disp[i];
+    }
+    cout << ans.val() << endl;
     return 0;
 }
