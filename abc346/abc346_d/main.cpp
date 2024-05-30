@@ -1009,7 +1009,7 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-// ll con=15;
+ll con=15;
 // int main()
 // {
 // 	ios::sync_with_stdio(false);
@@ -1019,6 +1019,7 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 //     string S;
 //     // long L[con][2],R[con][2];
 // 	cin>>N>>S;
+//     dbg(N);
 //     vll C(N);
 //     //L holds cost to switch numbers s.t. get 010101010/1010 pattern starting from left and ending with 0 or 101010101/010101 pattern starting from left and ending with 1
 //     vvll L(N+1, vll(2));
@@ -1026,35 +1027,41 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 //     vvll R(N+1, vll(2));
 //     //holds costs of switching each number in S
 //     cin >> C;
-//     dbg(C);
+//     // dbg(C);
 // 	for(int i=0;i<N;i++)
 // 	{
 //         //swap and propagate the cost of digits to the left changing
 // 		L[i+1][0]=L[i][1];
 // 		L[i+1][1]=L[i][0];
 //         //check if rightmost digit needs changing and thus addition of current index cost
-// 		L[i+1]['1'-S[i]]+=C[i];
+// 		// L[i+1]['1'-S[i]]+=C[i];
+//                 if(S[i]=='1') L[i+1][0]+=C[i];
+//         if(S[i]=='0') L[i+1][1]+=C[i];
 // 	}
-//     dbg(L);
-// 	for(int i=N;i--;)
+//     // dbg(L);
+// 	for(int i=N-1;i>=0;i--)
 // 	{
+//         dbg(i);
 // 		R[i][0]=R[i+1][1];
 // 		R[i][1]=R[i+1][0];
-// 		R[i]['1'-S[i]]+=C[i];
+//                 if(S[i]=='1') R[i][0]+=C[i];
+//         if(S[i]=='0') R[i][1]+=C[i];
+// 		// R[i]['1'-S[i]]+=C[i];
 // 	}
-//     dbg(R);
+//     // dbg(R);
 // 	ll ans=1e18;
 // 	for(int i=0;i+1<N;i++)
 // 	{
 //         //brute force checking which of all combinations results in lowest cost
 // 		ans=min(ans,L[i+1][0]+R[i+1][0]);
-//         dbg((L[i+1][0]));
-//         dbg(R[i+1][0]);
-//         dbg(ans);
+//         // dbg((L[i+1][0]));
+//         // dbg(R[i+1][0]);
+//         // dbg(ans);
 // 		ans=min(ans,L[i+1][1]+R[i+1][1]);
-//         dbg((L[i+1][1]+R[i+1][1]));
-//         dbg(ans);
+//         // dbg((L[i+1][1]+R[i+1][1]));
+//         // dbg(ans);
 // 	}
+    
 // 	cout<<ans<<endl;
 // }
 
@@ -1074,22 +1081,29 @@ int main(){
         L[i+1][0]=L[i][1];
         if(s[i]=='1') L[i+1][0]+=c[i];
         if(s[i]=='0') L[i+1][1]+=c[i];
+        // L[i+1]['1'-s[i]]+=c[i];
     }
-    for(int i = n; i>=1; i--){
-        R[i-1][1]=R[i][0];
-        R[i-1][0]=R[i][1];
-        if(s[i-1]=='1') R[i-1][0]+=c[i-1];
-        if(s[i-1]=='0') R[i-1][1]+=c[i-1];
+    for(int i = n-1; i>=0; i--){
+        R[i][1]=R[i+1][0];
+        R[i][0]=R[i+1][1];
+        if(s[i]=='1') R[i][0]+=c[i];
+        if(s[i]=='0') R[i][1]+=c[i];
+        // R[i]['1'-s[i]]+=c[i];
     }
     dbg(L);
     dbg(R);
-    ll ans=0;
-    foi(0,n+1){
-        ll temp;
+    ll ans=INF;
+    for(int i = 0; i+1<n; i++){
+        ll temp=0;
         temp+=L[i+1][0];
         temp+=R[i+1][0];
-        ans=m
+        ans=min(ans,temp);
+        temp=0;
+        temp+=L[i+1][1];
+        temp+=R[i+1][1];
+        ans=min(ans,temp);
     }
+    cout << ans << endl;
 
     return 0;
 }
