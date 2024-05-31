@@ -817,13 +817,15 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-long long solve(int N, long long M, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -837,8 +839,23 @@ int main() {
     REP (i, N) {
         std::cin >> A[i];
     }
-    auto ans = solve(N, M, A);
-    std::cout << ans << '\n';
+    vll B(N);
+    vvll dp(M+1,vll(N+1,-INF));
+    dp[0][0]=0;
+    foi(0,M+1){
+        foj(0,N+1){
+            if(dp[i][j]!=-INF){
+                if(i+1<M+1 && j+1<N+1) dp[i+1][j+1]=max(dp[i+1][j+1],dp[i][j]+A[j]*(i+1));
+                if(j+1<N+1) dp[i][j+1]=max(dp[i][j+1],dp[i][j]);
+            }
+        }
+    }
+    dbg(dp);
+    ll ans=-INF;
+    foi(0,N+1){
+        ans=max(ans,dp[M][i]);
+    }
+    cout << ans << endl;
 
     /* genprimes(1e5); */
 
