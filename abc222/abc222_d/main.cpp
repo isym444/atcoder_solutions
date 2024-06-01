@@ -253,68 +253,6 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
-#ifdef isym444_LOCAL
-const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
-#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
-#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
-#else
-#define dbg(x) ((void)0)
-#define dbgif(cond, x) ((void)0)
-#endif
-
-ll midpoint(ll L, ll R){
-    return (L+(R-L)/2);
-}
-
-template<typename T, typename U>
-auto ceildiv(T n, U d) -> decltype(n / d + 0) {
-    static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "ceildiv requires arithmetic types");
-
-    if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
-        // Handle case where either n or d is a floating-point number
-        return static_cast<decltype(n / d + 0)>(std::ceil(n / static_cast<double>(d)));
-    } else {
-        // Handle case where both n and d are integers
-        return (n + d - 1) / d;
-    }
-}
-
-/* ll ceildiv(ll n, ll d){
-return((n+d-1)/d);
-}
-*/
-/* ll floordiv(ll n, ll d){
-ll x = (n%d+d)%d;
-return ((n-x)/d);
-}
- */
-template<typename T, typename U>
-auto floordiv(T n, U d) -> decltype(n / d + 0) {
-    static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "floordiv requires arithmetic types");
-
-    if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
-        // Handle case where either n or d is a floating-point number
-        // Perform the division as floating-point operation and use std::floor to round down
-        return static_cast<decltype(n / d + 0)>(std::floor(n / static_cast<double>(d)));
-    } else {
-        // Handle case where both n and d are integers
-        // Original logic for floor division with integers
-        T x = (n % d + d) % d;
-        return (n - x) / d;
-    }
-}
-
-template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.begin(), vec.end()), vec.erase(unique(vec.begin(), vec.end()), vec.end()); return vec; }
-//index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
-template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
-//index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
-template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
-
-/*/---------------------------Useful Graph Visualizer----------------------/*/
-//https://csacademy.com/app/graph_editor/
-
-//h INSERT CODE SNIPPETS HERE
-/*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 #if __cplusplus >= 202002L
 #include <bit>
@@ -433,6 +371,53 @@ template <class T> using to_unsigned_t = typename to_unsigned<T>::type;
 
 }  // namespace internal
 
+
+template <class T> struct fenwick_tree {
+    using U = internal::to_unsigned_t<T>;
+
+  public:
+    // Declare fenwick_tree (N elements initialized to 0) by doing:
+    // fenwick_tree< long  long > ft (N);
+    // fenwick tree is held in a vector<T> called data
+    fenwick_tree() : _n(0) {}
+    explicit fenwick_tree(int n) : _n(n), data(n) {}
+
+    // a is 0-indexed
+    // use add to add array item 'x' to index 'a' in Fenwick tree
+    // n.b. index 'a' in Fenwick tree represents a range of responsibility
+    // i.e. holds a prefix sum for a particular range of original array
+    // this range of responsibility is determined by index 'a's binary representation
+    // it is responsible for E elements below it
+    // where E is the index of its LSB where index is from R->L of binary number
+    // e.g. 11010 LSB index is 2
+    void add(int p, T x) {
+        assert(0 <= p && p < _n);
+        p++;
+        while (p <= _n) {
+            data[p - 1] += U(x);
+            p += p & -p;
+        }
+    }
+
+    // Get sum over range [l, r), where l is 0-indexed
+    T sum(int l, int r) {
+        assert(0 <= l && l <= r && r <= _n);
+        return sum(r) - sum(l);
+    }
+
+  private:
+    int _n;
+    std::vector<U> data;
+
+    U sum(int r) {
+        U s = 0;
+        while (r > 0) {
+            s += data[r - 1];
+            r -= r & -r;
+        }
+        return s;
+    }
+};
 
 namespace internal {
 
@@ -864,6 +849,7 @@ using is_dynamic_modint_t = std::enable_if_t<is_dynamic_modint<T>::value>;
 }  // namespace internal
 
 
+
 /*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
 //n.b. it is a data type so declare variablesas: mint x;
 // to convert any other data type such as int or ll to mint, do: mint(x);
@@ -880,19 +866,19 @@ int main() {
     cin >> N;
     vector<int> A(N), B(N);
     cin >> A >> B;
-    // int MAX = 3005;
-    int MAX = 10;
-    vector<vector<ll>> dp(N + 1, vector<ll>(MAX + 1, 0));
+    int MAX = 3005;
+    // int MAX = 10;
+    vector<vector<mint>> dp(N + 1, vector<mint>(MAX + 1, mint(0)));
     dp[0][0] = 1;
-    dbg(dp);
+    // dbg(dp);
     foi(0,N+1) {
         foj(0,MAX) dp[i][j + 1] += dp[i][j];
         if (i+1 < N+1) foj(A[i], B[i]+1) dp[i + 1][j] += dp[i][j];
     }
-    fx(dp){
-        dbg(x);
-    }
+    // fx(dp){
+        // dbg(x);
+    // }
     // dbg(dp);
 
-    cout << dp[N][MAX]+10 << "\n";
+    std::cout << dp[N][MAX].val() << "\n";
 }

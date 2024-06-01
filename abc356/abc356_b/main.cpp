@@ -324,65 +324,52 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 
-// Weighted UnionFind
-template <class S> struct WeightedUnionFind {
-    //par for parent i.e. representative node of set (initially itself), size of set a node belongs to (only if node the root of that set) but n.b. count() returns appropriately
-    std::vector<int> par, size;
-    //pot stores the potential/weight of each element relative to the root of its set i.e. the distance to the root of the set for each node (given the weights of the edges)
-    std::vector<S> pot;
-    WeightedUnionFind(int N = 0) : par(N), size(N, 1), pot(N) {
-        std::iota(par.begin(), par.end(), 0);
-    }
-    //finds the root of the set containing x
-    int find(int x) {
-        if (par[x] != x) {
-            int r = find(par[x]);
-            pot[x] = pot[x] + pot[par[x]], par[x] = r;
-        }
-        return par[x];
-    }
-    //unites sets containing s & t with a relative difference rel_diff and checks for contradictions
-    bool unite(int s, int t, S rel_diff) {
-        // Relate s and t by f[t] = f[s] + rel_diff
-        // Return false if contradiction happens.
-        rel_diff = rel_diff + weight(s) + (-weight(t));
-        // If already in the same set, check for a contradiction in pre-existing weights and if so, return false else return true
-        if ((s = find(s)) == (t = find(t))) return rel_diff == 0;
-        if (size[s] < size[t]) std::swap(s, t), rel_diff = -rel_diff;
-        par[t] = s, size[s] += size[t], pot[t] = rel_diff;
-        return true;
-    }
-    //returns weight of x relative to root of its set
-    S weight(int x) { return find(x), pot[x]; }
-    //returns difference in potential between t and s N.B. that ORDER MATTERS e.g. if want coordinates, put the node at 0,0 as first argument i.e. s
-    S diff(int s, int t) { return weight(t) + (-weight(s)); } // return f[t] - f[s]
-    //returns size of set containing x
-    int count(int x) { return size[find(x)]; }
-    //checks if s and t are in same set
-    bool same(int s, int t) { return find(s) == find(t); }
-};
-
-
-int main() {
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
+const std::string YES = "Yes";
+const std::string NO = "No";
+int main(){
+    // sets precision of output of floating point numbers to x number of decimal places
     int N, M;
-    cin >> N >> M;
-    WeightedUnionFind<ll> dsux(N);
-    WeightedUnionFind<ll> dsuy(N);
+    std::cin >> N >> M;
+    std::vector<long long> A(M);
+    std::vector<std::vector<long long> > X(N, std::vector<long long>((M)));
+    foi(0, M) {
+        std::cin >> A[i];
+    }
+    vll nut(M,0);
+    foi(0, N) {
+        foj(0, M) {
+            std::cin >> X[i][j];
+            nut[j]+=X[i][j];
+            // if(X[i][j]<A[j]){
+            //     cout << "No" << endl;
+            //     return 0;
+            // }
+
+        }
+    }
     foi(0,M){
-        ll a,b,x,y;
-        cin >> a >> b >> x >> y;
-        a--;
-        b--;
-        dsux.unite(a,b,x);
-        dsuy.unite(a,b,y);
-    }
-    foi(0,N){
-        if(dsux.same(0,i)){
-            cout << dsux.diff(0,i) << " ";
-            cout << dsuy.diff(0,i) << endl;
-        }
-        else{
-            cout << "undecidable" << endl;
+        if(nut[i]<A[i]){
+            cout << "No" << endl;
+            return 0;
         }
     }
+    cout << "Yes" << endl;
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
+    return 0;
+
 }

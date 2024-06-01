@@ -324,65 +324,41 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 
-// Weighted UnionFind
-template <class S> struct WeightedUnionFind {
-    //par for parent i.e. representative node of set (initially itself), size of set a node belongs to (only if node the root of that set) but n.b. count() returns appropriately
-    std::vector<int> par, size;
-    //pot stores the potential/weight of each element relative to the root of its set i.e. the distance to the root of the set for each node (given the weights of the edges)
-    std::vector<S> pot;
-    WeightedUnionFind(int N = 0) : par(N), size(N, 1), pot(N) {
-        std::iota(par.begin(), par.end(), 0);
-    }
-    //finds the root of the set containing x
-    int find(int x) {
-        if (par[x] != x) {
-            int r = find(par[x]);
-            pot[x] = pot[x] + pot[par[x]], par[x] = r;
-        }
-        return par[x];
-    }
-    //unites sets containing s & t with a relative difference rel_diff and checks for contradictions
-    bool unite(int s, int t, S rel_diff) {
-        // Relate s and t by f[t] = f[s] + rel_diff
-        // Return false if contradiction happens.
-        rel_diff = rel_diff + weight(s) + (-weight(t));
-        // If already in the same set, check for a contradiction in pre-existing weights and if so, return false else return true
-        if ((s = find(s)) == (t = find(t))) return rel_diff == 0;
-        if (size[s] < size[t]) std::swap(s, t), rel_diff = -rel_diff;
-        par[t] = s, size[s] += size[t], pot[t] = rel_diff;
-        return true;
-    }
-    //returns weight of x relative to root of its set
-    S weight(int x) { return find(x), pot[x]; }
-    //returns difference in potential between t and s N.B. that ORDER MATTERS e.g. if want coordinates, put the node at 0,0 as first argument i.e. s
-    S diff(int s, int t) { return weight(t) + (-weight(s)); } // return f[t] - f[s]
-    //returns size of set containing x
-    int count(int x) { return size[find(x)]; }
-    //checks if s and t are in same set
-    bool same(int s, int t) { return find(s) == find(t); }
-};
-
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
+constexpr long long MOD = 998244353;
+long long solve(long long N, long long M) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
-    int N, M;
-    cin >> N >> M;
-    WeightedUnionFind<ll> dsux(N);
-    WeightedUnionFind<ll> dsuy(N);
-    foi(0,M){
-        ll a,b,x,y;
-        cin >> a >> b >> x >> y;
-        a--;
-        b--;
-        dsux.unite(a,b,x);
-        dsuy.unite(a,b,y);
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N, M;
+    std::cin >> N >> M;
+    auto ans = solve(N, M);
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    foi(0,N){
-        if(dsux.same(0,i)){
-            cout << dsux.diff(0,i) << " ";
-            cout << dsuy.diff(0,i) << endl;
-        }
-        else{
-            cout << "undecidable" << endl;
-        }
-    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
+    return 0;
 }
