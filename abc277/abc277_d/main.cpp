@@ -818,27 +818,45 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, long long M, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+#define rep(i,n) for(int i=0; i<(int)(n); i++)
+using i64 = int64_t;
+
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    long long M;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    std::cin >> M;
-    REP (i, N) {
-        std::cin >> A[i];
+    ll N,M;
+    cin >> N >> M;
+    vector<ll> A(N);
+    cin >> A;
+    sort(A.begin(),A.end());
+    dbg(A);
+    dsu dsu(N);
+    rep(i,N-1) if(A[i+1] - A[i] <= 1) dsu.merge(i, i+1);
+    if(A[N-1] == M-1 && A[0] == 0) dsu.merge(N-1, 0);
+    i64 sum = 0;
+    rep(i,N) sum += A[i];
+    dbg(sum);
+    i64 ans = sum;
+    for(auto& g : dsu.groups()){
+        dbg(g);
+        i64 gsum = 0;
+        for(int v : g) gsum += A[v];
+        ans = min(ans, sum - gsum);
     }
-    auto ans = solve(N, M, A);
-    std::cout << ans << '\n';
+    cout << ans+1 << endl;
+    
+    
+    // cout << ans << endl;
 
     /* genprimes(1e5); */
 
