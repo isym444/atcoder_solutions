@@ -789,27 +789,64 @@ bool isPalindrome(long long n) {
 
     return original == reversed;
 }
-
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-long long solve(long long X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
+#define rep(i, n) for (int i = 0; i < (n); ++i)
+#define repp(i, a, b) for (int i = (a); i < (b); ++i)
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
     long long X;
     std::cin >> X;
-    auto ans = solve(X);
-    std::cout << ans << '\n';
+    // vvll col;
+    set<vector<ll>> col;
+    for(int initial = 1; initial<=9; initial++){
+        for(int dif = -9; dif<=9; dif++){
+            int digit = initial;
+            vll temp={};
+            for(int len = 1; len<=18; len++){
+                temp.pb(digit);
+                // col.pb(temp);
+                col.insert(temp);
+                digit+=dif;
+                if(digit>9||digit<0) break;
+            }
+        }
+    }
+    dbg(col.size());
+    vector<ll> lcol;
+    fx(col){
+        // dbg(x);
+        ll temp=0;
+        for(auto y:x){
+            temp*=10;
+            temp+=y;
+        }
+        lcol.pb(temp);
+    }
+    sort(lcol.begin(), lcol.end());
+    dbg(lcol);
+    dbg(lcol.size());
+    fx(lcol){
+        if(x>=X){
+            cout << x << endl;
+            return 0;
+        }
+    }
 
+    /*
+    X is either an arithmetic number itself or you can make the next biggest one by increasing digits from R->L?
+     */
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

@@ -327,12 +327,6 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 const std::string YES = "Yes";
 const std::string NO = "No";
-auto solve(int N, long long S, const std::vector<long long> &a, const std::vector<long long> &b) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -349,12 +343,46 @@ int main() {
     REP (i, N) {
         std::cin >> a[i] >> b[i];
     }
-    auto ans = solve(N, S, a, b);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
 
-
+    dbg(a);
+    vvll dp(N+1,vll(S+1,0));
+    dp[0][0]=1;
+    foi(0,N+1){
+        foj(0,S+1){
+            if(dp[i][j]==1){
+                if(i+1<N+1){
+                    if(j+a[i]<S+1) dp[i+1][j+a[i]]=1;
+                    if(j+b[i]<S+1) dp[i+1][j+b[i]]=1;
+                }
+            }
+        }
+    }
+    if(dp[N][S]==0){
+        cout << "No" << endl;
+        return 0;
+    }
+    
+    cout << "Yes" << endl;
+    string ans;
+    dbg(S);
+    dbg(dp);
+    fx(dp){
+        dbg(x);
+    }
+    for(ll i = N; i>0; i--){
+        if(dp[i-1][S-a[i-1]]==1){
+            ans.append("H");
+            S-=a[i-1];
+        }
+        else{
+            ans.append("T");
+            S-=b[i-1];
+        }
+    }
+    dbg(ans);
+    reverse(all(ans));
+    dbg(ans);
+    cout << ans << endl;
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */
 

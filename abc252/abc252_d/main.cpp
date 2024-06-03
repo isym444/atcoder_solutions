@@ -782,17 +782,19 @@ bool isPalindrome(long long n) {
 
     return original == reversed;
 }
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-long long solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -804,8 +806,37 @@ int main() {
     REP (i, N) {
         std::cin >> A[i];
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
+    dbg(A);
+    map<ll,ll> m;
+    for(auto x: A){
+        m[x]++;
+    }
+    dbg(m);
+    vll fv;
+    for(auto x:m){
+        fv.push_back(x.second);
+    }
+    N=fv.size();
+    vvll dp(N+1,vll(4,0));
+    dp[0][0]=1;
+    foi(0,N+1){
+        foj(0,4){
+            if(i+1<N+1){
+                dp[i+1][j]=dp[i][j];
+            }
+            }
+        foj(0,4){
+            if(i+1<N+1 && j+1<4){
+                // dbg(make_pair(dp[i][j],A[i]));
+                // dbg(dp[i+1][j+1]);
+                dp[i+1][j+1]=dp[i+1][j+1]+(dp[i][j]*fv[i]);
+                // dp[i+1][j+1]=5;
+        }
+
+        }
+    }
+    dbg(dp);
+    cout << dp[N][3] << endl;
 
     /* genprimes(1e5); */
 

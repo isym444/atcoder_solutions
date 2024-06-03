@@ -1701,12 +1701,21 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(long long N, std::string S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+string integerToString(ll num){
+    return to_string(num);
 }
+ll stringToInteger(string s){
+    return stoll(s);
+}
+
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1717,8 +1726,29 @@ int main() {
     long long N;
     std::string S;
     std::cin >> N >> S;
-    auto ans = solve(N, S);
-    std::cout << ans << '\n';
+    sort(S.rbegin(), S.rend());
+    string maxpos = S;
+    ll im = stringToInteger(maxpos);
+    sort(all(S));
+    ll i=0;
+    ll ans = 0;
+    while(i*i<=im){
+        string temp = integerToString(i*i);
+        dbg(temp);
+        if(temp.length()<S.length()){
+            ll concat = S.length()-temp.length();
+            temp.insert(0,concat,'0');
+        }
+        sort(all(temp));
+        if(temp==S){
+            ans++;
+            cerr << "answer: ";
+            dbg(temp);
+        }
+        i++;
+
+    }
+    cout << ans << endl;
 
     /* genprimes(1e5); */
 

@@ -20,6 +20,8 @@
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
+#include <set>
+#include <unordered_set>
 
 using namespace std;
 
@@ -72,47 +74,33 @@ template<class T> istream& operator >> (istream &is, vector<T>& V) {
         is >> e;
     return is;
 }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec);
+template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr);
+template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec);
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const pair<T, U> &pa);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec);
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa);
+template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp);
+template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp);
+template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl);
 
-template<typename CharT, typename Traits, typename T>
-ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, T const &val) {
-    return (out << val << " ");
-}
-template<typename CharT, typename Traits, typename T1, typename T2>
-ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, pair<T1, T2> const &val) {
-    return (out << "(" << val.first << "," << val.second << ") ");
-}
-template<typename CharT, typename Traits, template<typename, typename...> class TT, typename... Args>
-ostream& operator << (std::basic_ostream<CharT, Traits> &out, TT<Args...> const &cont) {
-    out << "[ ";
-    for(auto&& elem : cont) _containerprint(out, elem);
-    return (out << "]");
-}
-template<class L, class R> ostream& operator << (ostream& out, pair<L, R> const &val){
-    return (out << "(" << val.first << "," << val.second << ") ");
-}
-template<class P, class Q = vector<P>, class R = less<P> > ostream& operator << (ostream& out, priority_queue<P, Q, R> const& M){
-    static priority_queue<P, Q, R> U;
-    U = M;
-    out << "{ ";
-    while(!U.empty())
-        out << U.top() << " ", U.pop();
-    return (out << "}");
-}
-template<class P> ostream& operator << (ostream& out, queue<P> const& M){
-    static queue<P> U;
-    U = M;
-    out << "{ ";
-    while(!U.empty())
-        out << U.front() << " ", U.pop();
-    return (out << "}");
-}
-template<typename CharT, typename Traits>
-ostream& operator << (std::basic_ostream<CharT, Traits> &out, vector<vector<ll>> const &matrix) {
-    for (auto &row : matrix) {
-        out << row << "\n";
-    }
-    return out;
-}
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec) { os << '['; for (auto v : vec) os << v << ','; os << ']'; return os; }
+template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr) { os << '['; for (auto v : arr) os << v << ','; os << ']'; return os; }
+template <class... T> std::istream &operator>>(std::istream &is, std::tuple<T...> &tpl) { std::apply([&is](auto &&... args) { ((is >> args), ...);}, tpl); return is; }
+template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl) { os << '('; std::apply([&os](auto &&... args) { ((os << args << ','), ...);}, tpl); return os << ')'; }
+template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec) { os << "deq["; for (auto v : vec) os << v << ','; os << ']'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa) { return os << '(' << pa.first << ',' << pa.second << ')'; }
+template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+
+
 
 void setIO(string name = "")
 { // name is nonempty for USACO file I/O
@@ -787,39 +775,57 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, long long M, const std::vector<std::string> &S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+using pll = pair<ll,ll>;
+
+const int di[] = {-1, 0, 1, 0};
+const int dj[] = {0, -1, 0, 1};
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    long long M;
-    std::cin >> N;
-    std::vector<std::string> S(N);
-    std::cin >> M;
-    REP (i, N) {
-        std::cin >> S[i];
+    int n, m;
+    cin >> n >> m;
+    vector<string> s(n);
+    rep(i,n) cin >> s[i];
+    dbg(s);
+    pll cur = mp(1,1);
+    deque<pll> q;
+    q.pb(cur);
+    dbg(q.front());
+    vvll passed(n,vll(m,0));
+    vvll stopped(n,vll(m,0));
+    while(!q.empty()){
+        auto [i,j] = q.front();
+        q.pop_front();
+        fok(0,4){
+            auto [vi,vj] = mp(i,j);
+            while(s[vi][vj]=='.'){
+                passed[vi][vj]=1;
+                vi+=di[k];
+                vj+=dj[k];
+            }
+            vi-=di[k];
+            vj-=dj[k];
+            if(stopped[vi][vj]==0){
+                stopped[vi][vj]=1;
+                q.pb(mp(vi,vj));
+            }
+        }
     }
-    auto ans = solve(N, M, S);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    ll ans = 0;
+    foi(0,n){
+        foj(0,m){
+            if(passed[i][j]==1) ans++;
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << ans << endl;
     return 0;
 }
