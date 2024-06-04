@@ -1700,39 +1700,62 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
-auto solve(auto T) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+
+bool f(ll a, ll s) {
+    //base case of recursion: if s has been reduced to 0, a must also have been reduced to 0, else x and y are incorrect
+    if (!s) return a==0;
+    rep(x,2)rep(y,2) {
+        //checks LSB and ensures current x and y bits can make it
+        if ((x&y) != (a&1)) continue;
+        ll temp = x&1+y&1;
+        if(temp==1&&(s&1)!=1) continue;
+        if(temp==0&&(s&1)!=0) continue;
+        // //checks adjusted s-x-y always >= 0. If not it means that for all the otherwise correct x and y bits to the right and above,
+        // //this is not compatible with x+y=S.
+        // //while s-x-y remains > 0, recursion will continue
+        // if (s-x-y < 0) continue;
+        // //checks whether remaining s is even as if is odd, means although satisfied AND, does not satisfy +
+        // //another way to think about this is that you cannot bitshift to right an odd number as you will lose information
+        if ((s-x-y)%2 != 0) continue;
+        //if base case reached and returned true then return true
+        if (f(a>>1, (s-x-y)>>1)) return true;
+        // if (f(a>>1, (s)>>1)) return true;
+    }
+    return false;
+}
+
+void solve() {
+    ll a, s;
+    cin >> a >> s;
+    if (f(a,s)) cout << "Yes" << endl;
+    else cout << "No" << endl;
 }
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    auto T;
-    std::cin >> T;
-    auto ans = solve(T);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    int t;
+    cin >> t;
+    rep(ti,t) solve();
     return 0;
 }
+
+// #define rep(i,n) for (int i = 0; i < (n); ++i)
+// int main(){
+//     ll T;
+//     cin >> T;
+//     rep(Ti,T){
+//         ll a,s;
+//         cin >> a >> s;
+//         s-=2*a;
+//         if(s<0){
+//             cout << "No" << endl;
+//             continue;
+//         }
+//         if((s&a)!=0){
+//             cout << "No" << endl;
+//             continue;
+//         }
+//         cout << "Yes" << endl;
+//     }
+//     return 0;
+// }

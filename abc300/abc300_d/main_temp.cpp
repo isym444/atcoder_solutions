@@ -820,7 +820,7 @@ vector<int> dy_wasd = {0,0,1,-1};
 vll GenListOfPrimesOnly(){
     gen_primes();
     vll allprimes;
-    for(int i = 2; i<MAXA; i++){
+    for(int i = 0; i<MAXA; i++){
         if(prime[i]==1){
             allprimes.pb(i);
         }
@@ -847,14 +847,7 @@ bool IsPrime(int num)
 }
 
 
-#ifdef isym444_LOCAL
-const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
-#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
-#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
-#else
-#define dbg(x) ((void)0)
-#define dbgif(cond, x) ((void)0)
-#endif
+
 
 #define MAXP 300005
 vector<long long> sieve(){
@@ -881,37 +874,66 @@ int main() {
     }
     // gen_primes();
     vll p = GenListOfPrimesOnly();
-    cerr << (p[0]) << endl;
-    cerr << p.size() << endl;
+    cerr << (p.size()) << endl;
+    vll sp;
+    foi(1,30000){
+        // cerr << (p[i]) << endl;
+        sp.pb(p[i]);
+    }
+    cerr << sp.size() << endl;
     ll ans = 0;
-    ll m = (ll)1e6;
-    // ll m = 400;
-    vector<tuple<ll,ll,ll>> check;
-    foi(0,m){
-        ll a = p[i];
-        if(a*a*a*a*a>N) break;
-        foj(i+1,m){
-            ll b = p[j];
-            if(a*a*b*b*b>N) break;
-            fok(j+1,m){
-                ll c = p[k];
-                if(a*a*b*c*c>N) break;
-                // cerr << a << " " << b << " " << c << " ";
-                // cerr << a*a*b*c*c << endl;
-                check.push_back(make_tuple(a,b,c));
-                ans++;
-            }
+    set<ll> as;
+    foi(0,sp.size()){
+        ll k = sp.size()-1;
+        for(int j = i+1; j<k && j<sp.size(); j++){
+            while(j<k){
+                ll a,b,c;
+                a=sp[i];
+                b=sp[j];
+                ll v = a*a*b;
+                if(v>N){k--;continue;}
+                c=sp[k];
+                v*=c;
+                if(v>N){k--;continue;}
+                v*=c;
+                if(v>N){k--;continue;}
+                break;
+                // if(a<b && b<c && a*a*b*c*c<=N){
+                //     // cerr << a << " " << b << " " << c << " " << a*a*b*c*c << endl;
+                //     as.insert(a*a*b*c*c);
+                // }
+        }
+        ans+=(k-j);
+
         }
     }
-    sort(check.begin(),check.end(),[](tuple<ll,ll,ll> t1, tuple<ll,ll,ll> t2){
-        return get<2>(t1)>get<2>(t2);
-    });
-    dbg(get<0>(check[0]));
-    dbg(get<1>(check[0]));
-    dbg(get<2>(check[0]));
-    dbg(get<0>(check[0])*get<0>(check[0])*get<0>(check[1])*get<0>(check[2])*get<0>(check[2]));
-    dbg(check.size());
     cout << ans << endl;
+    // ll ans = 0;
+    // foi(0,sp.size()){
+    //     ll a = sp[i];
+    //     if(a*a*a*a*a>N) break;
+    //     ll b = sp[i+1];
+    //     ll bi=i;
+    //     while(b<sp[sp.size()-1]){
+    //         if(a*a*b*b*b > N) break;
+    //         ll r = sqrt(N/a/a/b);
+    //         if(r<b) break;
+    //         ans+=sp[r]-sp[b];
+    //         bi++;
+    //         b=sp[bi];
+    //     }
+    // }
+    // cout << ans << endl;
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
     // cout << as.size() << endl;
     return 0;
 }
