@@ -1644,25 +1644,64 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, const std::vector<long long> &X, const std::vector<long long> &Y, const std::vector<long long> &Z) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
     int N;
     std::cin >> N;
-    std::vector<long long> X(N), Y(N), Z(N);
+    std::vector<long long> X(N), Y(N), Z(N), C(N);
+    //T, A, Z, benefit
+    vector<tuple<ll,ll,ll,double>> amaj;
+    ll totalseats=0;
+    ll tseats=0;
+    ll aseats=0;
     REP (i, N) {
         std::cin >> X[i] >> Y[i] >> Z[i];
+        C[i]=ceildiv(X[i]+Y[i],2)-X[i];
+        if(C[i]<=0) C[i]=INF;
+        totalseats+=Z[i];
+        if(X[i]>Y[i]){
+            tseats+=Z[i];
+        }
+        else{
+            aseats+=Z[i];
+            
+            // double benefit = (1./(ceildiv(X[i]+Y[i],2)-X[i]))*(Z[i]);
+            // cerr << 1./ceildiv(X[i]+Y[i],2)-X[i] << " benefit:" << benefit << endl;
+            // amaj.pb(make_tuple(X[i],Y[i],Z[i],benefit));
+
+        }
     }
-    auto ans = solve(N, X, Y, Z);
-    std::cout << ans << '\n';
+    if(tseats>=ceildiv(totalseats,2)){
+        cout << 0 << endl;
+        return 0;
+    }
+    // INF = 100;
+    vvll dp(N+1,vll(totalseats+1,INF));
+    // fx(dp){
+    //     cerr << x << endl;
+    // }
+    // cerr << C << endl;
+    dp[0][tseats]=0;
+    foi(0,N+1){
+        foj(0,totalseats+1){
+            if(dp[i][j]!=INF){
+                if(i+1<N+1) dp[i+1][j]=min(dp[i+1][j],dp[i][j]);
+                // ll x = ceildiv(X[i]+Y[i],2)-X[i];
+                if(i+1<N+1&&j+Z[i]<totalseats+1) dp[i+1][j+Z[i]]=min(dp[i+1][j+Z[i]],dp[i][j]+C[i]);
+            }
+        }
+    }
+    // fx(dp){
+    //     cerr << x << endl;
+    // }
+    ll ans = INF;
+    foi(ceildiv(totalseats,2),totalseats+1){
+        ans=min(ans,dp[N][i]);
+    }
+    cout << ans << endl;
+    
 
     /* genprimes(1e5); */
 
