@@ -804,16 +804,37 @@ int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll N;
+    cin >> N;
+    ll sx,sy,tx,ty;
+    cin >> sx >> sy >> tx >> ty;
+    vll x(N), y(N), r(N);
+    ll scircle, tcircle;
+    foi(0,N){
+        cin >> x[i] >> y[i] >> r[i];
+        if(abs(sx-x[i])*abs(sx-x[i])+abs(sy-y[i])*abs(sy-y[i])==r[i]*r[i]) scircle = i;
+        if(abs(tx-x[i])*abs(tx-x[i])+abs(ty-y[i])*abs(ty-y[i])==r[i]*r[i]) tcircle = i;
     }
-    auto ans = solve(n, a);
-    std::cout << (ans ? YES : NO) << '\n';
+    dsu d(N);
+    foi(0,N){
+        foj(0,N){
+            if(i!=j){
+                ll dist = abs(x[j]-x[i])*abs(x[j]-x[i])+abs(y[j]-y[i])*abs(y[j]-y[i]);
+                ll cond1 = r[i]+r[j];
+                cond1*=cond1;
+                ll cond2 = abs(r[i]-r[j]);
+                cond2*=cond2;
+                if(dist > cond1 || dist<cond2) continue;
+                d.merge(i,j);
+            }
+        }
+    }
+    if(d.same(scircle,tcircle)){
+        cout << "Yes" << endl;
+        return 0;
+    }
+    cout << "No" << endl;
+    
 
     /* genprimes(1e5); */
 
