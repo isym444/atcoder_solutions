@@ -1687,30 +1687,38 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, int M, const std::vector<long long> &p, const std::vector<long long> &x, const std::vector<long long> &y) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N, M;
-    std::cin >> N;
-    std::vector<long long> p(N - 1);
-    std::cin >> M;
-    std::vector<long long> x(M), y(M);
-    REP (i, N - 1) {
-        std::cin >> p[i];
+    
+    ll N,M;
+    cin >> N >> M;
+
+    vll parents;
+    parents.pb(-1);
+    parents.pb(-1);
+    foi(0,N){
+        ll temp;
+        cin >> temp;
+        parents.pb(temp);
     }
-    REP (i, M) {
-        std::cin >> x[i] >> y[i];
+    vll gensCovered(N+4,-1);
+    foi(0,M){
+        ll x,y;
+        cin >> x >> y;
+        gensCovered[x]=max(gensCovered[x],y);
     }
-    auto ans = solve(N, M, p, x, y);
-    std::cout << ans << '\n';
+    cerr << gensCovered << endl;
+    foi(2,N+2){
+        gensCovered[i]=max(gensCovered[i],gensCovered[parents[i]]);
+    }
+    ll ans=0;
+    for(auto x:gensCovered){
+        if(x!=-1) ans++;
+    }
+    cerr << (gensCovered);
+    cout << ans << endl;
 
     /* genprimes(1e5); */
 

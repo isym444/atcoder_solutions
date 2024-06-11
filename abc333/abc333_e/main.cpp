@@ -295,25 +295,76 @@ struct loc
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-auto solve(int N, const std::vector<long long> &t, const std::vector<long long> &x) {
-    
-}
+#define pb push_back
+#include <unordered_map>
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    std::cin >> N;
-    std::vector<long long> t(N), x(N);
-    REP (i, N) {
-        std::cin >> t[i] >> x[i];
+    
+    ll N;
+    cin >> N;
+    vector<ll> event;
+    foi(0,N){
+        ll t,x;
+        cin >> t >> x;
+        if(t==1){
+            event.pb(x);
+        }
+        else{
+            event.pb(-x);
+        }
     }
-    auto ans = solve(N, t, x);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
+    ll cur = 0;
+    ll ans = 0;
+    vector<ll> av;
+    unordered_map<ll,ll> pot;
+    for(int i = N-1; i>=0; i--){
+        ll t = event[i];
+        //if encounters a monster
+        if(t<0){
+            //incr pot type t he needs
+            pot[-t]++;
+            cur++;
+        }
+        else{
+            //he encounters a potion
+            //if he needs one to defeat a monster later on then --
+            if(pot[t]>0){
+                pot[t]--;
+                cur--;
+                av.pb(1);
+            }
+            else{
+                av.pb(0);
+            }
+        }
+        ans=max(ans,cur);
+    }
+    // foi(0,pot.size()){
+    //     // cout << (*next(pot.begin(),i)).first << endl;
+    //     if((*next(pot.begin(),i)).second>0){
+    //         cout << -1 << endl;
+    //         return 0;
+    //     }
+    // }
+    for(auto x:pot){
+        if(x.second>0){
+            cout << -1 << endl;
+            return 0;
+        }
+    }
+    // if(cur>0){
+    //     cout << -1 << endl;
+    //     return 0;
+    // }
+    // cerr << av << endl;
+    reverse(av.begin(),av.end());
+    cout << ans << endl;
+    for(auto x:av){
+        cout << x << " ";
+    }
 
     /* genprimes(1e5); */
 
