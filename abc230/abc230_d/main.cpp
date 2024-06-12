@@ -1001,27 +1001,31 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, long long D, const std::vector<long long> &L, const std::vector<long long> &R) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    long long D;
-    std::cin >> N;
-    std::vector<long long> L(N), R(N);
-    std::cin >> D;
-    REP (i, N) {
-        std::cin >> L[i] >> R[i];
+    ll N, D;
+    cin >> N >> D;
+    vector<pair<ll,ll>> lr;
+    foi(0,N){
+        ll l,r;
+        cin >> l >> r;
+        lr.pb(mp(l,r));
     }
-    auto ans = solve(N, D, L, R);
-    std::cout << ans << '\n';
+    sort(lr.begin(),lr.end(),[](pair<ll,ll> a, pair<ll,ll> b){
+        return a.second < b.second;
+    });
+    // cerr << lr << endl;
+    ll cur = -INF;
+    ll ans = 0;
+    for(auto x:lr){
+        if(cur+D-1<x.first){
+            ans++;
+            cur=x.second;
+        }
+    }
+    cout << ans << endl;
 
     /* genprimes(1e5); */
 

@@ -1855,11 +1855,40 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    std::string S;
-    std::cin >> S;
-    auto ans = solve(S);
-    std::cout << ans << '\n';
+    string S;
+    cin >> S;
+    vector<vector<mint>> dp(S.length()+1,vector<mint>(S.length()+1,0));
+    dp[0][0]=1;
+    foi(0,S.length()){
+        char x = S[i];
+        if(x=='('){
+            foj(0,S.length()+1){
+                if(dp[j][i]!=0){
+                    if(j+1<S.length()+1&&i+1<S.length()+1) dp[j+1][i+1]+=dp[j][i];
+                    // if(j-1>=0&&i+1<S.length()+1) dp[j-1][i+1]+=dp[j][i];
+                }
+            }
+        }
+        else if(x==')'){
+            foj(0,S.length()+1){
+                if(dp[j][i]!=0){
+                    // if(j+1<S.length()+1&&i+1<S.length()+1) dp[j+1][i+1]+=dp[j][i];
+                    if(j-1>=0&&i+1<S.length()+1) dp[j-1][i+1]+=dp[j][i];
+                }
+            }
+        }
+        else{
+            foj(0,S.length()+1){
+                if(dp[j][i]!=0){
+                    if(j+1<S.length()+1&&i+1<S.length()+1) dp[j+1][i+1]+=dp[j][i];
+                    if(j-1>=0&&i+1<S.length()+1) dp[j-1][i+1]+=dp[j][i];
+                }
+            }
 
+        }
+    }
+    // dbg(dp);
+    cout << dp[0][S.length()].val() << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

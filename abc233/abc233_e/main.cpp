@@ -1687,21 +1687,26 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-std::string solve(std::string X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    std::string X;
-    std::cin >> X;
-    auto ans = solve(X);
-    std::cout << ans << '\n';
+    string X;
+    cin >> X;
+
+    ll sum = 0;
+    for(auto dig:X){
+        sum+=(dig-'0');
+    }
+
+    deque<ll> ans;
+
+    for(ll i = X.length()-1; i>=0; i--){
+        ll bottom = sum%10;
+        ll carry = sum/10;
+        
+    }
 
     /* genprimes(1e5); */
 

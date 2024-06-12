@@ -1686,6 +1686,15 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+vvll adj;
+vll gensCovered;
+
+void dfs(ll cur){
+    for(auto child:adj[cur]){
+        gensCovered[child]=max(gensCovered[child],gensCovered[cur]-1);
+        dfs(child);
+    }
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1696,28 +1705,31 @@ int main() {
     cin >> N >> M;
 
     vll parents;
+    adj.resize(N+4);
     parents.pb(-1);
     parents.pb(-1);
-    foi(0,N){
+    foi(0,N-1){
         ll temp;
         cin >> temp;
         parents.pb(temp);
+        adj[temp].pb(i+2);
     }
-    vll gensCovered(N+4,-1);
+    gensCovered.resize(N+4,-1);
     foi(0,M){
         ll x,y;
         cin >> x >> y;
         gensCovered[x]=max(gensCovered[x],y);
     }
-    cerr << gensCovered << endl;
-    foi(2,N+2){
-        gensCovered[i]=max(gensCovered[i],gensCovered[parents[i]]);
-    }
+    // cerr << gensCovered << endl;
+    dfs(1);
+    // foi(2,N+2){
+    //     gensCovered[i]=max(gensCovered[i],gensCovered[parents[i]]-1);
+    // }
     ll ans=0;
-    for(auto x:gensCovered){
-        if(x!=-1) ans++;
+    for(int i = 1; i<=N; i++){
+        if(gensCovered[i]!=-1) ans++;
     }
-    cerr << (gensCovered);
+    // cerr << (gensCovered);
     cout << ans << endl;
 
     /* genprimes(1e5); */
