@@ -1699,13 +1699,24 @@ int main() {
     for(auto dig:X){
         sum+=(dig-'0');
     }
-
+    cerr << (sum) << endl;
     deque<ll> ans;
-
+    ll carry = 0;
+    ll bottom = 0;
+    ll temp = 0;
     for(ll i = X.length()-1; i>=0; i--){
-        ll bottom = sum%10;
-        ll carry = sum/10;
-        
+        // cerr << sum << endl;
+        temp = carry+sum;
+        bottom = temp%10;
+        ans.push_front(bottom);
+        carry = temp/10;
+        sum-=(X[i]-'0');
+    }
+    if(carry!=0){
+        ans.push_front(carry);
+    }
+    for(auto d:ans){
+        cout << d;
     }
 
     /* genprimes(1e5); */
