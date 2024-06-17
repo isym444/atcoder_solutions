@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
+#include <list>
 
 using namespace std;
 
@@ -798,33 +799,14 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-std::vector<auto> solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+typedef pair<ll, ll> pl;
+typedef list<ll> dll;
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
-    std::cout << (int)ans.size();
-    REP (i, (int)ans.size()) {
-        std::cout << b[i] << ' ';
-    }
-    std::cout << '\n';
-
+    
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
