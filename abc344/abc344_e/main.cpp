@@ -806,7 +806,45 @@ int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    
+    ll N;
+    cin >> N;
+    map<ll,list<ll>::iterator> mm;
+    dll A;
+    // auto it = A.begin();
+    foi(0,N){
+        ll t;
+        cin >> t;
+        A.pb(t);
+        // mm[t]=it;
+        // it++;
+    }
+    // fx(A){
+    //     mm[x]=&x;
+    // }
+    for(auto it = A.begin(); it != A.end(); ++it){
+        mm[*it] = it;
+    }
+    ll Q;
+    cin >> Q;
+    foi(0,Q){
+        ll type;
+        cin >> type;
+        if(type==1){
+            ll x,y;
+            cin >> x >> y;
+            A.insert(next(mm[x],1),y);
+            mm[y]=next(mm[x]);
+        }
+        else{
+            ll x;
+            cin >> x;
+            A.erase(mm[x]);
+            // mm.erase(x);
+        }
+    }
+    fx(A){
+        cout << x << " ";
+    }
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

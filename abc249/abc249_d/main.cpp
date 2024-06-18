@@ -817,14 +817,6 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-long long solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -832,12 +824,23 @@ int main() {
     int N;
     std::cin >> N;
     std::vector<long long> A(N);
+    map<ll,ll> cnt;
     REP (i, N) {
         std::cin >> A[i];
+        cnt[A[i]]++;
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
-
+    ll ans = 0;
+    foi(0,2e5+10){
+        if(cnt[i]>0){
+            for(int j=0; i*j<2e5+1; j++){
+                if(cnt[j]>0){
+                    ans+=cnt[i]*cnt[j]*cnt[i*j];
+                }
+            }
+        }
+    }
+    cout << ans << endl;
+    
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

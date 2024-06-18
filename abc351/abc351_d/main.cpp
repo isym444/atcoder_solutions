@@ -48,7 +48,7 @@ using namespace std;
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
 //#define gcd __gcd
 #define mp make_pair
 //Makes % get floor remainder (towards -INF) and make it always positive
@@ -1846,64 +1846,72 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-vvll visited1;
+// vvll visited1;
+// ll H,W;
+// vector<string> S;
+// ll curvis;
+// void dfs(ll i, ll j){
+//     // visited2[i][j]=1;
+//     visited1[i][j]=1;
+//     curvis++;
+//     if(isvalid(i+1,H,j,W) && S[i+1][j]=='#') return ;
+//     if(isvalid(i-1,H,j,W) && S[i-1][j]=='#') return ;
+//     if(isvalid(i,H,j+1,W) && S[i][j+1]=='#') return ;
+//     if(isvalid(i,H,j-1,W) && S[i][j-1]=='#') return ;
+
+//     if(isvalid(i+1,H,j,W) && !visited1[i+1][j]){
+//         dfs(i+1,j);
+//     }
+//     if(isvalid(i-1,H,j,W) && !visited1[i-1][j]){
+//         dfs(i-1,j);
+//     }
+//     if(isvalid(i,H,j+1,W) && !visited1[i][j+1]){
+//         dfs(i,j+1);
+//     }
+//     if(isvalid(i,H,j-1,W) && !visited1[i][j-1]){
+//         dfs(i,j-1);
+//     }
+//     return ;
+// }
+
+// long long solve() {
+//     /* vis.assign(n+1, false);
+//     g.assign(n+1, vector<ll>());
+//     wg.assign(n + 1, vector<pair<ll,ll>>());
+//     parent.assign(n+1, -1); */
+//     visited1.resize(H, vll(W,0));
+//     // ll checker = 0;
+//     ll ans=1;
+//     foi(0,H){
+//         foj(0,W){
+//             if(S[i][j]=='#') continue;
+//             if(isvalid(i+1,H,j,W) && S[i+1][j]=='#') continue ;
+//             if(isvalid(i-1,H,j,W) && S[i-1][j]=='#') continue ;
+//             if(isvalid(i,H,j+1,W) && S[i][j+1]=='#') continue;
+//             if(isvalid(i,H,j-1,W) && S[i][j-1]=='#') continue;
+//             if(!visited1[i][j]){
+//                 dbg("reached");
+//                 curvis=0;
+//                 dfs(i, j);
+//                 dbg(ans);
+//                 ans=max(ans,curvis);
+//                 dbg(visited1);
+//                 dbg(curvis);
+//             }
+//             // dbg(visited1);
+//         }
+//     }
+//     dbg(ans);
+//     return ans;
+// }
+
 ll H,W;
-vector<string> S;
-ll curvis;
-void dfs(ll i, ll j){
-    // visited2[i][j]=1;
-    visited1[i][j]=1;
-    curvis++;
-    if(isvalid(i+1,H,j,W) && S[i+1][j]=='#') return ;
-    if(isvalid(i-1,H,j,W) && S[i-1][j]=='#') return ;
-    if(isvalid(i,H,j+1,W) && S[i][j+1]=='#') return ;
-    if(isvalid(i,H,j-1,W) && S[i][j-1]=='#') return ;
 
-    if(isvalid(i+1,H,j,W) && !visited1[i+1][j]){
-        dfs(i+1,j);
-    }
-    if(isvalid(i-1,H,j,W) && !visited1[i-1][j]){
-        dfs(i-1,j);
-    }
-    if(isvalid(i,H,j+1,W) && !visited1[i][j+1]){
-        dfs(i,j+1);
-    }
-    if(isvalid(i,H,j-1,W) && !visited1[i][j-1]){
-        dfs(i,j-1);
-    }
-    return ;
+ll uniquexy(ll x, ll y){
+    return x*W+y;
 }
 
-long long solve() {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    visited1.resize(H, vll(W,0));
-    // ll checker = 0;
-    ll ans=1;
-    foi(0,H){
-        foj(0,W){
-            if(S[i][j]=='#') continue;
-            if(isvalid(i+1,H,j,W) && S[i+1][j]=='#') continue ;
-            if(isvalid(i-1,H,j,W) && S[i-1][j]=='#') continue ;
-            if(isvalid(i,H,j+1,W) && S[i][j+1]=='#') continue;
-            if(isvalid(i,H,j-1,W) && S[i][j-1]=='#') continue;
-            if(!visited1[i][j]){
-                dbg("reached");
-                curvis=0;
-                dfs(i, j);
-                dbg(ans);
-                ans=max(ans,curvis);
-                dbg(visited1);
-                dbg(curvis);
-            }
-            // dbg(visited1);
-        }
-    }
-    dbg(ans);
-    return ans;
-}
+#define isvalid(checking,min_boundary,max_boundary) (0<=checking and checking<max_boundary)
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1912,14 +1920,77 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    std::cin >> H;
-    S.resize(H);
-    std::cin >> W;
-    REP (i, H) {
-        std::cin >> S[i];
+    cin >> H >> W;
+    vector<string> vs;
+    foi(0,H){
+        string temp;
+        cin >> temp;
+        vs.pb(temp);
     }
-    auto ans = solve();
-    std::cout << ans << '\n';
+    //iterate over all positions and if adjacent to magnet then mark as blockers
+    vvll blockers(H, vll(W,0));
+    foi(0,H) foj(0,W){
+        if(vs[i][j]=='#'){
+            fok(0,4){
+                ll di = i+dx_wasd[k];
+                ll dj = j+dy_wasd[k];
+                if(isvalid(di,0,H)&&isvalid(dj,0,W)){
+                    blockers[di][dj]=1;
+                }
+            }
+        }
+    }
+    dbg(blockers);
+    //initialize dsu
+    dsu uf(H*W);
+    //run dsu
+    foi(0,H) foj(0,W){
+        if(vs[i][j]=='#') continue;
+        if(blockers[i][j]) continue;
+        fok(0,4){
+            ll di = i+dx_wasd[k];
+            ll dj = j+dy_wasd[k];
+            if(isvalid(di,0,H)&&isvalid(dj,0,W)&&!blockers[di][dj]){
+                uf.merge(uniquexy(di,dj),uniquexy(i,j));
+            }
+        }
+    }
+    fx(uf.groups()){
+        dbg(x);
+    }
+    //initialize ans
+    ll ans = 1;
+    //update dsu sizes by adding blockers to each connected component they contribute to
+    map<ll,ll> extras;
+    foi(0,H) foj(0,W){
+        set<ll> contributesto;
+        if(blockers[i][j]){
+            fok(0,4){
+                ll di = i+dx_wasd[k];
+                ll dj = j+dy_wasd[k];
+                if(isvalid(di,0,H)&&isvalid(dj,0,W)&&vs[di][dj]!='#'&&!blockers[di][dj]){
+                    contributesto.insert(uf.leader(uniquexy(di,dj)));
+                }
+            }
+        }
+        fx(contributesto){
+            extras[x]++;
+        }
+    }
+    //update ans
+    fx(uf.groups()){
+        ans=max(ans,(ll)x.size()+extras[uf.leader(x[0])]);
+        // ans=max(ans,(ll)x.size());
+    }
+    cout << ans << endl;
+    // std::cin >> H;
+    // S.resize(H);
+    // std::cin >> W;
+    // REP (i, H) {
+    //     std::cin >> S[i];
+    // }
+    // auto ans = solve();
+    // std::cout << ans << '\n';
 
     /* genprimes(1e5); */
 

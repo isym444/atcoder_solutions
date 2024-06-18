@@ -1882,14 +1882,6 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -1897,18 +1889,36 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll Q;
+    cin >> Q;
+    deque<ll> A;
+    priority_queue<ll> S;
+    // priority_queue<int,vector<int>,greater<int>> S;
+    foi(0,Q){
+        ll t;
+        cin >> t;
+        if(t==1){
+            ll x;
+            cin >> x;
+            A.pb(x);
+        }
+        else if(t==2){
+            if(S.size()){
+                cout << -S.top() << endl;
+                S.pop();
+            }
+            else{
+                cout << A.front() << endl;
+                A.pop_front();
+            }
+        }
+        else{
+            fx(A){
+                S.push(-x);
+            }
+            A.clear();
+        }
     }
-    auto ans = solve(n, a);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
 
     /* genprimes(1e5); */
 
