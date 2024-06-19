@@ -793,30 +793,41 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll N,Q;
+    cin >> N >> Q;
+    vector<set<ll>> ss(N);
+    ll ans=N;
+    foi(0,Q){
+        ll type, u,v;
+        cin >> type;
+        if(type==1){
+            cin >> u >> v;
+            u--;
+            v--;
+            if(ss[u].size()==0) ans--;
+            if(ss[v].size()==0) ans--;
+            ss[u].insert(v);
+            ss[v].insert(u);
+        }
+        else{
+            cin >> v;
+            v--;
+            fx(ss[v]){
+                ss[x].erase(v);
+                if(ss[x].size()==0) ans++;
+            }
+            if(ss[v].size()){
+                ss[v].clear();
+                ans++;
+            }
+        }
+        cout << ans << endl;
+        
     }
-    auto ans = solve(n, a);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
-
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
