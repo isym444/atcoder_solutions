@@ -630,21 +630,13 @@ vector<char> genAlphabet(){
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(long long N, long long M, long long P) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long N, M, P;
-    std::cin >> N >> M >> P;
-    auto ans = solve(N, M, P);
-    std::cout << ans << '\n';
+    
+    
 
     /* genprimes(1e5); */
 

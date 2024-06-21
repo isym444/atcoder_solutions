@@ -628,14 +628,19 @@ vector<char> genAlphabet(){
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
+//order doesn't matter so smaller than nPx
+// long long nCx(int n, int x) {
+//     if (x > n) return 0;
+//     if (x * 2 > n) x = n - x; // Take advantage of symmetry, nCx == nC(n-x)
+//     if (x == 0) return 1;
 
-
-long long solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+//     long long result = 1;
+//     for (int i = 1; i <= x; ++i) {
+//         result *= n - (x - i);
+//         result /= i;
+//     }
+//     return result;
+// }
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -644,12 +649,20 @@ int main() {
     int N;
     std::cin >> N;
     std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+    cin >> A;
+    map<ll,ll> occur;
+    map<ll,ll> cumind;
+    ll ans = 0;
+    fok(0,N){
+        ans+=(k-1)*occur[A[k]];
+        ans-=cumind[A[k]];
+        occur[A[k]]++;
+        cumind[A[k]]+=(k);
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
-
+    fok(0,N){
+        ans-=nCx(occur[k+1],3);
+    }
+    cout << ans << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

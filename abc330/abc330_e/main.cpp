@@ -294,26 +294,64 @@ struct loc
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+const ll mmm = (ll)2e5+1;
+// const ll mmm = 10;
 
-auto solve(int n, const std::vector<int64_t> &a) {
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    ll N,Q;
+    cin >> N >>Q;
+    //creates a bitset of size 20001 with all bits initially set to 0
+    // bitset<mmm> appears;
+    map<ll,ll> cnt;
+    vector<ll> A(N);
+    set<ll> ap;
+    set<ll> nap;
+    cin >> A;
+    fok(0,N){
+        cnt[A[k]]++;
+        // appears.set(A[k]);
+        ap.insert(A[k]);
     }
-    auto ans = solve(n, a);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
+    fok(0,mmm){
+        if(ap.count(k)) continue;
+        nap.insert(k);
+    }
+    // cerr << nap << endl;
+    // cerr << "......." << cnt[3] << endl;
+    // cerr << appears << endl;
+    fok(0,Q){
+        ll i,x;
+        cin >> i >> x;
+        // if(x>2e5+1){
+        //     cout << findFirstUnsetBitFromRight(appears) << endl;
+        //     continue;
+        // }
+        i--;
+        if(cnt[A[i]]==1){
+            // appears.flip(A[i]);
+            ap.erase(A[i]);
+            if(A[i]<mmm) nap.insert(A[i]);
+        }
+        // cerr << A << endl;
+        cnt[A[i]]--;
+        A[i]=x;
+        // cerr << (cnt[x]) << endl;
+        if(cnt[x]==0){
+            // if(x<2e5+1) appears.flip(x);
+            if(x<mmm) nap.erase(x);
+            ap.insert(x);
+        }
+        cnt[x]++;
+        // cerr << cnt[x] << endl;
+        // cerr << "..." << appears << endl;
+        // cout << findFirstUnsetBitFromRight(appears) << endl;
+        // cerr << nap << endl;
+        cout << *nap.begin() << endl;
+    }
 
     /* genprimes(1e5); */
 

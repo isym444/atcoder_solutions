@@ -17,6 +17,7 @@
 #include <deque>
 #include <numeric>
 #include <assert.h>
+#include <unordered_set>
 #include <unordered_map>
 #include <type_traits> // For std::is_floating_point
 #include <cmath> // For std::ceil
@@ -991,6 +992,7 @@ std::vector<std::string> split(const char* s, char delim) {
 }
 
 
+
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
 vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
 vector<int> dx_wasd = {1,-1,0,0};
@@ -1000,42 +1002,81 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#define FOR(i, begin, end) for(int i=(begin),i##_end_=(end);i<i##_end_;i++)
 
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    ll H,W,N,h,w;
+    cin >> H >> W >> N >> h >> w;
+    vvll A(H, vll(W,0));
+    vvll ans(H-h+1, vll(W-w+1));
+    foi(0,H){
+        cin >> A[i];
+    }
+    dbg(A);
+    // dbg(pa);
+    foi(1,N+1){
+        vvll pa(H+1, vll(W+1,0));
+        foj(1,H+1) fok(1,W+1){
+            pa[j][k]=pa[j-1][k]+pa[j][k-1]-pa[j-1][k-1];
+            pa[j][k]+=(A[j-1][k-1]==i);
+        }
+        ll totalN = pa[H][W];
+        foj(h,H+1) fok(w,W+1){
+            ll boxN = pa[j][k]-pa[j-h][k]-pa[j][k-w]+pa[j-h][k-w];
+            if(boxN<totalN) ans[j-h][k-w]++;
+        }
+        dbg(pa);
+    }
+    for(auto x:ans){
+        for(auto y:x){
+            cout << y << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }
+
+
+// int main() {
+//     int H, W, N, h, w;
+//     cin >> H >> W >> N >> h >> w;
+
+//     vector<vector<int>> A(H, vector<int>(W));
+//     cin >> A;
+//     // dbg(make_tuple(h, w, A));
+
+//     vector<vector<int>> ret(H - h + 1, vector<int>(W - w + 1));
+//     vector<vector<int>> cs(H + 1, vector<int>(W + 1));
+//     FOR(a, 1, N + 1) {
+//         int num = 0;
+//         REP(i, H) REP(j, W) {
+//             bool b = A.at(i).at(j) == a;
+//             num += b;
+//             cs[i + 1][j + 1] = cs[i][j + 1] + cs[i + 1][j] - cs[i][j] + b;
+//         }
+//         REP(i, ret.size()) REP(j, ret.at(i).size()) {
+//             if (cs[i + h][j + w] - cs[i][j + w] - cs[i + h][j] + cs[i][j] < num) ++ret[i][j];
+//         }
+//         for(auto x:cs){
+//             cerr << x << endl;
+//         }
+//         cerr << endl;
+//     }
+
+
+//     for (auto vec : ret) {
+//         for (auto x : vec) cout << x << ' ';
+//         cout << '\n';
+//     }
+//     cout << "test" << endl;
+// }
