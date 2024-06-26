@@ -343,9 +343,25 @@ int main() {
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
     int M, N;
+    cin>>N>>M;
     vector<int> H(N);
     cin>>H;
-    
+    // sort(all(H));
+    // sort(H.begin(), H.end());
+    int checker=0;
+    dbg(H);
+    for(int c=1;c<=N;c++){
+        M=M-H[c-1];
+        dbg(M);
+        if(M<0){
+            cout<<c-1;
+            checker=1;
+            break;
+        }
+    }
+    if(checker==0){
+        cout<<N;
+    }
     
 
 

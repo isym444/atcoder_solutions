@@ -1794,20 +1794,7 @@ ll lcs(string s, string t){
     return dp[s.size()][t.size()];
 }
 
-//["abc", "def"]
-//becomes
-//["da", "eb", "fc"]
-vector<string> rotate90(const vector<string>& matrix) {
-    int n = matrix.size();
-    int m = matrix[0].size();
-    vector<string> rotated(m, string(n, '.'));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            rotated[j][n - 1 - i] = matrix[i][j];
-        }
-    }
-    return rotated;
-}
+
 
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
@@ -1842,11 +1829,35 @@ using mint = modint998244353;
 
 const std::string YES = "Yes";
 const std::string NO = "No";
-bool solve(auto N, const std::vector<std::vector<auto> > &S, const std::vector<std::vector<auto> > &T) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+
+
+// template <typename T> std::vector<std::vector<T>> rotate90(const std::vector<std::vector<T>> &in) {
+//     const int H = in.size(), W = in[0].size();
+//     std::vector<std::vector<T>> ret(W, std::vector<T>(H));
+//     for (int i = 0; i < H; i++) {
+//         for (int j = 0; j < W; j++) ret[j][i] = in[i][W - 1 - j];
+//     }
+//     return ret;
+// }
+
+std::vector<std::string> rotate90(const std::vector<std::string> &in) {
+    const int H = in.size(), W = in[0].size();
+    std::vector<std::string> ret(W, std::string(H, '\0'));
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < W; j++) ret[j][i] = in[i][W - 1 - j];
+    }
+    return ret;
+}
+void trim(vector<string>& S){
+    foi(0,4){
+        // dbg(S[S.size()-1]);
+        // dbg(find(all(S[S.size()-1]),'#')==S[S.size()-1].end());
+        // dbg(S);
+        while(find(all(S[S.size()-1]),'#')==S[S.size()-1].end()) S.pop_back();
+        // dbg(S);
+        S=rotate90(S);
+    }
+    // cerr << endl;
 }
 
 int main() {
@@ -1856,21 +1867,34 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    auto N;
-    std::cin >> N;
-    std::vector<std::vector<auto> > S(2 * N + 2, std::vector<auto>((N))), T(2 * N + 2, std::vector<auto>((N)));
-    REP (j, N + 2) {
-        REP (i, N) {
-            std::cin >> S[i + j][i];
+    ll N;
+    cin >> N;
+    vector<string> S(N);
+    vector<string> T(N);
+    cin >> S;
+    cin >> T;
+    // S=rotate90(S);
+    // dbg(S);
+    // fx(S) cerr << x << endl;
+    dbg(S);
+    dbg(T);
+    // S=rotate90(S);
+    // fx(S) cerr << x << endl;
+    trim(S);
+    trim(T);
+    cerr << "Trimmed: " << endl;
+    dbg(S);
+    dbg(T);
+    foi(0,4){
+        if(S==T){
+            cout << "Yes" << endl;
+            return 0;
         }
+        S=rotate90(S);
     }
-    REP (j, N + 2) {
-        REP (i, N) {
-            std::cin >> T[i + j][i];
-        }
-    }
-    auto ans = solve(N, S, T);
-    std::cout << (ans ? YES : NO) << '\n';
+    cout << "No" << endl;
+
+
 
     /* genprimes(1e5); */
 

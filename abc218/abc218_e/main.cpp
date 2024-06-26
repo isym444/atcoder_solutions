@@ -1841,12 +1841,6 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-long long solve(long long N, int M, const std::vector<long long> &A, const std::vector<long long> &B, const std::vector<long long> &C) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1858,12 +1852,27 @@ int main() {
     long long N;
     int M;
     std::cin >> N >> M;
-    std::vector<long long> A(M), B(M), C(M);
-    REP (i, M) {
-        std::cin >> A[i] >> B[i] >> C[i];
+    dsu dd(N);
+    vector<tuple<ll,ll,ll>> edges;
+    foi(0,M){
+        ll a,b,c;
+        cin >> a >> b >> c;
+        a--; b--;
+        edges.pb(make_tuple(c,a,b));
     }
-    auto ans = solve(N, M, A, B, C);
-    std::cout << ans << '\n';
+    dbg(edges);
+    sort(all(edges));
+    dbg(edges);
+    ll ans = 0;
+    fx(edges){
+        if(get<0>(x)<0||!dd.same(get<1>(x),get<2>(x))){
+            dd.merge(get<1>(x),get<2>(x));
+        }
+        else{
+            ans+=get<0>(x);
+        }
+    }
+    cout << ans << endl;
 
     /* genprimes(1e5); */
 

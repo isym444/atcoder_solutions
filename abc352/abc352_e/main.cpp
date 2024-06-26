@@ -1845,47 +1845,40 @@ vector<int> dy_wasd = {0,0,1,-1};
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+using E = tuple<int,int,int>;
 
-
-long long solve(long long a, int b, const std::vector<long long> &c, const std::vector<long long> &d, const std::vector<std::vector<long long> > &e) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long a;
-    int b;
-    std::cin >> a >> b;
-    std::vector<long long> c(b), d(b);
-    std::vector<std::vector<long long> > e(b, std::vector<long long>((c_i)));
-    REP (i, b) {
-        std::cin >> c[i] >> d[i];
-        REP (j, c_i) {
-            std::cin >> e[i][j];
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    dsu aa(N);
+    dsu dd(N);
+    vector<tuple<ll,ll,ll>> edges;
+    foi(0,M){
+        ll K,C;
+        cin >> K >> C;
+        vll A(K);
+        cin >> A;
+        foj(1,K){
+            edges.pb(make_tuple(C,A[0]-1,A[j]-1));
+            aa.merge(A[0]-1,A[j]-1);
         }
     }
-    auto ans = solve(a, b, c, d, e);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    dbg(edges);
+    if(aa.groups().size()>1){
+        cout << -1 << endl;
+        return 0;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    sort(all(edges),[](tuple<ll,ll,ll> t1, tuple<ll,ll,ll> t2){
+        return get<0>(t1)<get<0>(t2);
+    });
+    dbg(edges);
+    ll ans = 0;
+    fx(edges){
+        if(dd.same(get<1>(x),get<2>(x))) continue;
+        dd.merge(get<1>(x), get<2>(x));
+        ans+=get<0>(x);
+    }
+    cout << ans << endl;
     return 0;
 }

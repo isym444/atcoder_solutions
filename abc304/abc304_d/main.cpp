@@ -329,13 +329,6 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-std::pair<long long, long long> solve(long long W, long long H, int N, const std::vector<long long> &p, const std::vector<long long> &q, int A, const std::vector<long long> &a, int B, const std::vector<long long> &b) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -360,10 +353,26 @@ int main() {
     REP (i, B) {
         std::cin >> b[i];
     }
-    auto [m, M] = solve(W, H, N, p, q, A, a, B, b);
-    std::cout << m << ' ' << M << '\n';
 
-
+    map<pair<ll,ll>,ll> finder;
+    foi(0,N){
+        ll P,Q;
+        P = p[i];
+        Q = q[i];
+        ll x,y;
+        x = indlb(a,P);
+        y = indlb(b,Q);
+        finder[mp(x,y)]++;
+    }
+    ll minans=INF;
+    ll maxans=-INF;
+    fx(finder){
+        dbg(x);
+        minans = min(minans, x.second);
+        maxans = max(maxans, x.second);
+    }
+    if(finder.size()<(A+1)*(B+1)) minans=0;
+    cout << minans << " " << maxans << endl;
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */
 

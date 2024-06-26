@@ -1846,13 +1846,22 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
+// UnionFind Tree (0-indexed), based on size of each disjoint set
+struct UnionFind {
+    std::vector<int> par, cou;
+    UnionFind(int N = 0) : par(N), cou(N, 1) { iota(par.begin(), par.end(), 0); }
+    int find(int x) { return (par[x] == x) ? x : (par[x] = find(par[x])); }
+    bool unite(int x, int y) {
+        x = find(x), y = find(y);
+        if (x == y) return false;
+        if (cou[x] < cou[y]) std::swap(x, y);
+        par[y] = x, cou[x] += cou[y];
+        return true;
+    }
+    int count(int x) { return cou[find(x)]; }
+    bool same(int x, int y) { return find(x) == find(y); }
+};
 
-auto solve(long long N, int M, const std::vector<long long> &A, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1861,16 +1870,36 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long N;
-    int M;
-    std::cin >> N >> M;
-    std::vector<long long> A(M), B(M);
-    REP (i, M) {
-        std::cin >> A[i] >> B[i];
+    ll N, M;
+    cin >> N >> M;
+    vll A(M), B(M);
+    vvll to(N);
+    foi(0,M){
+        cin >> A[i] >> B[i];
+        A[i]--;
+        B[i]--;
+        to[A[i]].pb(B[i]);
+        to[B[i]].pb(A[i]);
     }
-    auto ans = solve(N, M, A, B);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
+    dbg(to);
+    fx(to){
+        dbg(x);
+    }
+    dsu dd(N);
+    ll ta=0;
+    vll ans(N,0);
+    for(int i = N-1; i>=1; i--){
+        ta++;
+        fx(to[i]){
+            if(x>i){
+                if(!dd.same(x,i)) ta--;
+                dd.merge(x,i);
+            }
+        }
+        ans[i-1]=ta;
+    }
+    fx(ans){
+        cout << x << endl;
     }
 
     /* genprimes(1e5); */
