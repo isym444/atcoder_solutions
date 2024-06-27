@@ -332,42 +332,40 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 // using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-#define rep(i,n) for (int i = 0; i < (n); ++i)
 
-void solve() {
-    int n, jump, k;
-    cin >> n >> jump >> k;
-    k--;
-    //array divided into g segments
-    int uniquePositionsWithinSegment = gcd(n,jump);
-    //number of unique positions will cycle through when moving in step size D...number of unique positions you can move to in one cycle
-    int segments = n/uniquePositionsWithinSegment;
-    //effective step size for each move. i.e. how many steps between segments will you make between 2 adjacent k (NOT modded)
-    int segmentsToJumpAtEachStep = jump/uniquePositionsWithinSegment;
-    // int segmentsToJumpAtEachStep = jump/uniquePositionsWithinSegment;
-    //segment k will be in
-    int segmentContainingK = (ll)k*segmentsToJumpAtEachStep%segments;
-    // int segmentContainingK = (ll)k*segmentsToJumpAtEachStep%segments;
-    //how many full cycles of unique positions you completed
-    int cyclesOfUniquePositionsCompleted = k/segments;
-    int ans = segmentContainingK*uniquePositionsWithinSegment+cyclesOfUniquePositionsCompleted;
-//   dbg(mt(k, segments,uniquePositionsWithinSegment,e,b,i,ans));
-dbg(k);
-dbg(jump);
-dbg(uniquePositionsWithinSegment);
-dbg(segments);
-dbg(segmentsToJumpAtEachStep);
-dbg(segmentContainingK);
-dbg(cyclesOfUniquePositionsCompleted);
-dbg(ans);
-cerr << endl;
-    cout << ans << endl;
+std::string solve(double a) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
 }
 
 int main() {
-    int t;
-    cin >> t;
-    rep(ti,t) solve();
-    // cout << "breaker" << endl;
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    double a;
+    std::cin >> a;
+    auto ans = solve(a);
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

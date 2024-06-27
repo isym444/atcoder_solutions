@@ -332,42 +332,115 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 // using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-#define rep(i,n) for (int i = 0; i < (n); ++i)
+const std::string YES = "Yes";
+const std::string NO = "No";
 
-void solve() {
-    int n, jump, k;
-    cin >> n >> jump >> k;
-    k--;
-    //array divided into g segments
-    int uniquePositionsWithinSegment = gcd(n,jump);
-    //number of unique positions will cycle through when moving in step size D...number of unique positions you can move to in one cycle
-    int segments = n/uniquePositionsWithinSegment;
-    //effective step size for each move. i.e. how many steps between segments will you make between 2 adjacent k (NOT modded)
-    int segmentsToJumpAtEachStep = jump/uniquePositionsWithinSegment;
-    // int segmentsToJumpAtEachStep = jump/uniquePositionsWithinSegment;
-    //segment k will be in
-    int segmentContainingK = (ll)k*segmentsToJumpAtEachStep%segments;
-    // int segmentContainingK = (ll)k*segmentsToJumpAtEachStep%segments;
-    //how many full cycles of unique positions you completed
-    int cyclesOfUniquePositionsCompleted = k/segments;
-    int ans = segmentContainingK*uniquePositionsWithinSegment+cyclesOfUniquePositionsCompleted;
-//   dbg(mt(k, segments,uniquePositionsWithinSegment,e,b,i,ans));
-dbg(k);
-dbg(jump);
-dbg(uniquePositionsWithinSegment);
-dbg(segments);
-dbg(segmentsToJumpAtEachStep);
-dbg(segmentContainingK);
-dbg(cyclesOfUniquePositionsCompleted);
-dbg(ans);
-cerr << endl;
-    cout << ans << endl;
-}
+const ll tmmm = 2000005;
+// const ll tmmm = 4;
 
 int main() {
-    int t;
-    cin >> t;
-    rep(ti,t) solve();
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    ll N,M;
+    cin >> N >> M;
+    vector<deque<ll>> A;
+    deque<ll> toProcess;
+    vvll locs(tmmm);
+    vector<ll> tops(tmmm,0);
+    foi(0,M){
+        ll K;
+        cin >> K;
+        deque<ll> temp;
+        foj(0,K){
+            ll t;
+            cin >> t;
+            temp.pb(t);
+            if(j==0){
+                tops[t]++;
+                locs[t].pb(i);
+                if(tops[t]==2){
+                    toProcess.pb(t);
+                }
+            }
+        }
+        A.pb(temp);
+    }
+    // dbg(toProcess);
+    // dbg(A);
+    // dbg(tops);
+    ll checker = 0;
+    if(!toProcess.empty()){
+        // cerr << "REACHED!!!!!" << endl;
+    }
+    while(!toProcess.empty()){
+        // dbg(locs);
+        // dbg(toProcess.front());
+        // dbg(locs[toProcess.front()].size());
+        auto tl1 = locs[toProcess.front()][0];
+        auto tl2 = locs[toProcess.front()][1];
+        // dbg(toProcess.size());
+        // dbg(mt(tl1,tl2));
+        toProcess.pop_front();
+        A[tl1].pop_front();
+        A[tl2].pop_front();
+        if(!A[tl1].empty()){
+            tops[A[tl1].front()]++;
+            locs[A[tl1].front()].pb(tl1);
+            if(tops[A[tl1].front()]==2){
+                toProcess.pb(A[tl1].front());
+            }
+        }
+        if(!A[tl2].empty()){
+            tops[A[tl2].front()]++;
+            locs[A[tl2].front()].pb(tl2);
+            if(tops[A[tl2].front()]==2){
+                toProcess.pb(A[tl2].front());
+            }
+        }
+        // dbg(tops);
+        // if(!A[tl1].empty()){
+        // }
+        // if(!A[tl1].empty()&&!A[tl2].empty()){
+        //     if(tops[A[tl1].front()]!=tops[A[tl2].front()]){
+        //     }
+        // }
+        // if(A[tl1].empty()){
+        //     if(!A[tl2].empty()){
+        //         toProcess.pb(A[tl2].front());
+        //     }
+        // }
+    }
+    ll i = 0;
+    fx(A){
+        if(x.size()>0){
+            dbg(i);
+            dbg(x);
+            cout << "No" << endl;
+            return 0;
+        }
+        i++;
+    }
+    // dbg(A);
+    // dbg(tops);
+    cout << "Yes" << endl;
     // cout << "breaker" << endl;
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }
