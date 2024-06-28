@@ -2176,14 +2176,14 @@ vector<int> dy_wasd = {0,0,1,-1};
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
-
-
-long long solve(long long N, int M, const std::vector<long long> &u, const std::vector<long long> &v) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -2191,17 +2191,35 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    long long N;
-    int M;
-    std::cin >> N >> M;
-    std::vector<long long> u(M), v(M);
-    REP (i, M) {
-        std::cin >> u[i] >> v[i];
-    }
-    auto ans = solve(N, M, u, v);
-    std::cout << ans << '\n';
-
     /* genprimes(1e5); */
+    ll N,M;
+    cin >> N >> M;
+    vvll adj(N);
+    foi(0,M){
+        ll u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    dbg(adj);
+    vll visited(N,0);
+    ll ans = 0;
+    auto dfs = [&](auto dfs, ll v) -> void {
+        if(ans==1e6) return;
+        visited[v]=1;
+        ans++;
+        for(auto x:adj[v]){
+            if(!visited[x]){
+                dfs(dfs, x);
+                // ans++;
+            }
+        }
+        visited[v]=0;
+    };
+    dfs(dfs,(ll)0);
+    cout << ans << endl;
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
     for (int i = 0; i < n; i++) {

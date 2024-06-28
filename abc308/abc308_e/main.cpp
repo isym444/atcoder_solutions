@@ -1686,29 +1686,64 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-long long solve(int N, const std::vector<long long> &A, std::string S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    std::string S;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    string S;
+    cin >> S;
+    vll M(3,0);
+    vll E(3,0);
+    vll X(3,0);
+    foi(0,N){
+        if(S[i]=='X'){
+            X[A[i]]++;
+        }
     }
-    std::cin >> S;
-    auto ans = solve(N, A, S);
-    std::cout << ans << '\n';
 
+    auto mex = [&](ll a, ll b, ll c){
+        ll all = 1<<a | 1<<b | 1<<c;
+        ll i = 0;
+        while(all>>i&1==1){
+            i++;
+        }
+        return (i);
+    };
+
+    dbg(X);
+    ll ans = 0;
+    foi(0,N){
+        if(S[i]=='E'){
+            // ll validTriples = 0;
+            foj(0,3){
+                fok(0,3){
+                    dbg(mex(A[i],j,k));
+                    ans+=mex(A[i],j,k)*(M[j]*X[k]);
+                }
+            }
+        }
+        else if(S[i]=='M'){
+            M[A[i]]++;
+        }
+        else if(S[i]=='X'){
+            X[A[i]]--;
+        }
+    }
+    cout << ans << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

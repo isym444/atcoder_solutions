@@ -1699,34 +1699,102 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 constexpr long long MOD = 998244353;
-void GenerateCombinations(int n, int k, int start, long long value, std::vector<long long>& result) {
-    // When we have selected enough bits
-    if (k == 0) {
-        result.push_back(value);
-        return;
-    }
-    // Try all possible next positions
-    for (int i = start; i <= n - k; ++i) {
-        // Set the ith bit and recurse
-        GenerateCombinations(n, k - 1, i + 1, value | (1LL << i), result);
-    }
-}
 
-// Function to generate all numbers with exactly x set bits up to a limit
-std::vector<long long> GenerateNumbersWithPopCount(int x) {
-    std::vector<long long> numbers;
-    GenerateCombinations(60, x, 0, 0, numbers); // 60 bit positions
-    return numbers;
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
+string itobins(ll n) {
+    if (n == 0) return "0";
+
+    string binary = "";
+    while (n > 0) {
+        binary += (n % 2) ? '1' : '0';
+        n /= 2;
+    }
+
+    reverse(binary.begin(), binary.end()); // Reverse to get the correct order
+    return binary;
+}
 int main() {
-    int x = 3; // Example: Generate numbers with exactly 3 set bits
-    auto numbers = GenerateNumbersWithPopCount(x);
-
-    std::cout << "Generated " << numbers.size() << " numbers with popcount == " << x << std::endl;
-    for (long long num : numbers) {
-        std::cout << num << std::endl;
+    ll a,b,c;
+    cin >> a >> b >> c;
+    dbg(itobins(c));
+    dbg(itobins(c).size());
+    ll p = __builtin_popcountll(c);
+    dbg(p);
+    // cerr << p << endl;
+    if((a+b+p)%2!=0||p<abs(a-b)||(a+b+p)/2>60||p>a+b){
+        cout << -1 << endl;
+        return 0;
     }
-
+    ll x=0;
+    ll y=0;
+    ll numberSame=a+b-p;
+    // cerr << numberSame << endl;
+    dbg(numberSame);
+    ll numberDif=a+b-numberSame;
+    ll xAvailableForDif=a-(numberSame/2);
+    // cerr << xAvailableForDif << endl;
+    dbg(xAvailableForDif);
+    ll yAvailableForDif=b-(numberSame/2);
+    dbg(yAvailableForDif);
+    cerr << endl;
+    ll counter = 0;
+    ll counter0 = 0;
+    ll counter1 = 0;
+    foi(0,60){
+        dbg(i);
+        ll temp=c>>(ll)i&1;
+        dbg(temp);
+        // dbg(x);
+        // dbg(y);
+        // dbg(a);
+        // dbg(b);
+        if(temp==1){
+            counter1++;
+            if(xAvailableForDif){
+                x=x|((ll)1<<i);
+                xAvailableForDif--;
+                a--;
+                // cerr << xAvailableForDif << endl;
+            }
+            else{
+                y=y|((ll)1<<i);
+                yAvailableForDif--;
+                b--;
+            }
+        }
+        else{
+            counter0++;
+            counter++;
+            // if(a>0) x=x|((ll)1<<i), a--;
+            // if(b>0) y=y|((ll)1<<i), b--;
+            if(numberSame>0){
+                x=x|((ll)1<<i), a--;
+                y=y|((ll)1<<i), b--;
+                numberSame-=2;
+            }
+        }
+        dbg(c>>(ll)i&1);
+        dbg(x>>(ll)i&1);
+        dbg(y>>(ll)i&1);
+        dbg(" ");
+    }
+    dbg(counter);
+    dbg(counter0);
+    dbg(counter1);
+    dbg(x);
+    dbg(y);
+    dbg(a);
+    dbg(b);
+    dbg(make_pair(xAvailableForDif, yAvailableForDif));
+    dbg(numberSame);
+    cout << x << " " << y << endl;
     return 0;
 }

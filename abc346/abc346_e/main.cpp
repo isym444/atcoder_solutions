@@ -997,32 +997,79 @@ vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
 vector<int> dy_wasd = {0,0,1,-1};
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
-
-
-auto solve(long long H, long long W, int M, const std::vector<long long> &T, const std::vector<long long> &A, const std::vector<long long> &X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long H, W;
-    int M;
-    std::cin >> H >> W >> M;
-    std::vector<long long> T(M), A(M), X(M);
-    REP (i, M) {
-        std::cin >> T[i] >> A[i] >> X[i];
+    ll H,W,M;
+    cin >> H >> W >> M;
+    vll T(M);
+    vll A(M);
+    vll X(M);
+    foi(0,M){
+        cin >> T[i] >> A[i] >> X[i];
     }
-    auto ans = solve(H, W, M, T, A, X);
-    std::cout << n << '\n';
-    REP (i, n) {
-        std::cout << a[i] << ' ' << b[i] << '\n';
+    vll counts((ll)2e5+10,0);
+    counts[0]=H*W;
+    ll remH = H;
+    ll remW = W;
+    vll usedColumns(W,0);
+    vll usedRows(H,0);
+    dbg(usedRows);
+    for(int i = M-1; i>=0; i--){
+        ll t,a,x;
+        t = T[i];
+        a = A[i];
+        a--;
+        x = X[i];
+        dbg(make_pair(a,x));
+        //if t == 1, paint all cells in row a
+        if(t==1){
+            //remW = remaining columns
+            if(!usedRows[a]){
+                dbg("reached");
+                counts[x]+=remW;
+                //remH = remaining rows
+                remH--;
+                usedRows[a]=1;
+            }
+        }else{
+            if(!usedColumns[a]){
+                counts[x]+=remH;
+                remW--;
+                usedColumns[a]=1;
+            }
+        }
+    }
+    // counts[0]=remW*remH;
+    deque<pair<ll,ll>> ans;
+    ll nonzero=0;
+    foi(1,(ll)2e5+10){
+        if(counts[i]!=0){
+            // cout << i << " " << counts[i] << endl;
+            ans.pb(make_pair(i,counts[i]));
+            nonzero+=counts[i];
+        }
+    }
+    // dbg(nonzero);
+    ll zerocount = (H*W)-nonzero;
+    // ans.pop_front();
+    if(zerocount>0) ans.push_front(make_pair(0,zerocount));
+    cout << ans.size() << endl;
+    fx(ans){
+        cout << x.first << " " << x.second << endl;
     }
 
     /* genprimes(1e5); */
