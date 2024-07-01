@@ -44,7 +44,7 @@ using namespace std;
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
 //#define gcd __gcd
 #define mp make_pair
 //Makes % get floor remainder (towards -INF) and make it always positive
@@ -2163,10 +2163,7 @@ long long ipow(long long base, int exp) {
 }
 
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
-vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
-vector<int> dx_wasd = {1,-1,0,0};
-vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
-vector<int> dy_wasd = {0,0,1,-1};
+
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
@@ -2176,15 +2173,9 @@ vector<int> dy_wasd = {0,0,1,-1};
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
-
-const std::string YES = "Yes";
-const std::string NO = "No";
-bool solve(auto H, auto W, const std::vector<std::vector<auto> > &C) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#define isvalid(checking,min_boundary,max_boundary) (0<=checking and checking<max_boundary)
+vector<int> dx_wasd = {1,-1,0,0};
+vector<int> dy_wasd = {0,0,1,-1};
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -2192,16 +2183,88 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    auto H, W;
-    std::cin >> H >> W;
-    std::vector<std::vector<auto> > C(H, std::vector<auto>((W)));
-    REP (j, H) {
-        REP (i, W) {
-            std::cin >> C[j][i];
+    ll H,W;
+    cin >> H >> W;
+    vector<string> g(H);
+    pair<ll,ll> spos;
+    foi(0,H){
+        cin >> g[i];
+        foj(0,W){
+            if(g[i][j]=='S') spos=mp(i,j);
         }
     }
-    auto ans = solve(H, W, C);
-    std::cout << (ans ? YES : NO) << '\n';
+
+    vector<pair<ll,ll>> adjacents;
+
+    foi(0,4){
+        ll ti,tj;
+        ti = spos.first+dy_wasd[i];
+        tj = spos.second+dx_wasd[i];
+        // cerr << ti << " " << tj << endl;
+        if(!isvalid(ti,0,H)) continue;
+        if(!isvalid(tj,0,W)) continue;
+        if(g[ti][tj]=='.'){
+            adjacents.pb(mp(ti,tj));
+        }
+    }
+    if(adjacents.size()<2){
+        cout << "No" << endl;
+        return 0;
+    }
+
+    dsu dd(H*W);
+
+    auto uniquexy = [&](ll x, ll y)->ll{
+        return x*W+y;
+    };
+
+    map<pair<ll,ll>,ll> visited;
+    auto findConnected = [&](auto findConnected, ll x, ll y)->void{
+        visited[mp(x,y)]=1;
+        foi(0,4){
+            ll ti, tj;
+            ti = x+dy_wasd[i];
+            tj = y+dx_wasd[i];
+            if(!isvalid(ti,0,H)) continue;
+            if(!isvalid(tj,0,W)) continue;
+            if(!visited[mp(ti,tj)] && g[ti][tj]=='.'){
+                dd.merge(uniquexy(x,y),uniquexy(ti,tj));
+                findConnected(findConnected, ti,tj);
+            }
+
+        }
+    };
+
+    for(auto xy:adjacents){
+        findConnected(findConnected, xy.first, xy.second);
+    }
+
+    // for(auto x:dd.groups()){
+    //     cerr << x << endl;
+    // }
+
+    foi(0, adjacents.size()){
+        foj(0, adjacents.size()){
+            if(i==j) continue;
+            // cerr << adjacents[i].first << " " << adjacents[i].second << endl;
+            // cerr << adjacents[j].first << " " << adjacents[j].second << endl;
+            // cerr << uniquexy(adjacents[i].first, adjacents[i].second) << endl;
+            // cerr << uniquexy(adjacents[j].first, adjacents[j].second) << endl;
+            // cerr << dd.same(uniquexy(adjacents[i].first,adjacents[i].second),uniquexy(adjacents[j].first,adjacents[j].second)) << endl;
+            if(dd.same(uniquexy(adjacents[i].first,adjacents[i].second),uniquexy(adjacents[j].first,adjacents[j].second))){
+                cout << "Yes" << endl;
+                return 0;
+            }
+        }
+    }
+
+    // cerr << adjacents << endl;
+
+    // fx(g){
+    //     cerr << x << endl;
+    // }
+
+    cout << "No" << endl;
 
     /* genprimes(1e5); */
 
