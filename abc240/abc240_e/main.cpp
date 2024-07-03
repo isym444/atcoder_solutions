@@ -792,40 +792,35 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-auto solve(int N, const std::vector<long long> &u, const std::vector<long long> &v) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#define rep(i,n) for (int i = 0; i < (n); ++i)
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    std::cin >> N;
-    std::vector<long long> u(N - 1), v(N - 1);
-    REP (i, N - 1) {
-        std::cin >> u[i] >> v[i];
-    }
-    auto ans = solve(N, u, v);
-    REP (i, N) {
-        std::cout << L[i] << ' ' << R[i] << '\n';
-    }
+  int n;
+  cin >> n;
+  vector<vector<int>> to(n);
+  rep(i,n-1) {
+    int a, b;
+    cin >> a >> b;
+    --a; --b;
+    to[a].push_back(b);
+    to[b].push_back(a);
+  }
 
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+  vector<int> l(n), r(n);
+  int x = 1;
+  auto dfs = [&](auto f, int v, int p=-1) -> void {
+    l[v] = x;
+    for (int u : to[v]) {
+      if (u == p) continue;
+      f(f,u,v);
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-    return 0;
+    if (to[v].size() == 1 && p != -1) { // leaf
+      x++;
+    }
+    r[v] = x-1;
+  };
+
+  dfs(dfs, 0);
+  rep(i,n) printf("%d %d\n", l[i], r[i]);
+  return 0;
 }
