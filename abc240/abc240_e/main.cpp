@@ -789,38 +789,55 @@ bool isPalindrome(long long n) {
     return original == reversed;
 }
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-#define rep(i,n) for (int i = 0; i < (n); ++i)
-
-int main() {
-  int n;
-  cin >> n;
-  vector<vector<int>> to(n);
-  rep(i,n-1) {
-    int a, b;
-    cin >> a >> b;
-    --a; --b;
-    to[a].push_back(b);
-    to[b].push_back(a);
-  }
-
-  vector<int> l(n), r(n);
-  int x = 1;
-  auto dfs = [&](auto f, int v, int p=-1) -> void {
-    l[v] = x;
-    for (int u : to[v]) {
-      if (u == p) continue;
-      f(f,u,v);
+int main(){
+    ll N;
+    cin >> N;
+    vvll to(N);
+    foi(0,N-1){
+        ll u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        // dbg(make_pair(u,v));
+        to[u].pb(v);
+        to[v].pb(u);
     }
-    if (to[v].size() == 1 && p != -1) { // leaf
-      x++;
-    }
-    r[v] = x-1;
-  };
+    ll x = 1;
+    vll L(N);
+    vll R(N);
 
-  dfs(dfs, 0);
-  rep(i,n) printf("%d %d\n", l[i], r[i]);
-  return 0;
+    auto checkleaf = [&](ll v) -> bool {
+        if(to[v].size()==1) return true;
+        return false;
+    };
+    
+    auto dfs = [&](auto dfs, ll v, ll p) -> void {
+        L[v]=x;
+        for(auto u:to[v]){
+            if(u==p) continue;
+            dfs(dfs, u, v);
+        }
+        if(checkleaf(v)&&p!=-1){
+            x++;
+        }
+        R[v]=x-1;
+    };
+    dbg(to);
+    dfs(dfs, 0, -1);
+    foi(0,N){
+        cout << L[i] << " " << R[i] << endl;
+    }
+    return 0;
 }
