@@ -260,6 +260,21 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
+
+
+/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+// using mint = modint998244353;
+// Custom operator<< for modint998244353
+
+// //uncomment this code to allow dbg / ostream to handle mint
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
+
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
 #define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
@@ -324,47 +339,43 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
-//n.b. it is a data type so declare variablesas: mint x;
-// to convert any other data type such as int or ll to mint, do: mint(x);
-// when you want to access the value of a mint, use x.val()
-// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-// using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-
 const std::string YES = "Yes";
 const std::string NO = "No";
-
-
-
-bool solve(string S, string T) {
-    int S_length = S.length();
-    int T_length = T.length();
-
-    for (int w = 1; w < S_length; w++) {
-        for (int c = 1; c <= w; c++) {
-            string concatenated;
-            for (int i = 0; i < S_length; i += w) {
-                if (i + c - 1 < S_length) {
-                    concatenated += S[i + c - 1];
-                    if(concatenated.length()>=c){
-                        if(concatenated == T) return true;
-                    }
-                }
-            }
-        }
-    }
-    return false;
+bool solve(std::string S, std::string T) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
+    setIO("");
     std::cin.tie(nullptr);
-    std::cout << std::fixed << std::setprecision(11);
-
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
     std::string S, T;
     std::cin >> S >> T;
-    bool ans = solve(S, T);
+    auto ans = solve(S, T);
     std::cout << (ans ? YES : NO) << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
+    return 0;
 }

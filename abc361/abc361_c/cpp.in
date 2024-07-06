@@ -1,0 +1,24 @@
+BWBWBW
+
+BWBWBW.. 4
+BW..BWBW 6
+BWWBB..W 3
+..WBBBWW 4
+WWWBBB.. 0
+
+
+
+
+BWBWBW 0 together & 0 together, 3 apart & 3 apart, differs 3 from T, 3 same as T
+WWWBBB 3 together & 3 together, 0 apart & 0 apart
+answer: 4
+
+BBBWBWWWBBWWBW 5 together & 5 together, 2 apart & 2 apart, differs 6 from T, 8 same as T
+WBWWBBWWWBWBBB 5 together & 5 together, 2 apart & 2 apart
+answer: 7
+
+
+BBBWBWBBWWBW
+WBWWBBWBWBBB..
+..WWBBWBWBBBWB
+BBWBWWBBWB..WB 2 moves

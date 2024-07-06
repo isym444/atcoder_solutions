@@ -260,6 +260,21 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
+
+
+/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+// using mint = modint998244353;
+// Custom operator<< for modint998244353
+
+// //uncomment this code to allow dbg / ostream to handle mint
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
+
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
 #define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
@@ -324,12 +339,6 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
-//n.b. it is a data type so declare variablesas: mint x;
-// to convert any other data type such as int or ll to mint, do: mint(x);
-// when you want to access the value of a mint, use x.val()
-// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-// using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 const std::string YES = "Yes";
@@ -339,13 +348,6 @@ bool solve(std::string S) {
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
-    ll r,m;
-    foi(0,3){
-        if(S[i]=='R') r=i;
-        if(S[i]=='M') m=i;
-    }
-    if(r<m) return true;
-    return false;
 }
 
 int main() {

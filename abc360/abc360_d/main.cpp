@@ -260,6 +260,21 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
+
+
+/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+// using mint = modint998244353;
+// Custom operator<< for modint998244353
+
+// //uncomment this code to allow dbg / ostream to handle mint
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
+
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
 #define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
@@ -324,14 +339,16 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
-//n.b. it is a data type so declare variablesas: mint x;
-// to convert any other data type such as int or ll to mint, do: mint(x);
-// when you want to access the value of a mint, use x.val()
-// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-// using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
+
+long long solve(int N, long long T, std::string S, const std::vector<long long> &X) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
+
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -344,30 +361,13 @@ int main() {
     std::string S;
     std::cin >> N;
     std::vector<long long> X(N);
-    //position & direction
-    vector<pair<ll,ll>> ants;
     std::cin >> T >> S;
     REP (i, N) {
         std::cin >> X[i];
     }
-    vll right;
-    vll left;
-    foi(0,N){
-        if(S[i]-'0'==1){
-            right.pb(X[i]);
-        }
-        else left.pb(X[i]);
-    }
-    sort(all(right));
-    sort(all(left));
-    dbg(right);
-    dbg(left);
-    ll ans = 0;
-    fx(right){
-        dbg(mt(x, x+2*T,left[indub(left,x+2*T)-1]));
-        ans += indub(left,x+2*T)-indlb(left,x+1);
-    }
-    cout << ans << endl;
+    auto ans = solve(N, T, S, X);
+    std::cout << ans << '\n';
+
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */
