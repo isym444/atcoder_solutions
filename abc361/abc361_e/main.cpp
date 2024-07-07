@@ -342,11 +342,43 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
+vector<vector<pair<ll,ll>>> wg;
+
+void edge(ll originNode, ll destNode, ll weight){
+    wg[originNode].emplace_back(destNode, weight);
+    // totalEdges++;
+    // For an undirected graph e.g., tree, add this line:
+    wg[destNode].emplace_back(originNode, weight);
+}
+
 long long solve(int N, const std::vector<long long> &A, const std::vector<long long> &B, const std::vector<long long> &C) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    // vector<vector<pair<ll,ll>>> g;
+    wg.assign(N, vector<pair<ll,ll>>());
+    ll tw=0;
+    foi(0,N-1){
+        edge(A[i]-1,B[i]-1,C[i]);
+        tw+=C[i];
+    }
+    dbg(wg);
+    tw*=2;
+    pair<ll,ll> furthestNode=mp(-1,-1);
+    auto dfs = [&](auto dfs, ll v, ll p, ll dist) -> void{
+        if(dist>furthestNode.second){
+            furthestNode=mp(v, dist);
+        }
+        for(auto u:wg[v]){
+            if(u.first==p) continue;
+            dfs(dfs, u.first, v, dist+u.second);
+        }
+    };
+    dfs(dfs,0,-1,0);
+    ll interimNode = furthestNode.first;
+    furthestNode=mp(-1,-1);
+    dfs(dfs,interimNode,-1,0);
+    return(tw-furthestNode.second);
 }
 
 int main() {
