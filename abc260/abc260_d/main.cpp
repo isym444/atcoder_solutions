@@ -663,42 +663,137 @@ ll lcs(string s, string t){
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-auto solve(int N, long long K, const std::vector<long long> &P) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    int N;
-    long long K;
-    std::cin >> N;
-    std::vector<long long> P(N);
-    std::cin >> K;
-    REP (i, N) {
-        std::cin >> P[i];
+    ll N,K;
+    cin >> N >> K;
+    vector<ll> P(N);
+    cin >> P;
+    // dbg(P);
+    // set<ll> pilechecker;
+    map<ll,ll> pilechecker;
+    dsu dd(N*2+4);
+    // ll counter=0;
+    foi(0,N){
+        // dbg(pilechecker);
+        // dbg(i);
+        ll cur = P[i];
+        // auto temp = lower_bound(pilechecker.begin(),pilechecker.end(),cur);
+        auto temp = pilechecker.lower_bound(cur);
+        if(temp==pilechecker.end()){
+            // pilechecker.insert(cur);
+            pilechecker[cur]++;
+            if(dd.size(cur)==K){
+                // dbg("merging");
+                // dbg(i);
+                dd.merge(cur,N+i+1);
+                pilechecker.erase(cur);
+            }
+            continue;
+        }
+        // dbg(mp(*it,cur));
+        dd.merge(temp->first,cur);
+        pilechecker.erase(temp);
+        // pilechecker.insert(cur);
+        // pilechecker.at(temp).first
+        auto tc = temp->second+1;
+        pilechecker[cur]=tc;
+        if(dd.size(cur)==K){
+            // dbg("merging");
+            // dbg(i);
+            dd.merge(cur,N+i+1);
+            pilechecker.erase(cur);
+        }
     }
-    auto ans = solve(N, K, P);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
+    vector<ll> ans(N,-1);
+    for(auto x:dd.groups()){
+        // dbg(x);
+        ll checker=-1;
+        for(auto y:x){
+            if(y==0) continue;
+            if(y>N&&y<=2*N){
+                checker=y-N;
+            }
+        }
+        if(checker!=-1){
+            for(auto z:x){
+                    if(z>N) continue;
+                    ans[z-1]=checker;
+                }
+        }
     }
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    for(auto x:ans){
+        cout << x << endl;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }
+// int main() {
+//     int N, K;
+//     cin >> N >> K; // Read number of cards and threshold K
+//     dsu uf(N * 2); // Initialize Union-Find for merging piles
+
+//     vector<int> P(N);
+//     cin >> P; // Read the permutation P
+//     REP(i, N) --P[i]; // Convert to 0-based indexing
+//     dbg(P);
+
+//     map<int, int> mp; // Map to store current piles and their sizes
+
+//     REP(turn, N) {
+//         int p = P.at(turn); // Draw the card
+//         auto itr = mp.lower_bound(p); // Find the pile to stack this card
+//         if (itr == mp.end()) {
+//             mp[p] = 1; // No suitable pile, create new pile with this card
+//         } else {
+//             auto cntr = itr->second + 1; // Increase the size of the pile
+//             uf.merge(itr->first, p); // Merge piles in union-find
+//             mp.erase(itr); // Remove old pile
+//             mp[p] = cntr; // Update new pile size
+//         }
+
+//         if (mp[p] == K) { // If pile size reaches K
+//             dbg("fin:");
+//             dbg(mp); // Debug print the current piles
+//             uf.merge(turn + N, p); // Record the turn it is eaten
+//             mp.erase(p); // Remove the pile
+//         }
+//         dbg(mp); // Debug print the current piles
+//     }
+
+//     // dbg(uf.groups()); // Debug print union-find groups
+//     for(auto x:uf.groups()){
+//         dbg(x);
+//     }
+
+//     vector<int> ret(N, -1); // Initialize result array
+//     for (auto g : uf.groups()) { // For each group in union-find
+//         int t = -1;
+//         for (auto i : g) {
+//             if (i >= N) { // Identify the turn for this group
+//                 t = i - N;
+//             }
+//         }
+//         if (t >= 0) {
+//             for (auto i : g) {
+//                 if (i < N) {
+//                     ret[i] = t + 1; // Assign the turn to cards
+//                 }
+//             }
+//         }
+//     }
+
+//     for (auto x : ret) cout << x << '\n'; // Output the result for each card
+//     cout << "break" << endl;
+//     return 0;
+// }

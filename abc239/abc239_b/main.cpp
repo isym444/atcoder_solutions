@@ -117,7 +117,7 @@ typedef multiset<ll> msll;
 #define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 
 /*/---------------------------Bits----------------------/*/
-#define setbits(decimalnumber) __builtin_popcount(decimalnumber)
+#define setbits(decimalnumber) __builtin_popcountll(decimalnumber)
 
 
 /*/---------------------------Strings----------------------/*/
@@ -260,6 +260,21 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
+
+
+/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+// using mint = modint998244353;
+// Custom operator<< for modint998244353
+
+// //uncomment this code to allow dbg / ostream to handle mint
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
+
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
 #define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
@@ -324,15 +339,15 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
-//n.b. it is a data type so declare variablesas: mint x;
-// to convert any other data type such as int or ll to mint, do: mint(x);
-// when you want to access the value of a mint, use x.val()
-// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-// using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
+long long solve(long long X) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -341,62 +356,11 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    ll N,K;
-    cin >> N >> K;
-    vll A(N);
-    cin >> A;
+    long long X;
+    std::cin >> X;
+    auto ans = solve(X);
+    std::cout << ans << '\n';
 
-    ll L,R,M;
-    L=0;
-    R=(ll)2e9;
-    ll bestMid=INF;
-
-    auto numToReduceToM = [&](ll M) -> ll{
-        ll ret=0;
-        fx(A){
-            ret+=max((ll)0,x-M);
-        }
-        return ret;
-    };
-
-    while(L<=R){
-        M = midpoint(L,R);
-        dbg(M);
-        if(numToReduceToM(M)<=K){
-            bestMid = min(bestMid,M);
-            R=M-1;
-        } else{
-            L=M+1;
-        }
-    }
-
-    dbg(bestMid);
-
-    ll totalFun=0;
-
-    // auto arithmeticSum = [&](ll L, ll R) -> ll {
-    //     return (L + R) * (R - L + 1) / 2;
-    // };
-
-    auto arithmeticSum = [&](ll L, ll R, ll d) -> ll {
-        ll n = (R - L) / d + 1;
-        return n * (L + R) / 2;
-    };
-
-    ll usedRides = 0;
-
-    fx(A){
-        if(x<=bestMid) continue;
-        totalFun+=arithmeticSum(bestMid+1, x, (ll)1);
-        dbg(totalFun);
-        usedRides+=x-bestMid;
-    }
-    dbg(usedRides);
-    ll remainingRides = K-usedRides;
-
-    totalFun+=remainingRides*bestMid;
-
-    cout << totalFun << endl;
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */

@@ -117,7 +117,7 @@ typedef multiset<ll> msll;
 #define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 
 /*/---------------------------Bits----------------------/*/
-#define setbits(decimalnumber) __builtin_popcount(decimalnumber)
+#define setbits(decimalnumber) __builtin_popcountll(decimalnumber)
 
 
 /*/---------------------------Strings----------------------/*/
@@ -260,6 +260,21 @@ struct dsu {
     std::vector<int> parent_or_size;
 };
 
+
+
+/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+// using mint = modint998244353;
+// Custom operator<< for modint998244353
+
+// //uncomment this code to allow dbg / ostream to handle mint
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
+
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
 #define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
@@ -324,15 +339,17 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
-//n.b. it is a data type so declare variablesas: mint x;
-// to convert any other data type such as int or ll to mint, do: mint(x);
-// when you want to access the value of a mint, use x.val()
-// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-// using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-
+vector<vector<ll> > g;
+void edge(ll originNode, ll destNode)
+{
+    g[originNode].pb(destNode);
+    // totalEdges++;
+ 
+    // for undirected graph e.g. tree, add this line:
+    g[destNode].pb(originNode);
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -341,63 +358,65 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    ll N,K;
-    cin >> N >> K;
-    vll A(N);
-    cin >> A;
-
-    ll L,R,M;
-    L=0;
-    R=(ll)2e9;
-    ll bestMid=INF;
-
-    auto numToReduceToM = [&](ll M) -> ll{
-        ll ret=0;
-        fx(A){
-            ret+=max((ll)0,x-M);
-        }
-        return ret;
-    };
-
-    while(L<=R){
-        M = midpoint(L,R);
-        dbg(M);
-        if(numToReduceToM(M)<=K){
-            bestMid = min(bestMid,M);
-            R=M-1;
-        } else{
-            L=M+1;
-        }
+    
+    ll N,Q;
+    cin >> N >> Q;
+    g.resize(N);
+    vll X(N);
+    cin >> X;
+    dbg(X);
+    foi(0,N-1){
+        dbg(i);
+        ll a,b;
+        cin >> a >> b;
+        a--;
+        b--;
+        // dbg(mp(a,b));
+        edge(a,b);
     }
-
-    dbg(bestMid);
-
-    ll totalFun=0;
-
-    // auto arithmeticSum = [&](ll L, ll R) -> ll {
-    //     return (L + R) * (R - L + 1) / 2;
-    // };
-
-    auto arithmeticSum = [&](ll L, ll R, ll d) -> ll {
-        ll n = (R - L) / d + 1;
-        return n * (L + R) / 2;
-    };
-
-    ll usedRides = 0;
-
-    fx(A){
-        if(x<=bestMid) continue;
-        totalFun+=arithmeticSum(bestMid+1, x, (ll)1);
-        dbg(totalFun);
-        usedRides+=x-bestMid;
+    dbg(g);
+    vll V;
+    vll K;
+    foi(0,Q){
+        ll v,k;
+        cin >> v >> k;
+        v--;
+        V.pb(v);
+        K.pb(k);
     }
-    dbg(usedRides);
-    ll remainingRides = K-usedRides;
-
-    totalFun+=remainingRides*bestMid;
-
-    cout << totalFun << endl;
-
+    dbg(V);
+    dbg(K);
+    auto mergeSortAndResize = [&](vll vec1, vll vec2) -> vll {
+        fx(vec2){
+            vec1.pb(x);
+        }
+        sort(vec1.rbegin(),vec1.rend());
+        vec1.resize(20);
+        return vec1;
+    };
+    vvll subtreeRootRanges(N);
+    map<ll,vll> answers;
+    auto dfs = [&](auto dfs, ll v, ll p) -> void{
+        vll returner(20,0);
+        returner[0]=X[v];
+        for(auto u:g[v]){
+            if(u==p) continue;
+            dfs(dfs, u, v);
+            // subtreeRootRanges[v]=temp;
+            returner = mergeSortAndResize(answers[u],returner);
+        }
+        answers[v]=returner;
+        // return returner;
+    };
+    subtreeRootRanges[0].pb(X[0]);
+    // vll tv;
+    // tv.pb(X[0]);
+    dfs(dfs,0,-1);
+    // dbg(ans);
+    dbg(answers);
+    foi(0,Q){
+        cout << answers[V[i]][K[i]-1] << endl;
+    }
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */
 

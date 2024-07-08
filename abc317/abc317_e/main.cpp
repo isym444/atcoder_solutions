@@ -42,7 +42,7 @@ using namespace std;
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+// #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
 //#define gcd __gcd
 #define mp make_pair
 //Makes % get floor remainder (towards -INF) and make it always positive
@@ -1636,36 +1636,97 @@ template <class T> struct BIT {
 
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
 vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
-vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
-vector<int> dy_wasd = {0,0,1,-1};
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-long long solve(auto H, auto W, const std::vector<std::vector<auto> > &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#define isvalid(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    auto H, W;
-    std::cin >> H >> W;
-    std::vector<std::vector<auto> > A(H + W + 4, std::vector<auto>((H + W + 4)));
-    REP (j, H + 4) {
-        REP (i, W) {
-            std::cin >> A[i + j][i + j];
+    ll H,W;
+    cin >> H >> W;
+    vector<vector<char>> G;
+    foi(0,H){
+        vector<char> temp;
+        foj(0,W){
+            char t;
+            cin >> t;
+            temp.pb(t);
+        }
+        G.pb(temp);
+    }
+    fx(G){
+        dbg(x);
+    }
+
+    // >, <, ^, v
+    vector<int> dx_wasd = {1,-1,0,0};
+    vector<int> dy_wasd = {0,0,1,-1};
+
+    auto filler = [&](auto filler, ll x, ll y, ll direction) -> void {
+        // cerr << "reached" << endl;
+        if(!isvalid(x,y,0,W-1,0,H-1)) return;
+        // dbg(G[y][x]);
+        // dbg(mp(x,y));
+        ll nx, ny;
+        // if(G[y][x]!='>'||G[y][x]!='<'||G[y][x]!='^'||G[y][x]!='>'){
+        //     nx = x+dx_wasd[direction];
+        //     ny = y+dy_wasd[direction];
+        //     filler(filler, nx, ny, direction);
+        // }
+        if(G[y][x]!='!'&&G[y][x]!='.') return;
+        G[y][x]='!';
+        nx = x+dx_wasd[direction];
+        ny = y+dy_wasd[direction];
+        filler(filler, nx, ny, direction);
+    };
+
+    foi(0,H){
+        foj(0,W){
+            if(G[i][j]=='v'){
+                // dbg(G[i][j]);
+                ll direction = 2;
+                filler(filler,j+dx_wasd[direction],i+dy_wasd[direction],direction);
+            }
+            if(G[i][j]=='>'){
+                ll direction = 0;
+                filler(filler,j+dx_wasd[direction],i+dy_wasd[direction],direction);
+                // filler(filler,j,i,direction);
+
+            }
+            if(G[i][j]=='<'){
+                ll direction = 1;
+                filler(filler,j+dx_wasd[direction],i+dy_wasd[direction],direction);
+                // filler(filler,j,i,direction);
+
+            }
+            if(G[i][j]=='^'){
+                ll direction = 3;
+                filler(filler,j+dx_wasd[direction],i+dy_wasd[direction],direction);
+                // filler(filler,j,i,direction);
+
+            }
         }
     }
-    auto ans = solve(H, W, A);
-    std::cout << ans << '\n';
+    cerr << endl;
+    fx(G){
+        dbg(x);
+    }
 
+    auto dfs = [&](){};
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
