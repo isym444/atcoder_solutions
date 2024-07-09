@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "deque": "cpp",
+        "tuple": "cpp",
+        "queue": "cpp"
+    }
+}

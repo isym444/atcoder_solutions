@@ -792,40 +792,118 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-auto solve(int N, const std::vector<std::string> &S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    std::cin >> N;
-    std::vector<std::string> S(N);
-    REP (i, N) {
-        std::cin >> S[i];
-    }
-    auto ans = solve(N, S);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
-    }
+// int main(){
+//     ll N;
+//     cin >> N;
+//     vector<pair<string,ll>> S;
+//     foi(0,N){
+//         string temp;
+//         cin >> temp;
+//         S.pb(mp(temp,i));
+//     }
+//     sort(S.begin(), S.end());
+//     dbg(S);
+//     vll ans(N,-1);
+//     foi(0,N-1){
+//         auto [s1, i1] = S[i];
+//         auto [s2, i2] = S[i+1];
+//         ll counter = 0;
+//         foj(0,min(s1.size(),s2.size())){
+//             if(s1[j]!=s2[j]){
+//                 break;
+//             }else{
+//                 counter=j+1;
+//             }
+//         }
+//         ans[i1]=max(ans[i1],counter);
+//         ans[i2]=max(ans[i2],counter);
+//     }
+//     fx(ans){
+//         cout << x << endl;
+//     }
+//     return 0;
+// }
 
-    /* genprimes(1e5); */
 
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
+int main(){
+    ll n;
+    cin >> n;
+    string s[n]; // Array of strings
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    // Define lambda functions for hash calculations
+    auto hashFunc1 = [&](ll x, char ch) {
+        return (x * 31 + ch) % mod;
+    };
+    auto hashFunc2 = [&](ll x, char ch) {
+        return (x * 37 + ch) % mod;
+    };
+
+    map<ll, ll> mp, mp2;
+    // Define a lambda function to compute prefix hashes for a given string
+    auto computePrefixHashes = [&](const string &str) {
+        vector<ll> pr, pr1;
+        pr.push_back(0);
+        pr1.push_back(0);
+        for (char ch : str) {
+            // Compute hash using the first hash function
+            ll x = pr.back();
+            ll p = hashFunc1(x, ch);
+            pr.push_back(p);
+            mp[p]++;
+            
+            // Compute hash using the second hash function
+            x = pr1.back();
+            p = hashFunc2(x, ch);
+            pr1.push_back(p);
+            mp2[p]++;
+        }
+        // return make_tuple(pr, pr1);
+        return make_tuple(mp, mp2);
+    };
+
+    vector<vector<ll>> all_pr(n + 1), all_pr1(n + 1);
+    // map<ll, ll> mp, mp1;
+    
+    // Reading strings and computing prefix hashes
+    for (ll i = 1; i <= n; i++) {
+        cin >> s[i];
+        auto [pr, pr1] = computePrefixHashes(s[i]);
+        // all_pr[i] = pr;
+        // all_pr1[i] = pr1;
+
+        // // Merge individual maps into global maps
+        // for (ll val : pr) {
+        //     mp[val]++;
+        // }
+        // for (ll val : pr1) {
+        //     mp1[val]++;
+        // }
+    }
+
+    // Finding the maximum length of the common prefix
+    for (ll i = 1; i <= n; i++) {
+        ll res = 0;
+        for (ll l = 1, r = s[i].size(); l <= r;) {
+            ll md = (l + r) >> 1;
+            if (mp[all_pr[i][md]] >= 2 && mp2[all_pr1[i][md]] >= 2) {
+                res = md;
+                l = md + 1;
+            } else {
+                r = md - 1;
+            }
+        }
+        cout << res << "\n";
+    }
+
     return 0;
 }

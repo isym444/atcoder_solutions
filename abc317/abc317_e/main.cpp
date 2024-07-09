@@ -1651,7 +1651,7 @@ const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = 
 #endif
 
 #define isvalid(x_value,y_value,min_valid_x,max_valid_x,min_valid_y,max_valid_y) (min_valid_x<=x_value and x_value<=max_valid_x and min_valid_y<=y_value and y_value<=max_valid_y)
-
+#define isvalidsingle(value,min_valid_value,max_valid_value) (min_valid_value<=value and value<=max_valid_value)
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -1726,7 +1726,84 @@ int main() {
         dbg(x);
     }
 
-    auto dfs = [&](){};
+    auto uniquexy = [&](ll x, ll y)->ll{
+        return(x*W+y);
+    };
+
+    // auto dfs = [&](auto dfs)->void{
+
+    // };
+
+    // dsu uf(H*W);
+
+    pair<ll,ll> Spos,Gpos;
+
+    foi(0,H){
+        foj(0,W){
+            // dbg(mp(i,j));
+            // dbg(G[i][j]);
+            // if(G[i][j]!='.'&&G[i][j]!='S'&&G[i][j]!='G') continue;
+            if(G[i][j]=='S') Spos = mp(i,j);
+            if(G[i][j]=='G') Gpos = mp(i,j);
+            // fok(0,4){
+            //     ll di = i+dy_wasd[k];
+            //     ll dj = j+dx_wasd[k];
+            //     if(isvalidsingle(di,0,H-1)&&isvalidsingle(dj,0,W-1)){
+            //         if(G[di][dj]!='.'&&G[di][dj]!='S'&&G[di][dj]!='G') continue;
+            //         // dbg(G[di][dj]);
+            //         // dbg(G[i][j]);
+            //         uf.merge(uniquexy(di,dj),uniquexy(i,j));
+            //     }
+            // }
+        }
+    }
+
+    // deque<tuple<ll,ll,ll>> q;
+    queue<tuple<ll,ll>> q;
+
+    q.push(make_tuple(Spos.first,Spos.second));
+    
+    vector<vector<ll>> visited(H, vector<ll>(W,0));
+    visited[Spos.first][Spos.second]=1;
+    
+    while(!q.empty()){
+        tuple<ll,ll> cur = q.front();
+        // ll i = get<0>(cur);
+        // ll j = get<1>(cur);
+        // ll d = get<2>(cur);
+        auto [i,j] = cur;
+        // visited[i][j] = d+1;
+        q.pop();
+        fok(0,4){
+                ll di = i+dy_wasd[k];
+                ll dj = j+dx_wasd[k];
+                if(isvalidsingle(di,0,H-1)&&isvalidsingle(dj,0,W-1)){
+                    if(visited[di][dj]) continue;
+                    if(G[di][dj]!='.'&&G[di][dj]!='S'&&G[di][dj]!='G') continue;
+                    // dbg(G[di][dj]);
+                    // dbg(G[i][j]);
+                    // uf.merge(uniquexy(di,dj),uniquexy(i,j));
+                    visited[di][dj]=visited[i][j]+1;
+                    q.push(make_tuple(di,dj));
+                }
+            }
+    }
+
+    dbg(Spos);
+    // dbg(uniquexy(Spos.first,Spos.second));
+    dbg(Gpos);
+    dbg(visited);
+
+    // for(auto x:uf.groups()){
+    //     dbg(x);
+    // }
+
+    // if(!uf.same(uniquexy(Spos.first,Spos.second),uniquexy(Gpos.first,Gpos.second))){
+    //     cout << -1 << endl;
+    //     return 0;
+    // }
+
+    cout << visited[Gpos.first][Gpos.second]-1 << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

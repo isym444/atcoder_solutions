@@ -167,41 +167,41 @@ void edge(ll originNode, ll destNode, ll weight){
 }
 
 //returns vector where each index is the shortest distance between the start node and node i
-vector<ll> dijkstra(ll start) {
-    vector<ll> dist(wg.size(), INF);  // Distance from start to each node
-    //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
-    //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
-    dist[start] = 0;
-    pq.push({0, start});  // {distance, node}
+// vector<ll> dijkstra(ll start) {
+//     vector<ll> dist(wg.size(), INF);  // Distance from start to each node
+//     //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
+//     //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
+//     priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+//     dist[start] = 0;
+//     pq.push({0, start});  // {distance, node}
 
-    while (!pq.empty()) {
-        //cerr << "pq" << pq << endl;
-        ll currentDist = pq.top().first;
-        ll currentNode = pq.top().second;
-        pq.pop();
+//     while (!pq.empty()) {
+//         //cerr << "pq" << pq << endl;
+//         ll currentDist = pq.top().first;
+//         ll currentNode = pq.top().second;
+//         pq.pop();
 
-        // If the distance in priority queue is larger, we have already found a better path
-        if (currentDist > dist[currentNode]) {
-            continue;
-        }
-        /* Optimization to try if TLEing instead of if statement above
-        if (cdist != dist[node]) { continue; }*/
+//         // If the distance in priority queue is larger, we have already found a better path
+//         if (currentDist > dist[currentNode]) {
+//             continue;
+//         }
+//         /* Optimization to try if TLEing instead of if statement above
+//         if (cdist != dist[node]) { continue; }*/
     
-        for (auto &neighbor : wg[currentNode]) {
-            ll nextNode = neighbor.first;
-            ll weight = neighbor.second;
-            ll newDist = currentDist + weight;
+//         for (auto &neighbor : wg[currentNode]) {
+//             ll nextNode = neighbor.first;
+//             ll weight = neighbor.second;
+//             ll newDist = currentDist + weight;
 
-            if (newDist < dist[nextNode]) {
-                dist[nextNode] = newDist;
-                pq.push({newDist, nextNode});
-            }
-        }
-    }
+//             if (newDist < dist[nextNode]) {
+//                 dist[nextNode] = newDist;
+//                 pq.push({newDist, nextNode});
+//             }
+//         }
+//     }
 
-    return dist;
-}
+//     return dist;
+// }
 
 //Bellman Ford Graph: L node, R node, weight of edge between L&R
 vector<tuple<int, int, ll>> bfg;
@@ -454,42 +454,142 @@ struct loc
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+// vector<ll> parent; // To store parent information
+//visited nodes
+// vector<bool> vis;
+//bool vis[61][61][61][61]={0};
+// map<ll,ll> depth;
+
+//initialize weighted graph as adjacency list
+// vector<vector<pair<ll,ll>>> wg;
+
+// void edge(ll originNode, ll destNode, ll weight){
+//     wg[originNode].emplace_back(destNode, weight);
+//     totalEdges++;
+//     // For an undirected graph e.g., tree, add this line:
+//     wg[destNode].emplace_back(originNode, weight);
+// }
+
+//returns vector where each index is the shortest distance between the start node and node i
+vector<ll> dijkstra(ll start, ll B, ll C) {
+    vector<ll> dist(wg.size(), INF);  // Distance from start to each node
+    //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
+    //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    dist[start] = 0;
+    pq.push({0, start});  // {distance, node}
+
+    while (!pq.empty()) {
+        //cerr << "pq" << pq << endl;
+        ll currentDist = pq.top().first;
+        ll currentNode = pq.top().second;
+        pq.pop();
+
+        // If the distance in priority queue is larger, we have already found a better path
+        if (currentDist > dist[currentNode]) {
+            continue;
+        }
+        /* Optimization to try if TLEing instead of if statement above
+        if (cdist != dist[node]) { continue; }*/
+    
+        for (auto &neighbor : wg[currentNode]) {
+            ll nextNode = neighbor.first;
+            ll weight = neighbor.second;
+            ll newDist = currentDist + weight*B+C;
+
+            if (newDist < dist[nextNode]) {
+                dist[nextNode] = newDist;
+                pq.push({newDist, nextNode});
+            }
+        }
+    }
+
+    return dist;
 }
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+int main(){
+    ll N, A, B, C;
+    cin >> N >> A >> B >> C;
+    wg.resize(N);
+    foi(0,N){
+        foj(0,N){
+            ll t;
+            cin >> t;
+            edge(i,j,t);
+        }
     }
-    auto ans = solve(n, a);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    for(auto x:wg){
+        dbg(x);
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    auto fromStart = dijkstra(0,A,0);
+    dbg(fromStart);
+    // foi(0,N){
+    //     fromStart[i]=fromStart[i]*A;
+    // }
+    auto fromEnd = dijkstra(N-1,B,C);
+    dbg(fromEnd);
+    // foi(0,N){
+    //     fromEnd[i]=fromEnd[i]*B+C;
+    // }
+    // fromEnd[N-1]=0;
+    dbg(fromStart);
+    dbg(fromEnd);
+    ll ans=INF;
+
+    foi(0,N){
+        ans=min(ans,fromStart[i]+fromEnd[i]);
+        dbg(ans);
+    }
+    cout << ans << endl;
     return 0;
 }
+
+
+// #define rep(i,n) for (int i = 0; i < (n); ++i)
+// using P = pair<ll,int>;
+
+// int main() {
+//     int n; ll a, b, c;
+//     cin >> n >> a >> b >> c;
+//     vector<vector<int>> d(n, vector<int>(n));
+//     rep(i,n)rep(j,n) cin >> d[i][j];
+//     const ll INF = 1e18; // A large value representing infinity
+//     auto dijk = [&](int sv, ll b, ll c) { // Lambda function for Dijkstra's algorithm
+//         vector<ll> dist(n,INF); // Distance vector initialized to infinity
+//         dist[sv] = 0; // Distance to the start vertex is 0
+//         vector<bool> done(n); // Boolean vector to check if the shortest path to a vertex is finalized
+//         rep(ni,n) {
+//             P best(INF,0); // Pair to find the minimum distance vertex -> pair represents distance to min dist vertex & which vertex it was
+//             rep(i,n) if (!done[i]) best = min(best, P(dist[i],i)); //finds next non processed vertex closest to last not fully processed vertex
+//             dbg(best);
+//             int v = best.second; // The vertex with the minimum tentative distance
+//             done[v] = true; // Mark this vertex as done
+//             dbg(done);
+//             rep(i,n) {
+//                 dist[i] = min(dist[i], dist[v]+d[v][i]/* *b+c */); // Update distances to neighboring vertices
+//             }
+//             dbg(dist);
+//             cerr << endl;
+//         }
+//         return dist; // Return the distance vector
+//     };
+
+//     auto d1 = dijk(0,a,0); // Minimum distances from city 1 using company car
+//     cerr << "---------------------" << endl;
+//     auto d2 = dijk(n-1,b,c); // Minimum distances from city N using train
+//     dbg(d1);
+//     dbg(d2);
+//     ll ans = INF; // Initialize the answer to infinity
+//     rep(i,n) ans = min(ans, d1[i]+d2[i]); // Find the minimum total travel time
+//     cout << ans << endl; // Output the result
+//     return 0;
+// }
