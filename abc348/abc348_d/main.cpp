@@ -47,7 +47,7 @@ using namespace std;
 #define fx(dataStructure) for(auto x : dataStructure)
 #define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
 #define qweasdzxc(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+
 //#define gcd __gcd
 #define mp make_pair
 //Makes % get floor remainder (towards -INF) and make it always positive
@@ -1806,9 +1806,8 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 //for iterating over possible directions from a square in a 2d array -> for both wasd & including diagonals
 vector<int> dx = {1, 0, -1, 0, 1, 1, -1, -1};
-vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
-vector<int> dy_wasd = {0,0,1,-1};
+
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
@@ -1821,12 +1820,6 @@ using mint = modint998244353;
 
 const std::string YES = "Yes";
 const std::string NO = "No";
-bool solve(auto H, auto W, const std::vector<std::vector<auto> > &A, auto N, const std::vector<auto> &R, const std::vector<auto> &C, const std::vector<auto> &E) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -1834,22 +1827,98 @@ int main() {
     std::cin.tie(nullptr);
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    auto H, W, N;
-    std::cin >> H >> W;
-    std::vector<std::vector<auto> > A(H + W + 4, std::vector<auto>((H + W + 4)));
-    REP (j, H + 4) {
-        REP (i, W) {
-            std::cin >> A[i + j][i + j];
+    ll H,W;
+    cin >> H >> W;
+    vector<string> A(H);
+    foi(0,H){
+        cin >> A[i];
+    }
+    pair<ll,ll> sloc, tloc;
+    foi(0,H) foj(0,W){
+        if(A[i][j]=='S'){
+            sloc=mp(j,i);
+        }
+        if(A[i][j]=='T'){
+            tloc=mp(j,i);
         }
     }
-    std::cin >> N;
-    std::vector<auto> R(N), C(N), E(N);
-    REP (i, N) {
-        std::cin >> R[i] >> C[i] >> E[i];
+    dbg(A);
+    ll N;
+    cin >> N;
+    // vector<tuple<ll,ll,ll>> medicines(N);
+    //for quick access convert to map
+    map<pair<ll,ll>,ll> medicineCoorToHealth;
+    map<pair<ll,ll>,ll> medicineCoorToVisited;
+    foi(0,N){
+        ll a,b,c;
+        cin >> a >> b >> c;
+        a--;
+        b--;
+        // medicines[i]=make_tuple(a,b,c);
+        medicineCoorToHealth[mp(a,b)]=c;
+        medicineCoorToHealth[mp(a,b)]=0;
     }
-    auto ans = solve(H, W, A, N, R, C, E);
-    std::cout << (ans ? YES : NO) << '\n';
+    // dbg(medicines);
 
+    // #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
+    #define isvalid(value,min_valid_value,max_valid_value) (min_valid_value<=value and value<max_valid_value)
+    vector<int> dx_wasd = {1,-1,0,0};
+    vector<int> dy_wasd = {0,0,1,-1};
+
+    queue<pair<ll,ll>> medicinesToDfs;
+    vvll visited(H,vll(W,0));
+    dbg(medicineCoorToHealth);
+    ll Tvisited=0;
+    auto dfs = [&](auto dfs, ll x, ll y, ll health) -> void{
+        // cerr << "REACHED!" << endl;
+        visited[y][x]=1;
+        //pick up potion if increases health
+        // ll temphealth=health;
+        ll temp = medicineCoorToHealth.count(mp(y,x));
+        // temp=0;
+        // dbg(temp);
+        ll temp2 = medicineCoorToHealth[mp(y,x)];
+        if(temp){
+            if(!medicineCoorToVisited[mp(y,x)]){
+                medicineCoorToVisited[mp(y,x)]=1;
+                medicinesToDfs.emplace(mp(y,x));
+            }
+            // if(temp2>health){
+            //     temphealth=temp2;
+            // }
+        }
+        //return if health at 0
+        if(health==0) return;
+        foi(0,4){
+            ll nx, ny;
+            nx = dx_wasd[i] + x;
+            ny = dy_wasd[i] + y;
+            if(!isvalid(nx,0,W)) continue;
+            if(!isvalid(ny,0,H)) continue;
+            if(A[ny][nx]=='#') continue;
+            if(A[ny][nx]=='T'){
+                Tvisited=1;
+            }
+            // dbg(mp(nx,ny));
+            if(visited[ny][nx]) continue; //?return instead of continue? ?prevent revisit with more health?
+            dfs(dfs,nx,ny, health-1);
+        }
+    };
+
+    dfs(dfs, sloc.first, sloc.second,0);
+    while(!medicinesToDfs.empty()){
+        visited.clear();
+        dfs(dfs, medicinesToDfs.back().second, medicinesToDfs.back().first,medicineCoorToHealth[]);
+        medicinesToDfs.pop();
+    }
+    dbg(sloc);
+    dbg(tloc);
+    dbg(visited);
+    if(Tvisited){
+        cout << "Yes" << endl;
+        return 0;
+    }
+    cout << "No" << endl;
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)

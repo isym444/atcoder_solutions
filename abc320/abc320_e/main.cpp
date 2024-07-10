@@ -325,14 +325,13 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 // using mint = modint998244353;
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
+typedef pair<ll, ll> pll;
 
-auto solve(long long N, int M, const std::vector<long long> &T, const std::vector<long long> &W, const std::vector<long long> &S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
+struct ComparePairs {
+    bool operator()(const pll &a, const pll &b) {
+        return a.second > b.second; // This makes it a min-heap
+    }
+};
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -340,19 +339,37 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long N;
-    int M;
-    std::cin >> N >> M;
-    std::vector<long long> T(M), W(M), S(M);
-    REP (i, M) {
-        std::cin >> T[i] >> W[i] >> S[i];
-    }
-    auto ans = solve(N, M, T, W, S);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
+    ll N,M;
+    cin >> N >> M;
+    //priority queue for people in the row
+    // priority_queue<ll> row;
+    std::priority_queue<long long, std::vector<long long>, std::greater<long long>> row;
+
+    foi(0,N) row.emplace(i);
+    //priority queue for people and time they will be ready to go back into the queue
+    // priority_queue<pair<ll,ll>> personTimeReady;
+    priority_queue<pll, vector<pll>, ComparePairs> personTimeReady;
+
+    //how many noodles each person received
+    vll ans(N,0);
+    foi(0,M){
+        ll t,w,s;
+        cin >> t >> w >> s;
+        while(!personTimeReady.empty() && personTimeReady.top().second<=t){
+            ll transfer = personTimeReady.top().first;
+            personTimeReady.pop();
+            row.emplace(transfer);
+        }
+        if(row.empty()) continue;
+        ll top = row.top();
+        row.pop();
+        ans[top]+=w;
+        personTimeReady.emplace(mp(top,t+s));
     }
 
-
+    for(auto x:ans){
+        cout << x << endl;
+    }
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */
 
