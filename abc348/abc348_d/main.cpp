@@ -1836,89 +1836,172 @@ int main() {
     pair<ll,ll> sloc, tloc;
     foi(0,H) foj(0,W){
         if(A[i][j]=='S'){
+            //x,y
             sloc=mp(j,i);
         }
         if(A[i][j]=='T'){
             tloc=mp(j,i);
         }
     }
-    dbg(A);
+    // dbg(A);
+    dbg(sloc);
     ll N;
     cin >> N;
-    // vector<tuple<ll,ll,ll>> medicines(N);
-    //for quick access convert to map
-    map<pair<ll,ll>,ll> medicineCoorToHealth;
-    map<pair<ll,ll>,ll> medicineCoorToVisited;
-    foi(0,N){
-        ll a,b,c;
-        cin >> a >> b >> c;
-        a--;
-        b--;
-        // medicines[i]=make_tuple(a,b,c);
-        medicineCoorToHealth[mp(a,b)]=c;
-        medicineCoorToHealth[mp(a,b)]=0;
-    }
-    // dbg(medicines);
 
     // #define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
     #define isvalid(value,min_valid_value,max_valid_value) (min_valid_value<=value and value<max_valid_value)
     vector<int> dx_wasd = {1,-1,0,0};
     vector<int> dy_wasd = {0,0,1,-1};
 
-    queue<pair<ll,ll>> medicinesToDfs;
-    vvll visited(H,vll(W,0));
-    dbg(medicineCoorToHealth);
-    ll Tvisited=0;
-    auto dfs = [&](auto dfs, ll x, ll y, ll health) -> void{
-        // cerr << "REACHED!" << endl;
-        visited[y][x]=1;
-        //pick up potion if increases health
-        // ll temphealth=health;
-        ll temp = medicineCoorToHealth.count(mp(y,x));
-        // temp=0;
-        // dbg(temp);
-        ll temp2 = medicineCoorToHealth[mp(y,x)];
-        if(temp){
-            if(!medicineCoorToVisited[mp(y,x)]){
-                medicineCoorToVisited[mp(y,x)]=1;
-                medicinesToDfs.emplace(mp(y,x));
-            }
-            // if(temp2>health){
-            //     temphealth=temp2;
-            // }
-        }
-        //return if health at 0
-        if(health==0) return;
-        foi(0,4){
-            ll nx, ny;
-            nx = dx_wasd[i] + x;
-            ny = dy_wasd[i] + y;
-            if(!isvalid(nx,0,W)) continue;
-            if(!isvalid(ny,0,H)) continue;
-            if(A[ny][nx]=='#') continue;
-            if(A[ny][nx]=='T'){
-                Tvisited=1;
-            }
-            // dbg(mp(nx,ny));
-            if(visited[ny][nx]) continue; //?return instead of continue? ?prevent revisit with more health?
-            dfs(dfs,nx,ny, health-1);
-        }
-    };
+    map<pair<ll,ll>,ll> medicineLocToEnergy;
+    map<pair<ll,ll>,ll> processedyet;
 
-    dfs(dfs, sloc.first, sloc.second,0);
-    while(!medicinesToDfs.empty()){
-        visited.clear();
-        dfs(dfs, medicinesToDfs.back().second, medicinesToDfs.back().first,medicineCoorToHealth[]);
-        medicinesToDfs.pop();
+    foi(0,N){
+        ll r,c,e;
+        cin >> r >> c >> e;
+        r--;
+        c--;
+        //y,x -> e
+        medicineLocToEnergy[mp(r,c)]=e;
+        processedyet[mp(r,c)]=0;
+    }    
+    // dbg(medicineLocToEnergy);
+
+    queue<pair<ll,ll>> q;
+
+    q.push(mp(sloc.second,sloc.first));
+
+    vector<vector<ll>> visited(H, vector<ll>(W,0));
+    // dbg(visited);
+    visited[sloc.second][sloc.first]=1;
+
+
+    // ll health = 0;
+    vector<vector<ll>> health(H, vector<ll>(W,0));
+
+    queue<pair<ll,ll>> toprocess;
+
+    ll checker = 0;
+
+    //make sure not to pass visited[i][j] into values of queue i.e. as part of a tuple as will cause TLE. Instead updated external visited directly
+    dbg(q.size());
+    cerr << "HERE!!!!!!!!!!" << endl;
+    // dbg(visited.size());
+    processedyet[mp(sloc.second,sloc.first)]=1;
+    vector<pair<ll,ll>> dv;
+    while(!q.empty()){
+        pair<ll,ll> cur = q.front();
+        // dbg(cur);
+        auto [i,j] = cur;
+        // visited[i][j]=1;
+        // checker++;
+        // dbg(checker);
+        // dbg(A[i][j]);
+        // dbg(mp(i,j));
+        // dv.pb(mp(i,j));
+        // if(j==199) dbg(mp(i,j));
+        if(A[i][j]=='T'){
+            cout << " Yes" << endl;
+            return 0;
+        }
+        if(medicineLocToEnergy.count(cur)){
+            if(medicineLocToEnergy[cur]>health[i][j]) health[i][j] = medicineLocToEnergy[cur];
+            if(!processedyet[cur]){
+                processedyet[cur]=1;
+                toprocess.emplace(i,j);
+            }
+        }
+        q.pop();
+        // dbg(health[i][j]);
+        // dbg(q.size());
+        if(health[i][j]==0) continue;
+        fok(0,4){
+                ll di = i+dy_wasd[k];
+                ll dj = j+dx_wasd[k];
+                if(di==0 && dj==199){
+                    dbg("REACHED!!!!!!!!!!!");
+                    dbg(isvalid(di,0,H));
+                    dbg(isvalid(dj,0,W));
+                    dbg(visited[di][dj]);
+                    dbg(A[di][dj]!='#');
+                }
+                if(isvalid(di,0,H)&&isvalid(dj,0,W)&&!visited[di][dj]&&A[di][dj]!='#'){
+                    if(A[di][dj]=='T'){
+                        cout << " Yes" << endl;
+                        return 0;
+                    }
+                    visited[di][dj] = 1;
+                    // if(visited[di][dj]) continue;
+                    // if(A[di][dj]!='.'&&A[di][dj]!='S'&&A[di][dj]!='T') continue;
+                    health[di][dj]=health[i][j]-1;
+                    q.push(mp(di,dj));
+                }
+            }
     }
-    dbg(sloc);
-    dbg(tloc);
-    dbg(visited);
-    if(Tvisited){
-        cout << "Yes" << endl;
-        return 0;
+    // dbg(dv);
+    dbg(toprocess.size());
+    // dbg(visited);
+    while(!toprocess.empty()){
+        auto [i,j] = toprocess.front();
+        toprocess.pop();
+        // dbg(A[i][j]);
+        vector<vector<ll>> health(H, vector<ll>(W,0));
+        health[i][j]=medicineLocToEnergy[mp(i,j)];
+        queue<pair<ll,ll>> q;
+        q.push(mp(i,j));
+        vector<vector<ll>> visited(H, vector<ll>(W,0));
+        visited[i][j]=1;
+        // cerr << "HERE!!!!!!!!!!!!" << endl;
+        // dbg(health[i][j]);
+        // dbg(visited);
+        // fx(visited){
+        //     dbg(x);
+        // }
+        while(!q.empty()){
+            pair<ll,ll> cur = q.front();
+            auto [i,j] = cur;
+            if(A[i][j]=='T'){
+                cout << " Yes" << endl;
+                return 0;
+            }
+            visited[i][j]=1;
+            if(medicineLocToEnergy.count(cur)){
+                // if(medicineLocToEnergy[cur]>health[i][j]) health[i][j] = medicineLocToEnergy[cur];
+                // dbg(health[i][j]);
+                if(!processedyet[cur]){
+                    processedyet[cur]=1;
+                    toprocess.emplace(i,j);
+                }
+            }
+            q.pop();
+            if(health[i][j]==0) continue;
+            fok(0,4){
+                    ll di = i+dy_wasd[k];
+                    ll dj = j+dx_wasd[k];
+                    // if(isvalid(di,0,H)&&isvalid(dj,0,W)){
+                    if(isvalid(di,0,H)&&isvalid(dj,0,W)&&!visited[di][dj]&&A[di][dj]!='#'){
+                        visited[di][dj] = 1;
+                        // if(visited[di][dj]) continue;
+                        // if(A[di][dj]!='.'&&A[di][dj]!='S'&&A[di][dj]!='T') continue;
+                        health[di][dj]=health[i][j]-1;
+                        q.push(mp(di,dj));
+                    }
+                }
+        }
+        // cerr << endl;
+        // fx(visited){
+        //     dbg(x);
+        // }
+        // cerr << "health" << endl;
+        // fx(health){
+        //     dbg(x);
+        // }
+
     }
+
     cout << "No" << endl;
+
+    // vvll 
     /* genprimes(1e5); */
 
     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
