@@ -1699,43 +1699,56 @@ vector<int> dy_wasd = {0,0,1,-1};
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-
-double solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+#define rep(i,n) for (int i = 0; i < (n); ++i) // Macro for a common loop pattern
+using P = pair<int,int>; // Typedef for a pair of integers
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+    vll c(9);
+    foi(0,9){
+        cin >> c[i];
     }
-    auto ans = solve(n, a);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    vll p(9);
+    foi(0,9){
+        p[i]=i;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    ll notDisappointed=0;
+    ll total=0;
+    ll checker=1;
+    auto f = [&](ll x, ll y, ll z){
+        vector<pair<ll,ll>> temp;
+        temp.pb(mp(p[x],c[x]));
+        temp.pb(mp(p[y],c[y]));
+        temp.pb(mp(p[z],c[z]));
+        sort(all(temp));
+        if(temp[0].second==temp[1].second&&temp[2].second!=temp[1].second) checker = 0;
+    };
+    do{
+        checker = 1;
+        f(0,1,2);
+        f(3,4,5);
+        f(6,7,8);
+        f(0,3,6);
+        f(1,4,7);
+        f(2,5,8);
+        f(0,4,8);
+        f(6,4,2);
+        if(checker == 1){
+            notDisappointed++;
+        }
+        total++;
+
+    } while (next_permutation(all(p)));
+    cout << (double)notDisappointed/total << endl;
+    dbg(c);
     return 0;
 }

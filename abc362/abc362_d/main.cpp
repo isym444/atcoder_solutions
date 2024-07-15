@@ -338,16 +338,65 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
+vector<ll> parent; // To store parent information
+//visited nodes
+vector<bool> vis;
+//bool vis[61][61][61][61]={0};
+map<ll,ll> depth;
 
+//initialize graph as adjacency list
+vector<vector<ll> > g;
+//initialize weighted graph as adjacency list
+vector<vector<pair<ll,ll>>> wg;
+//for building the adjacency list by adding edges info
+ll totalEdges = 0;
+
+void edge(ll originNode, ll destNode, ll weight){
+    wg[originNode].emplace_back(destNode, weight);
+    totalEdges++;
+    // For an undirected graph e.g., tree, add this line:
+    // wg[destNode].emplace_back(originNode, weight);
+}
+
+//returns vector where each index is the shortest distance between the start node and node i
+vector<ll> dijkstra(ll start) {
+    vector<ll> dist(wg.size(), INF);  // Distance from start to each node
+    //arguments: 1) type of elements pq will store 2) underlying container to be used by pq 
+    //3) comparison function to specify order of elements in pq (default is less with largest element at top i.e. max-heap vs min-heap below)
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    dist[start] = 0;
+    pq.push({0, start});  // {distance, node}
+
+    while (!pq.empty()) {
+        //cerr << "pq" << pq << endl;
+        ll currentDist = pq.top().first;
+        ll currentNode = pq.top().second;
+        pq.pop();
+
+        // If the distance in priority queue is larger, we have already found a better path
+        if (currentDist > dist[currentNode]) {
+            continue;
+        }
+        /* Optimization to try if TLEing instead of if statement above
+        if (cdist != dist[node]) { continue; }*/
+    
+        for (auto &neighbor : wg[currentNode]) {
+            ll nextNode = neighbor.first;
+            ll weight = neighbor.second;
+            ll newDist = currentDist + weight;
+
+            if (newDist < dist[nextNode]) {
+                dist[nextNode] = newDist;
+                pq.push({newDist, nextNode});
+            }
+        }
+    }
+
+    return dist;
+}
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-std::vector<auto> solve(int N, int M, const std::vector<long long> &A, const std::vector<long long> &U, const std::vector<long long> &V, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -358,20 +407,29 @@ int main() {
     unordered_map<long long, int, custom_hash> safe_map;
     int N, M;
     std::cin >> N;
+    wg.resize(N);
     std::vector<long long> A(N);
     std::cin >> M;
     std::vector<long long> U(M), V(M), B(M);
     REP (i, N) {
         std::cin >> A[i];
     }
+    dbg(A);
     REP (i, M) {
-        std::cin >> U[i] >> V[i] >> B[i];
+        // std::cin >> U[i] >> V[i] >> B[i];
+        ll u,v,b;
+        cin >> u >> v >> b;
+        u--;
+        v--;
+        edge(u,v,b+A[v]);
+        edge(v,u,b+A[u]);
     }
-    auto ans = solve(N, M, A, U, V, B);
-    REP (i, (int)ans.size()) {
-        std::cout << a[i] << ' ';
+    vll ans = dijkstra(0);
+    dbg(wg);
+    dbg(ans);
+    foi(1,ans.size()){
+        cout << ans[i]+A[0] << " ";
     }
-    std::cout << '\n';
 
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
