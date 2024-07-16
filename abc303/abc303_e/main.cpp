@@ -1881,15 +1881,24 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
+// vector<ll> parent; // To store parent information
+// //visited nodes
+// vector<bool> vis;
+// //bool vis[61][61][61][61]={0};
+// map<ll,ll> depth;
 
-
-auto solve(int N, const std::vector<long long> &u, const std::vector<long long> &v) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
+//initialize graph as adjacency list
+// vector<vector<ll> > g;
+//for building the adjacency list by adding edges info
+// ll totalEdges = 0;
+// void edge(ll originNode, ll destNode)
+// {
+//     g[originNode].pb(destNode);
+//     totalEdges++;
+ 
+//     // for undirected graph e.g. tree, add this line:
+//     g[destNode].pb(originNode);
+// }
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
@@ -1897,16 +1906,39 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> u(N - 1), v(N - 1);
-    REP (i, N - 1) {
-        std::cin >> u[i] >> v[i];
+    ll N;
+    cin >> N;
+    g.resize(N);
+
+    foi(0,N-1){
+        ll u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        edge(u,v);
     }
-    auto ans = solve(N, u, v);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
+
+    ll leaf=-1;
+    foi(0,g.size()){
+        if(g[i].size()==1) leaf=i;
+    }
+    dbg(leaf);
+    vll ans;
+
+    auto dfs = [&](auto dfs, ll v, ll p, ll cnt) -> void{
+        if(cnt%3==1) ans.pb(g[v].size());
+        for(auto u:g[v]){
+            if(u==p) continue;
+            dfs(dfs, u, v, cnt+1);
+        }
+    };
+
+    dfs(dfs, leaf, -1, 0);
+
+    sort(all(ans));
+    fx(ans){
+        cout << x << " ";
+    }
 
     /* genprimes(1e5); */
 
