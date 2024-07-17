@@ -1000,49 +1000,153 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string NO = "Impossible";
-auto solve(int N, const std::vector<long long> &A, const std::vector<std::string> &S, int Q, const std::vector<long long> &U, const std::vector<long long> &V) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+using pll = pair<ll, ll>;
+
+// INF = numeric_limits<ll>::max() / 2;
+
+// vector<ll> parent; // To store parent information
+// vector<bool> vis; // Visited nodes
+// map<ll, ll> depth;
+// vector<vector<ll>> g; // Adjacency list for unweighted graph
+// vector<vector<pair<ll, ll>>> wg; // Adjacency list for weighted graph
+// ll totalEdges = 0;
+
+// void edge(ll originNode, ll destNode) {
+//     g[originNode].push_back(destNode);
+//     totalEdges++;
+//     // For undirected graph, add this line:
+//     g[destNode].push_back(originNode);
+// }
+
+// void edge(ll originNode, ll destNode, ll weight) {
+//     wg[originNode].emplace_back(destNode, weight);
+//     totalEdges++;
+//     // For an undirected graph, add this line:
+//     wg[destNode].emplace_back(originNode, weight);
+// }
+
+vector<vector<pll>> ddist;
+vector<ll> a; // Souvenir values
+
+void floydWarshall(ll n) {
+    // Step 3: Floyd-Warshall Algorithm
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (ddist[i][k].first < INF && ddist[k][j].first < INF) {
+                    ll flights = ddist[i][k].first + ddist[k][j].first;
+                    ll souvenirs = ddist[i][k].second + ddist[k][j].second - a[k]; // Subtract a[k] to avoid double-counting
+                    if (flights < ddist[i][j].first || (flights == ddist[i][j].first && souvenirs > ddist[i][j].second)) {
+                        ddist[i][j] = make_pair(flights, souvenirs);
+                    }
+                }
+            }
+        }
+    }
 }
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N, Q;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    std::vector<std::string> S(N);
-    REP (i, N) {
-        std::cin >> A[i];
-    }
-    REP (i, N) {
-        std::cin >> S[i];
-    }
-    std::cin >> Q;
-    std::vector<long long> U(Q), V(Q);
-    REP (i, Q) {
-        std::cin >> U[i] >> V[i];
-    }
-    auto ans = solve(N, A, S, Q, U, V);
-    // failed to analyze output format
-    // TODO: edit here
-    std::cout << ans << '\n';
+    ll n;
+    cin >> n; // Number of cities
 
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    a.resize(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> a[i]; // Souvenir value of each city
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+
+    vector<string> s(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> s[i]; // Adjacency matrix input as strings
+    }
+
+    // Initialize the distance and souvenir matrix
+    ddist.assign(n, vector<pll>(n, pll(INF, 0)));
+    for (int i = 0; i < n; ++i) {
+        ddist[i][i] = pll(0, a[i]); // Distance to itself is 0, souvenir value is a[i]
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (s[i][j] == 'Y') {
+                ddist[i][j] = pll(1, a[i] + a[j]); // One flight to j, souvenir value is a[j] + a[i]
+            }
+        }
+    }
+
+    // Run Floyd-Warshall to compute shortest paths and maximum souvenirs
+    floydWarshall(n);
+
+    ll Q;
+    cin >> Q; // Number of queries
+
+    while (Q--) {
+        ll x, y;
+        cin >> x >> y; // Source and target cities
+        x--, y--;
+
+        if (ddist[x][y].first == INF) {
+            cout << "Impossible" << endl; // No path exists
+        } else {
+            cout << ddist[x][y].first << " " << ddist[x][y].second << endl; // Path found with number of flights and souvenir value
+        }
+    }
+
     return 0;
 }
+
+
+
+// using pll = pair<ll,ll>;
+
+// const std::string NO = "Impossible";
+// int main() {
+//     int n; 
+//     cin >> n; // Number of cities
+
+//     vector<ll> a(n); 
+//     for (int i = 0; i < n; ++i) {
+//         cin >> a[i]; // Souvenir value of each city
+//     }
+
+//     vector<string> s(n);
+//     for (int i = 0; i < n; ++i) {
+//         cin >> s[i]; // Adjacency matrix input as strings
+//     }
+
+//     vector<vector<pll>> d(n, vector<pll>(n, pll(INF, 0)));
+//     for (int i = 0; i < n; ++i) {
+//         d[i][i] = pll(0, 0); // Distance to itself is 0
+//     }
+
+//     // Convert the adjacency matrix
+//     for (int i = 0; i < n; ++i) {
+//         for (int j = 0; j < n; ++j) {
+//             if (s[i][j] == 'Y') {
+//                 d[i][j] = pll(1, -a[j]); // Direct flight with souvenir value
+//             }
+//         }
+//     }
+
+//     // Floyd-Warshall algorithm to find shortest paths
+//     for (int k = 0; k < n; ++k) {
+//         for (int i = 0; i < n; ++i) {
+//             for (int j = 0; j < n; ++j) {
+//                 d[i][j] = min(d[i][j], pll(d[i][k].first + d[k][j].first, d[i][k].second + d[k][j].second));
+//             }
+//         }
+//     }
+
+//     int Q;
+//     cin >> Q; // Number of queries
+//     while (Q--) {
+//         int x, y;
+//         cin >> x >> y; // Source and target cities
+//         --x, --y;
+//         if (d[x][y].first == INF) {
+//             cout << "Impossible" << endl; // No path exists
+//         } else {
+//             cout << d[x][y].first << " " << -d[x][y].second + a[x] << endl; // Path found with number of flights and souvenir value
+//         }
+//     }
+
+//         return 0;
+//     }
