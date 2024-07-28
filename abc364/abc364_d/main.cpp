@@ -290,21 +290,51 @@ int main() {
     unordered_map<long long, int, custom_hash> safe_map;
     int N, Q;
     std::cin >> N;
-    std::vector<long long> a(N);
     std::cin >> Q;
-    std::vector<long long> k(Q);
-    // priority_queue<ll> A;
-    // std::priority_queue<ll, std::vector<ll>, std::greater<ll>> A;
-    vector<ll> A;
-    REP (i, N) {
-        ll ta;
-        std::cin >> ta;
-        // ta=abs(ta);
-        A.pb(ta);
+    std::vector<long long> A(N);
+    std::vector<long long> K(Q);
+    vll B(Q);
+    cin >> A;
+    foi(0,Q){
+        cin >> B[i] >> K[i];
     }
     sort(all(A));
-    // dbg(A.top());
-    
+    // dbg(indlb(A, (ll)8));
+    // dbg(indlb(A,(ll)-2));
+    // dbg(indlb(A,(ll)2));
+    auto f = [&](ll b, ll m, ll k) -> ll {
+        // dbg(m);
+        ll toLeft = indlb(A, b-m);
+        ll toRight = indlb(A, b+m+1);
+        // dbg(A[toRight]);
+        dbg(mp(toLeft, toRight));
+        if(toRight!=N && A[toRight]-b>m) toRight--;
+        if(toRight==N) toRight--;
+        // dbg(mp(toLeft, toRight));
+        return(toRight-toLeft+1);
+    };
+    foi(0,Q){
+        ll l = 0;
+        ll r = 100;
+        auto b = B[i];
+        auto k = K[i];
+        ll ans=-1;
+        while(l<=r){
+            ll m = midpoint(l,r);
+            // dbg(mt(l,m,r));
+            ll numPointsInRadius = f(b,m, k);
+            // dbg(numPointsInRadius);
+            if(numPointsInRadius<k){
+                l=m+1;
+            } else{
+                // dbg(ans);
+                ans=m;
+                r=m-1;
+            }
+        }
+        cerr << endl;
+        cout << ans << endl;
+    }
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
     /* genprimes(1e5); */
