@@ -1025,19 +1025,82 @@ using pll = pair<ll, ll>;
 //     wg[destNode].emplace_back(originNode, weight);
 // }
 
-vector<vector<pll>> ddist;
-vector<ll> a; // Souvenir values
+// vector<ll> parent; // To store parent information
+// //visited nodes
+// vector<bool> vis;
+// //bool vis[61][61][61][61]={0};
+// map<ll,ll> depth;
+
+// //initialize graph as adjacency list
+// vector<vector<ll> > g;
+// //initialize weighted graph as adjacency list
+// vector<vector<pair<ll,ll>>> wg;
+//for building the adjacency list by adding edges info
+// ll totalEdges = 0;
+// void edge(ll originNode, ll destNode)
+// {
+//     g[originNode].pb(destNode);
+//     totalEdges++;
+ 
+//     // for undirected graph e.g. tree, add this line:
+//     g[destNode].pb(originNode);
+// }
+
+// void edge(ll originNode, ll destNode, ll weight){
+//     wg[originNode].emplace_back(destNode, weight);
+//     totalEdges++;
+//     // For an undirected graph e.g., tree, add this line:
+//     wg[destNode].emplace_back(originNode, weight);
+// }
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
+
+vector<vector<pair<ll,ll>> >ddist;
+vector<vector<ll> >ddist2;
+vector<vector<ll>> nextt;
+
+vll A;
 
 void floydWarshall(ll n) {
+    // Step 1: Initialization
+    ddist.assign(n, vector<pair<ll, ll>>(n, make_pair(INF, INF)));
+    nextt.assign(n, vector<ll>(n, -1));
+    for (int i = 0; i < n; i++) {
+        ddist[i][i] = mp(0,0);
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                nextt[i][j] = j;
+            }
+        }
+    }
+
+    // Step 2: Populate the adjacency matrix
+    for (int u = 0; u < n; u++) {
+        for (int i = 0; i < g[u].size(); i++) {
+            ll v = g[u][i];
+            // ddist[u][v] = 1; // Assuming unweighted graph, set weight to 1
+            // ddist[u][v] = 1+-A[v]; // Assuming unweighted graph, set weight to 1
+            ddist[u][v] = mp(1,-A[v]);
+            nextt[u][v] = v;
+            // For a weighted graph, you'd set this to the weight of the edge u->v
+        }
+    }
+
     // Step 3: Floyd-Warshall Algorithm
     for (int k = 0; k < n; k++) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (ddist[i][k].first < INF && ddist[k][j].first < INF) {
-                    ll flights = ddist[i][k].first + ddist[k][j].first;
-                    ll souvenirs = ddist[i][k].second + ddist[k][j].second - a[k]; // Subtract a[k] to avoid double-counting
-                    if (flights < ddist[i][j].first || (flights == ddist[i][j].first && souvenirs > ddist[i][j].second)) {
-                        ddist[i][j] = make_pair(flights, souvenirs);
+                    if (ddist[i][j] > mp(ddist[i][k].first + ddist[k][j].first, ddist[i][k].second + ddist[k][j].second)) {
+                        ddist[i][j] = mp(ddist[i][k].first + ddist[k][j].first, ddist[i][k].second + ddist[k][j].second);
+                        nextt[i][j] = nextt[i][k];
                     }
                 }
             }
@@ -1045,53 +1108,127 @@ void floydWarshall(ll n) {
     }
 }
 
-int main() {
-    ll n;
-    cin >> n; // Number of cities
-
-    a.resize(n);
-    for (ll i = 0; i < n; ++i) {
-        cin >> a[i]; // Souvenir value of each city
+// Function to reconstruct the path
+vector<ll> getPath(ll u, ll v) {
+    if (nextt[u][v] == -1) return {}; // No path
+    vector<ll> path = {u};
+    while (u != v) {
+        u = nextt[u][v];
+        path.push_back(u);
     }
+    return path;
+}
 
-    vector<string> s(n);
-    for (ll i = 0; i < n; ++i) {
-        cin >> s[i]; // Adjacency matrix input as strings
-    }
 
-    // Initialize the distance and souvenir matrix
-    ddist.assign(n, vector<pll>(n, pll(INF, 0)));
-    for (int i = 0; i < n; ++i) {
-        ddist[i][i] = pll(0, a[i]); // Distance to itself is 0, souvenir value is a[i]
-    }
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (s[i][j] == 'Y') {
-                ddist[i][j] = pll(1, a[i] + a[j]); // One flight to j, souvenir value is a[j] + a[i]
+int main(){
+    ll N;
+    cin >> N;
+    g.resize(N);
+    A.resize(N);
+    cin >> A;
+    foi(0,N){
+        string s;
+        cin >> s;
+        // dbg(s);
+        foj(0, N){
+            if(s[j]=='Y'){
+                edge(i,j);
             }
         }
     }
-
-    // Run Floyd-Warshall to compute shortest paths and maximum souvenirs
-    floydWarshall(n);
-
+    floydWarshall(N);
+    // floydWarshall2(N);
+    dbg(g);
+    // dbg(ddist);
+    // dbg(ddist2);
     ll Q;
-    cin >> Q; // Number of queries
-
-    while (Q--) {
-        ll x, y;
-        cin >> x >> y; // Source and target cities
-        x--, y--;
-
-        if (ddist[x][y].first == INF) {
-            cout << "Impossible" << endl; // No path exists
-        } else {
-            cout << ddist[x][y].first << " " << ddist[x][y].second << endl; // Path found with number of flights and souvenir value
-        }
+    cin >> Q;
+    foi(0,Q){
+        ll U,V;
+        cin >> U >> V;
+        U--;
+        V--;
+        // cout << ddist[U][V] << " " << ddist2[U][V]+A[U] << endl;
+        vll temp = getPath(U,V);
+        dbg(temp);
+        ll t2=0;
+        fx(temp) t2+=A[x];
+        if(ddist[U][V].first==INF) cout << "Impossible" << endl;
+        else cout << ddist[U][V].first << " " << ddist[U][V].second*(-1)+A[U] << endl;
+        // dbg(ddist[U][V]);
     }
 
     return 0;
 }
+
+
+// vector<vector<pll>> ddist;
+// vector<ll> a; // Souvenir values
+
+// void floydWarshall(ll n) {
+//     // Step 3: Floyd-Warshall Algorithm
+//     for (int k = 0; k < n; k++) {
+//         for (int i = 0; i < n; i++) {
+//             for (int j = 0; j < n; j++) {
+//                 if (ddist[i][k].first < INF && ddist[k][j].first < INF) {
+//                     ll flights = ddist[i][k].first + ddist[k][j].first;
+//                     ll souvenirs = ddist[i][k].second + ddist[k][j].second - a[k]; // Subtract a[k] to avoid double-counting
+//                     if (flights < ddist[i][j].first || (flights == ddist[i][j].first && souvenirs > ddist[i][j].second)) {
+//                         ddist[i][j] = make_pair(flights, souvenirs);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// int main() {
+//     ll n;
+//     cin >> n; // Number of cities
+
+//     a.resize(n);
+//     for (ll i = 0; i < n; ++i) {
+//         cin >> a[i]; // Souvenir value of each city
+//     }
+
+//     vector<string> s(n);
+//     for (ll i = 0; i < n; ++i) {
+//         cin >> s[i]; // Adjacency matrix input as strings
+//     }
+
+//     // Initialize the distance and souvenir matrix
+//     ddist.assign(n, vector<pll>(n, pll(INF, 0)));
+//     for (int i = 0; i < n; ++i) {
+//         ddist[i][i] = pll(0, a[i]); // Distance to itself is 0, souvenir value is a[i]
+//     }
+//     for (int i = 0; i < n; ++i) {
+//         for (int j = 0; j < n; ++j) {
+//             if (s[i][j] == 'Y') {
+//                 ddist[i][j] = pll(1, a[i] + a[j]); // One flight to j, souvenir value is a[j] + a[i]
+//             }
+//         }
+//     }
+
+//     // Run Floyd-Warshall to compute shortest paths and maximum souvenirs
+//     floydWarshall(n);
+
+//     ll Q;
+//     cin >> Q; // Number of queries
+
+//     while (Q--) {
+//         ll x, y;
+//         cin >> x >> y; // Source and target cities
+//         x--, y--;
+
+//         if (ddist[x][y].first == INF) {
+//             cout << "Impossible" << endl; // No path exists
+//         } else {
+//             cout << ddist[x][y].first << " " << ddist[x][y].second << endl; // Path found with number of flights and souvenir value
+//         }
+//     }
+
+//     return 0;
+// }
 
 
 

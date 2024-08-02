@@ -273,39 +273,42 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-std::string solve(long long N) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long N;
-    std::cin >> N;
-    auto ans = solve(N);
-    std::cout << ans << '\n';
+    ll n;
+    cin >> n; // Read input n
+    if (n == 1) { // Special case for n == 1
+        cout << 0 << endl; // Output the smallest palindrome
+        return 0;
+    }
+    n--; // Convert n to 0-based index
 
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    for (int keta = 1;; keta++) { // Iterate over possible lengths of palindromes
+        cerr << endl;
+        dbg(n);
+        dbg(keta);
+        int l = (keta + 1) / 2; // Half length of the palindrome
+        dbg(l);
+        ll num = 9; 
+        rep(i, l - 1) num *= 10; // Calculate the number of palindromes of this length
+        dbg(num);
+        if (n > num) { // If n exceeds the current range
+            n -= num; // Decrement n and continue to the next length
+            continue;
+        }
+        
+        n += num / 9 - 1; // Adjust n for correct indexing within the current range
+        dbg(n);
+        string s = to_string(n); // Convert n to string
+        dbg(s);
+        string rs = s;
+        reverse(rs.begin(), rs.end()); // Reverse the string
+        
+        if (keta % 2 == 1) s.pop_back(); // For odd lengths, remove the last character before mirroring
+        
+        s += rs; // Concatenate the original and reversed string to form the palindrome
+        cout << s+'0' << endl; // Output the resulting palindrome
+        return 0; // Terminate the program
     }
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-zz
     return 0;
 }
