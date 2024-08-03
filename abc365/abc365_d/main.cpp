@@ -273,103 +273,90 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-string findNthPalindrome(ll N){
-    if(N==1){
-        return "0";
+long long solve(long long N, std::string S) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+    vvll dp(N,vll(3,0));
+    map<char,ll> raw;
+    raw['R']=0;
+    raw['P']=1;
+    raw['S']=2;
+    map<char,ll> rps;
+    //beaten by
+    rps['R']=1;
+    rps['P']=2;
+    rps['S']=0;
+    //beats
+    map<char,ll> beats;
+    beats['R']=2;
+    beats['P']=0;
+    beats['S']=1;
+    foi(0,N){
+        char x = S[i];
+        dp[i][beats[x]]=-1;
+        // dp[i][rps[x]]=1;
     }
-
-    N--;
-
-    //find number of numbers in current block
-    for(int i = 1;;i++){
-        ll numInBlock=9;
-        numInBlock*=pow(10,((i-1)/2));
-        if(N>numInBlock){
-            N-=numInBlock;
-            continue;
+    dp[0][rps[S[0]]]=1;
+    dbg(dp);
+    foi(0,N-1){
+        vll pot(3,-1);
+        foj(0,3){
+            if(dp[i][j]==-1) continue;
+            // ll pot=-1;
+            fok(0,3){
+                if(dp[i+1][k]==-1) continue;
+                if(j==k) continue;
+                dbg(dp[i+1][k]);
+                dbg(dp[i][j]);
+                // dp[i+1][k]=max(dp[i+1][k],dp[i+1][k]+dp[i][j]);
+                pot[k]=max(pot[k],dp[i+1][k]+dp[i][j]);
+            }
         }
-        N+=((numInBlock/9)-1);
-        string sN = to_string(N);
-        // dbg(sN);
-        string OGsN = sN;
-        reverse(sN.begin(), sN.end());
-        if(i%2==1){
-            OGsN.pop_back();
+        fok(0,3){
+            dp[i+1][k]=max(dp[i+1][k],pot[k]);
         }
-        return OGsN+sN;
+        dbg(dp);
+        fok(0,3){
+            char top = S[i+1];
+            ll side = k;
+            if(rps[top]==k) dp[i+1][k]++;
+        }
+        // dbg(dp);
+        // cerr << endl;
     }
+    dbg(dp);
+    return max({dp[N-1][0],dp[N-1][1],dp[N-1][2]});
 }
 
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N;
+    std::string S;
+    std::cin >> N >> S;
+    auto ans = solve(N, S);
+    std::cout << ans << '\n';
 
 
-int main(){
-    ll N;
-    cin >> N;
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
 
-    cout << findNthPalindrome(N) << endl;
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// int main() {
-//     ll n;
-//     cin >> n; // Read input n
-//     if (n == 1) { // Special case for n == 1
-//         cout << 0 << endl; // Output the smallest palindrome
-//         return 0;
-//     }
-//     n--; // Convert n to 0-based index
-
-//     for (int palindromeLength = 1;; palindromeLength++) { // Iterate over possible lengths of palindromes
-//         cerr << endl;
-//         dbg(n);
-//         dbg(palindromeLength);
-//         int l = (palindromeLength + 1) / 2; // Half length of the palindrome
-//         dbg(l);
-//         ll num = 9; 
-//         rep(i, l - 1) num *= 10; // Calculate the number of palindromes of this length
-//         dbg(num);
-//         if (n > num) { // If n exceeds the current range
-//             n -= num; // Decrement n and continue to the next length
-//             continue;
-//         }
-        
-//         n += num / 9 - 1; // Generate actual half palindrome from nth number in current block
-//         dbg(n);
-//         string s = to_string(n); // Convert n to string
-//         dbg(s);
-//         string rs = s;
-//         reverse(rs.begin(), rs.end()); // Reverse the string
-//         dbg(rs);
-        
-//         if (palindromeLength % 2 == 1) s.pop_back(); // For odd lengths, remove the last character before mirroring
-        
-//         s += rs; // Concatenate the original and reversed string to form the palindrome
-//         cout << s+'0' << endl; // Output the resulting palindrome
-//         return 0; // Terminate the program
-//     }
-    
-//     return 0;
-// }
