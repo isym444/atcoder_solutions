@@ -1700,12 +1700,67 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-long long solve(int N, std::string T, const std::vector<std::string> &S) {
+template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.begin(), vec.end()), vec.erase(unique(vec.begin(), vec.end()), vec.end()); return vec; }
+//index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
+template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
+//index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
+template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
+
+
+long long solve(int N, std::string T, std::vector<std::string> &S) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
+    vll stringIndexToCharsInTCoveringF(N,0);
+    vll stringIndexToCharsInTCoveringR(N,0);
+    foi(0, N){
+        ll it=0;
+        for(auto c:S[i]){
+            if(c==T[it]){
+                stringIndexToCharsInTCoveringF[i]++;
+                it++;
+            }
+            if(it==T.length()) break;
+        }
+    }
+    dbg(stringIndexToCharsInTCoveringF);
+    reverse(all(T));
+    dbg(T);
+    foi(0,S.size()){
+        reverse(all(S[i]));
+    }
+    // dbg(S[2]);
+    foi(0, N){
+        ll it=0;
+        for(auto c:S[i]){
+            if(c==T[it]){
+                stringIndexToCharsInTCoveringR[i]++;
+                it++;
+            }
+            if(it==T.length()) break;
+        }
+    }
+    dbg(stringIndexToCharsInTCoveringR);
+    sort(all(stringIndexToCharsInTCoveringF));
+    sort(all(stringIndexToCharsInTCoveringR));
+    dbg(stringIndexToCharsInTCoveringF);
+    dbg(stringIndexToCharsInTCoveringR);
+    ll ans = 0;
+    foi(0,N){
+        ll target = T.length()-stringIndexToCharsInTCoveringF[i];
+        ans+=N-indlb(stringIndexToCharsInTCoveringR,target);
+    }
+    return ans;
 }
 
 int main() {
