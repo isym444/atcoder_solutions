@@ -347,46 +347,47 @@ struct loc
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#include<cassert>
+#include<atcoder/lazysegtree>
 
-std::vector<auto> solve(int N, int M, const std::vector<long long> &A, const std::vector<long long> &B) {
-    
-}
+long op(long f,long x){return f+x;}       // Defines the operation for the segment tree (sum operation).
+long e(){return 0L;}                      // Defines the identity element for the segment tree (0 for sum).
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N, M;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    std::cin >> M;
-    std::vector<long long> B(M);
-    REP (i, N) {
-        std::cin >> A[i];
-    }
-    REP (i, M) {
-        std::cin >> B[i];
-    }
-    auto ans = solve(N, M, A, B);
-    REP (i, (int)ans.size()) {
-        std::cout << ans[i] << ' ';
-    }
-    std::cout << '\n';
-    vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    parent.assign(n+1, -1);
+int N,M;
 
-    /* genprimes(1e5); */
+int main()
+{
+    ios::sync_with_stdio(false);          // Speeds up I/O operations.
+    cin.tie(nullptr);                     // Unlinks the input and output streams.
 
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    cin>>N>>M;                            // Read the number of boxes (N) and number of operations (M).
+    vector<long>A(N);                     // Create a vector to hold the initial number of balls in each box.
+    cin  >> A;                            // Read the initial number of balls in each box.
+
+    atcoder::lazy_segtree<long,op,e,long,op,op,e>seg(A);
+                                          // Initialize a lazy segment tree with the array A.
+
+    for(int i=0;i<M;i++)                  // Process each operation.
+    {
+        int b; cin>>b;                    // Read the index `b` (the box to pick up balls from).
+        long c = seg.get(b);              // Get the current number of balls in box `b`.
+        seg.set(b, 0L);                   // Set the number of balls in box `b` to 0.
+
+        seg.apply(0, N, c/N);             // Distribute `c/N` balls evenly across all boxes.
+
+        c %= N;                           // Calculate the remainder `c` after even distribution.
+        if(c == 0) continue;              // If no remainder, skip to the next operation.
+
+        if(b + c < N)
+            seg.apply(b + 1, b + c + 1, 1L);
+                                          // Distribute the remaining `c` balls in a straightforward range.
+        else
+        {
+            seg.apply(b + 1, N, 1L);      // If the range crosses the end, handle the overflow separately.
+            seg.apply(0, b + c - N + 1, 1L);
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    /* wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-    return 0;
+
+    for(int i = 0; i < N; i++)            // Output the final state of all boxes.
+        cout << seg.get(i) << (i + 1 == N ? "\n" : " ");
 }

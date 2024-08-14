@@ -273,43 +273,46 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-using i64=ll;
-
 int main(){
-    int N, M; cin >> N >> M;
-    atcoder::dsu G(N*2); // DSU initialized for 2N elements
-    
-    // Process each edge
-    rep(i,M){
-        int u,v; cin >> u >> v; u--; v--;
-        G.merge(u, v+N);  // Merge u with v's opposite set
-        G.merge(u+N, v);  // Merge u's opposite set with v
+    ll N,M;
+    cin >> N >> M;
+    dsu dd(2*N);
+    foi(0,M){
+        ll u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        dd.merge(u,v+N);
+        dd.merge(v,u+N);
     }
-    
-    // Check for bipartite condition violation
-    rep(i,N) if(G.same(i, N+i)){ cout << "0\n"; return 0; }
-    
-    // Calculate possible pairs
-    auto groups = G.groups(); // Get all connected components
-    dbg(groups);
-    vector<int> found(N);
-    i64 ans = 0;
-    i64 k = 0;
-    
-    for(auto& g : groups){
-        if(found[g[0]%N]) continue;
-        i64 c[2] = {};
-        for(int v : g){
-            c[v/N]++;  // Count number of nodes in both parts of the bipartite sets
-            found[v%N] = 1;
+    dbg(dd.groups());
+    foi(0,N){
+        if(dd.same(i,i+N)){
+            cout << 0 << endl;
+            return 0;
         }
-        ans += c[0] * c[1]; // Add cross product of the two sets in the bipartite
-        ans += k * g.size(); // Consider pairs with other groups
-        k += g.size(); // Accumulate group sizes
     }
-    
-    ans -= M; // Subtract already existing edges
-    cout << ans << endl;
+    ll ans = 0;
+    ll nodesSoFar = 0;
+    vll done(N,0);
+    fx(dd.groups()){
+        if(done[x[0]%N]) continue;
+        dbg(x);
+        ll c1=0;
+        ll c2=0;
+        for(auto y:x){
+            if(y<N){
+                c1++;
+            }else{
+                c2++;
+            }
+            done[y%N]=1;
+        }
+        ans+=c1*c2;
+        dbg(mp(c1,c2));
+        ans+=nodesSoFar*x.size();
+        nodesSoFar+=x.size();
+    }
+    cout << ans-M << endl;
     return 0;
 }
-
