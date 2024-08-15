@@ -350,44 +350,46 @@ struct loc
 #include<cassert>
 #include<atcoder/lazysegtree>
 
-long op(long f,long x){return f+x;}       // Defines the operation for the segment tree (sum operation).
-long e(){return 0L;}                      // Defines the identity element for the segment tree (0 for sum).
+typedef vector<long long> vll;
 
-int N,M;
+ll op(ll f,ll x){return f+x;}
+ll e(){return (ll)0;}
 
-int main()
-{
-    ios::sync_with_stdio(false);          // Speeds up I/O operations.
-    cin.tie(nullptr);                     // Unlinks the input and output streams.
+int main(){
 
-    cin>>N>>M;                            // Read the number of boxes (N) and number of operations (M).
-    vector<long>A(N);                     // Create a vector to hold the initial number of balls in each box.
-    cin  >> A;                            // Read the initial number of balls in each box.
+    ll N,M;
+    cin >> N >> M;
+    vll A(N);
+    cin >> A;
+    vll B(M);
+    cin >> B;
 
-    atcoder::lazy_segtree<long,op,e,long,op,op,e>seg(A);
-                                          // Initialize a lazy segment tree with the array A.
+    // vector<long>A(N);                     // Create a vector to hold the initial value at each element of segment tree.
+    atcoder::lazy_segtree<ll,op,e,ll,op,op,e>seg(A); // Initialize a lazy segment tree with the array A.
 
-    for(int i=0;i<M;i++)                  // Process each operation.
-    {
-        int b; cin>>b;                    // Read the index `b` (the box to pick up balls from).
-        long c = seg.get(b);              // Get the current number of balls in box `b`.
-        seg.set(b, 0L);                   // Set the number of balls in box `b` to 0.
-
-        seg.apply(0, N, c/N);             // Distribute `c/N` balls evenly across all boxes.
-
-        c %= N;                           // Calculate the remainder `c` after even distribution.
-        if(c == 0) continue;              // If no remainder, skip to the next operation.
-
-        if(b + c < N)
-            seg.apply(b + 1, b + c + 1, 1L);
-                                          // Distribute the remaining `c` balls in a straightforward range.
-        else
-        {
-            seg.apply(b + 1, N, 1L);      // If the range crosses the end, handle the overflow separately.
-            seg.apply(0, b + c - N + 1, 1L);
+    for(auto x:B){
+        ll toDistribute = seg.get(x);
+        seg.set(x,(ll)0);
+        if(toDistribute%N==0){
+            seg.apply(0,N,toDistribute/N);
+            continue;
         }
+        ll rem = toDistribute%N;
+        if(toDistribute>N){
+            seg.apply(0,N,toDistribute/N);
+        }
+        if(rem<=N-(x+1)){
+            seg.apply(x+1,x+1+rem,1);
+            continue;
+        }
+        seg.apply(x+1,N,1);
+        seg.apply(0,rem-(N-(x+1)),1);
     }
+    foi(0,N){
+        cout << seg.get(i) << " ";
+    }
+    cout << endl;
+    cout << seg.prod(0,N);
 
-    for(int i = 0; i < N; i++)            // Output the final state of all boxes.
-        cout << seg.get(i) << (i + 1 == N ? "\n" : " ");
+    return 0;
 }
