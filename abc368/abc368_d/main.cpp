@@ -406,7 +406,7 @@ int main()
     cin >> N >> K;
     //adjacency list
     vvll G(N);
-    foi(0, N)
+    foi(0, N-1)
     {
         ll a, b;
         cin >> a >> b;
@@ -423,20 +423,31 @@ int main()
     {
         ll t;
         cin >> t;
+        dbg(t);
         t--;
         V[t] = 1;
         starting=t;
     }
     dbg(G);
-    auto dfs = [&](auto dfs, ll v) -> void {
+    auto dfs = [&](auto dfs, ll v, ll p) -> void {
+        // if(V[v])
+        // dbg(v);
         for(auto x:G[v]){
-            if(!visited[x]){
-                dfs(dfs, x);
-            }
+            if(x==p) continue;
+            dfs(dfs, x, v);
+            V[v]+=V[x];
         }
     };
-    dfs(dfs,(ll)0,t);
-
+    dbg(starting);
+    dfs(dfs,starting,-1);
+    ll ans = 0;
+    fx(V){
+        if(x){
+            ans++;
+            dbg(x);
+        }
+    }
+    cout << ans << endl;
     return 0;
 }
 
