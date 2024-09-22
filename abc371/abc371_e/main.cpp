@@ -273,43 +273,35 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-long long solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+// Function to calculate n choose 2 (number of ways to pick 2 items from n)
+ll c2(ll n) { return n*(n-1)/2;}
+
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    dbg (A);
+    vvll each(N+1);
+    foi(0,N){
+        each[A[i]].pb(i);
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    dbg(each);
+    ll ans = 0;
+    foi(1,N+1){
+        each[i].pb(N);
+        ll pre=-1;
+        ll subswithout=0;
+        dbg(each[i]);
+        fx(each[i]){
+            dbg(x-pre-1);
+            subswithout += c2(x-pre);
+            pre=x;
+        }
+        dbg(subswithout);
+        ans+=c2(N+1)-subswithout;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    cout << ans << endl;
     return 0;
 }
