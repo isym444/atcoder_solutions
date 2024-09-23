@@ -273,44 +273,78 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-long long solve(long long H, long long W, int Q, const std::vector<long long> &R, const std::vector<long long> &C) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long H, W;
-    int Q;
-    std::cin >> H >> W >> Q;
-    std::vector<long long> R(Q), C(Q);
-    REP (i, Q) {
-        std::cin >> R[i] >> C[i];
+int main(){
+    ll H,W,Q;
+    cin >> H >> W >> Q;
+    // vll RQ(Q);
+    // vll CQ(Q);
+    // foi(0,Q){
+    //     cin >> RQ[i] >> CQ[i];
+    // }
+    // dbg(RQ);
+    // dbg(CQ);
+    vector<set<ll>> RG(H);
+    vector<set<ll>> CG(W);
+    foi(0,H){
+        foj(-1,W+1){
+            RG[i].insert(j);
+        }
     }
-    auto ans = solve(H, W, Q, R, C);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    foi(0,W){
+        foj(-1,H+1){
+            CG[i].insert(j);
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    dbg(RG);
+    dbg(CG);
+    auto er = [&](ll r, ll c)->void{
+        RG[r].erase(c);
+        CG[c].erase(r);
+    };
+    foi(0,Q){
+        dbg(i);
+        ll r,c;
+        cin >> r >> c;
+        r--;
+        c--;
+        if(RG[r].count(c)){
+            // RG[r].erase(c);
+            // CG[c].erase(r);
+            er(r,c);
+            dbg(RG);
+            dbg(CG);
+        }
+        else{
+            auto right = *RG[r].lower_bound(c);
+            dbg(right);
+            if(right!=W){
+                er(r,right);
+            }
+            auto left = *(prev(RG[r].lower_bound(c)));
+            dbg(left);
+            if(left!=-1){
+                er(r,left);
+            }
+            auto down = *CG[c].lower_bound(r);
+            dbg(down);
+            if(down!=H){
+                er(down,c);
+            }
+            auto up = *(prev(CG[c].lower_bound(r)));
+            dbg(up);
+            if(up!=-1){
+                er(up,c);
+            }
+            dbg(RG);
+            dbg(CG);
+        }
+    }
+    dbg(RG);
+    dbg(CG);
+    ll ans=0;
+    fx(RG){
+        ans+=x.size()-2;
+    }
+    cout << ans << endl;
     return 0;
 }

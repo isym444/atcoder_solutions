@@ -269,47 +269,48 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-
-
-/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-
-std::string solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+//return prime factorization of x as vector<pair<ll,ll>> -> use this if possible over sieve.Factorize(x) as easier to deal with
+vector<pll> factor(ll x) {
+    vector<pll> ans;
+    for(ll i = 2; i * i <= x; i++)
+        if(x % i == 0) {
+            ans.push_back({i, 1});
+            while((x /= i) % i == 0) ans.back().second++;
+        }
+    if(x != 1) ans.push_back({x, 1});
+    return ans;
 }
 
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+//   const int M = 100005;
+  const int M = 10;
+  vector<int> g(M);
+  vector<vector<int>> divs(M);
+  for (int i = 1; i < M; i++) {
+    for (int j = i*2; j < M; j += i) divs[j].push_back(i);
+  }
+  dbg(divs);
+  for (int i = 1; i < M; i++) {
+    set<int> st;
+    for(int d : divs[i]){
+        st.insert(g[d]);
+        dbg(g);
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
+    dbg(st);
+    while (st.count(g[i])) g[i]++;
+  }
+  dbg(g);
 
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
-    return 0;
+  int n;
+  cin >> n;
+  int x = 0;
+  rep(i,n) {
+    int a;
+    cin >> a;
+    x ^= g[a];
+  }
+  if (x == 0) cout << "Bruno" << endl;
+  else cout << "Anna" << endl;
+  return 0;
 }

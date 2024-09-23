@@ -274,74 +274,70 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    long long M;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    vll line;
-    line.pb(0);
-    std::cin >> M;
-    ll mm=0;
-    REP (i, N) {
-        std::cin >> A[i];
-        line.pb(line.back()+A[i]);
+    int N, M;
+    cin >> N >> M;
+    dbg(M);
+    
+    vector<int> A(N);
+    long long s = 0;
+
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];
+        s += A[i];
     }
-    mm=line.back();
     dbg(A);
-    dbg(line);
-    foi(0,N){
-        line.pb(line.back()+A[i]);
+    A.resize(2 * N);
+    for (int i = 0; i < N; ++i) {
+        A[N + i] = A[i];
     }
-    dbg(line);
-    ll ans = 0;
-    ll ogM = M;
-    while(M<(ll)1e6){
-        foi(0,N){
-            // if(i==2){
-            //     dbg(M);
-            //     dbg(mt(line[i],line[i]+M));
-            // }
-            if(binary_search(all(line),line[i]+M)){
-                if(indlb(line,line[i]+M)-i<N){
-                    ans++;
-                    dbg(mt(line[i],line[i]+M,i+1,(indlb(line,line[i]+M)+1)%N));
-                }
-            }
+
+    dbg(A);
+    dbg(s);
+
+    vector<int> c(M, 0);
+    long long d = 0, ans = 0;
+    
+    for (int i = 0; i < 2 * N; ++i) {
+        if (i >= N) {
+            dbg(c);
+            c[(d - s) % M]--;
+            dbg(c);
+            dbg(mt(d,d%M));
+            dbg(c[d%M]);
+            ans += c[d % M];
         }
-        M=M+ogM;
-        if(M>line.back()) break;
-    }
-    dbg(ans);
-    cout << ans << endl;
-
-    // foi(0,line.size()){
-    //     foj(i,line.size()){
-    //         if(i==j) continue;
-    //         // if(j==i+N) continue;
-    //         if(line[j]-line[i]%M==0){
-    //             dbg(mt("stupid: ", line[i], line[j]));
-    //         }
-    //     }
-    // }
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+        c[d % M]++;
+        d += A[i];
     }
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    cout << ans << endl;
     return 0;
 }
+
+// int main() {
+//   int n, m; // n = number of rest areas, m = modulus (M in the problem)
+//   cin >> n >> m; // Read n and m
+//   vector<int> a(n); // Array storing the steps between consecutive rest areas
+//   rep(i,n) cin >> a[i]; // Read the step values
+//   dbg(a);
+
+//   vector<int> s(n+1); // Prefix sum array (mod m) of steps
+//   rep(i,n) s[i+1] = (s[i]+a[i])%m; // Compute prefix sums modulo m
+
+//   dbg(s);
+
+//   int L = s[n]; // Total steps around the lake modulo m
+
+//   ll ans = 0; // Variable to store the answer (number of valid pairs)
+//   vector<int> cnt(m); // Frequency array for prefix sums modulo m
+//   for(int r = 0; r<n; r++) {
+//     dbg(cnt);
+//     ans += cnt[s[r]]; // Count valid pairs based on current prefix sum
+//     dbg(s[r]-L+m);
+//     ans += cnt[(s[r]-L+m)%m]; // Count pairs wrapping around the lake
+//     cnt[s[r]]++; // Update the frequency of the current prefix sum
+//   }
+//   dbg(cnt);
+//   cout << ans << endl; // Output the final count of valid pairs
+//   return 0;
+// }
