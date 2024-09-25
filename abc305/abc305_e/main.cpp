@@ -1869,49 +1869,50 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-
-std::vector<long long> solve(auto N, auto M, auto K, const std::vector<auto> &a, const std::vector<auto> &b, const std::vector<auto> &p, const std::vector<auto> &h) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    auto N, M, K;
-    std::cin >> N >> M;
-    std::vector<auto> a(M), b(M);
-    std::cin >> K;
-    std::vector<auto> p(K), h(K);
-    REP (i, M) {
-        std::cin >> a[i] >> b[i];
+//guards can guard until their health goes to -1
+int main(){
+    ll N, M, K;
+    cin >> N >> M >> K;
+    vvll G(N);
+    foi(0,M){
+        ll a,b;
+        cin >> a >> b;
+        a--;
+        b--;
+        G[a].pb(b);
+        G[b].pb(a);
     }
-    REP (i, K) {
-        std::cin >> p[i] >> h[i];
+    priority_queue<pair<ll,ll>> guards;
+    foi(0,K){
+        ll p,h;
+        cin >> p >> h;
+        p--;
+        guards.push(mp(h,p));
     }
-    auto ans = solve(N, M, K, a, b, p, h);
-    std::cout << (int)ans.size() << '\n';
-    REP (i, (int)ans.size()) {
-        std::cout << v[i] << ' ';
-    }
-    std::cout << '\n';
+    dbg(guards.top());
 
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
+    vll guarded(N,-1);
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    while(!guards.empty()){
+        auto [h,v] = guards.top();
+        guards.pop();
+        if(guarded[v]>=h) continue;
+        guarded[v] = h;
+        if(h==0) continue;
+        for(auto u:G[v]){
+            if(guarded[u]>=h-1) continue;
+            guards.push(mp(h-1,u));
+        }
+    }
+
+    vll ans;
+    foi(0, N){
+        auto x = guarded[i];
+        if(x!=-1) ans.pb(i+1);
+    }
+    cout << ans.size() << endl;
+    fx(ans){
+        cout << x << " ";
+    }
     return 0;
 }

@@ -273,46 +273,104 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-int main() {
-    int N, M;
+int main(){
+    ll N,M;
     cin >> N >> M;
-    dbg(M);
-    
-    vector<int> A(N);
-    long long s = 0;
-
-    for (int i = 0; i < N; ++i) {
-        cin >> A[i];
-        s += A[i];
+    vll A(N);
+    cin >> A;
+    // vll DA(2*N);
+    ll totalDist=0;
+    foi(0,N){
+        // DA[i]=A[i];
+        totalDist+=A[i];
     }
-    dbg(A);
-    A.resize(2 * N);
-    for (int i = 0; i < N; ++i) {
-        A[N + i] = A[i];
-    }
-
-    dbg(A);
-    dbg(s);
-
-    vector<int> c(M, 0);
-    long long d = 0, ans = 0;
-    
-    for (int i = 0; i < 2 * N; ++i) {
-        if (i >= N) {
-            dbg(c);
-            c[(d - s) % M]--;
-            dbg(c);
-            dbg(mt(d,d%M));
-            dbg(c[d%M]);
-            ans += c[d % M];
+    // foi(0,N){
+    //     DA[i+N]=A[i];
+    // }
+    // dbg(DA);
+    dbg(totalDist);
+    vll rems(M);
+    ll curdist=0;
+    ll ans = 0;
+    foi(0,2*N){
+        if(i>=N){
+            rems[(curdist-totalDist)%M]--;
+            ans+=rems[curdist%M];
+            dbg(curdist);
         }
-        c[d % M]++;
-        d += A[i];
+        rems[curdist%M]++;
+        curdist+=A[i%N];
     }
-    
     cout << ans << endl;
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// int main() {
+//     int N, M;
+//     cin >> N >> M;
+//     dbg(M);
+    
+//     vector<int> A(N);
+//     long long s = 0;
+
+//     for (int i = 0; i < N; ++i) {
+//         cin >> A[i];
+//         s += A[i];
+//     }
+//     dbg(A);
+//     A.resize(2 * N);
+//     for (int i = 0; i < N; ++i) {
+//         A[N + i] = A[i];
+//     }
+
+//     dbg(A);
+//     dbg(s);
+
+//     vector<int> c(M, 0);
+//     long long d = 0, ans = 0;
+    
+//     for (int i = 0; i < 2 * N; ++i) {
+//         if (i >= N) {
+//             dbg(c);
+//             c[(d - s) % M]--;
+//             dbg(c);
+//             dbg(mt(d,d%M));
+//             dbg(c[d%M]);
+//             ans += c[d % M];
+//         }
+//         c[d % M]++;
+//         d += A[i];
+//     }
+    
+//     cout << ans << endl;
+//     return 0;
+// }
 
 // int main() {
 //   int n, m; // n = number of rest areas, m = modulus (M in the problem)

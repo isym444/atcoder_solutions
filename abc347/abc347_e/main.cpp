@@ -1695,45 +1695,47 @@ vector<int> dx_wasd = {1,-1,0,0};
 vector<int> dy = {0, 1, 0, -1, 1, -1, 1, -1};
 vector<int> dy_wasd = {0,0,1,-1};
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
+
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-std::vector<auto> solve(long long N, int Q, const std::vector<long long> &x) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    int Q;
-    std::cin >> N >> Q;
-    std::vector<long long> x(Q);
-    REP (i, Q) {
-        std::cin >> x[i];
+int main(){
+    ll N,Q;
+    cin >> N >> Q;
+    vll A(N,0);
+    ll cumsum=0;
+    set<ll> s;
+    foi(0,Q){
+        ll x;
+        cin >> x;
+        x--;
+        if(s.count(x)==0){
+            A[x]-=cumsum;
+            s.insert(x);
+        }
+        else{
+            A[x]+=cumsum;
+            s.erase(x);
+        }
+        cumsum+=s.size();
+        // dbg(cumsum);
     }
-    auto ans = solve(N, Q, x);
-    REP (i, (int)ans.size()) {
-        std::cout << A[i] << ' ';
+    // dbg(A);
+    fx(s){
+        A[x]+=cumsum;
     }
-    std::cout << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    foi(0,N){
+        // if(A[i]<=0) A[i]=A[i]+cumsum;
+        cout << A[i] << " ";
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }

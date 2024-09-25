@@ -2226,47 +2226,84 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
+int main(){
+    ll Q,num,x,k;
+    cin >> Q;
+    multiset<ll> ms;
+    ms.insert(-1);
+    ms.insert(INF);
+    foi(0,Q){
+        cin >> num >> x;
+        if(num==1){
+            ms.insert(x);
+            continue;
+        }
+        if(num==2){
+            cin >> k;
+        }
+        if(num==3){
+            cin >> k;
+        }
+        if(num==2){
+            dbg(ms);
+            // auto temp = ms.upper_bound(x);
+            auto temp = upper_bound(ms.begin(),ms.end(),x);
+            --temp;
+            dbg(*temp);
+            ll checker = 0;
+            foi(0,k-1){
+                if(*temp==-1){
+                    cout << -1 << endl;
+                    checker = 1;
+                    break;
+                }
+                --temp;
+                if(*temp==-1){
+                    cout << -1 << endl;
+                    checker = 1;
+                    break;
+                }
+            }
+            dbg("reached");
+            dbg(*temp);
+            if(checker==0&*temp==-1){
+                cout << -1 << endl;
+                checker = 1;
+                continue;
+            }
+            if(checker == 0){
+                cout << *temp << endl;
+                continue;
+            }
+            dbg("reached");
+        }
+        if(num==3){
+            // auto temp = ms.lower_bound(x);
+            auto temp = lower_bound(ms.begin(),ms.end(),x);
+            ll checker = 0;
+            foi(0,k-1){
+                if(*temp==INF){
+                    dbg("reached!");
+                    cout << -1 << endl;
+                    checker = 1;
+                    break;
+                }
+                ++temp;
+                if(*temp==INF){
+                    cout << -1 << endl;
+                    checker = 1;
+                    break;
+                }
+            }
+            if(checker==0&&*temp==INF){
+                dbg("reached!");
+                cout << -1 << endl;
+                checker = 1;
+                continue;
+            }
+            if(checker == 0) cout << *temp << endl;
+        }
 
-auto solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
     }
-    auto ans = solve(n, a);
-    std::cout << a << '\n';
-    std::cout << b << '\n';
-    std::cout << c << '\n';
-    std::cout << d << '\n';
-    std::cout << e << '\n';
-    std::cout << f << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }

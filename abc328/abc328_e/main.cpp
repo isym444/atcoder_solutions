@@ -16,44 +16,134 @@
 #include <bitset>
 #include <deque>
 #include <numeric>
+#include <assert.h>
+#include <cassert>
+#include <unordered_map>
+#include <type_traits> // For std::is_floating_point
+#include <cmath> // For std::ceil
+#include <iomanip>
+#include <unordered_set>
+#include <functional>
+#include <type_traits>
+#include <chrono>
+#include <list>
+#include <atcoder/all>
 
 using namespace std;
+using namespace atcoder;
 
+
+/*/---------------------------Looping helpers----------------------/*/
+#define rep(i,n) for(int i = 0; i < (n); ++i)
+#define repp(i, a, b) for (int i = (a); i < (b); ++i)
+#define rrep(i,n) for(int i = 1; i <= (n); ++i)
+// #define rep(i, m, n) for (int i = (m); (i) < (int)(n); ++ (i))
 #define REP(i, n) for (int i = 0; (i) < (int)(n); ++ (i))
-#define REP3(i, m, n) for (int i = (m); (i) < (int)(n); ++ (i))
 #define REP_R(i, n) for (int i = (int)(n) - 1; (i) >= 0; -- (i))
 #define REP3R(i, m, n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
-#define ALL(x) ::std::begin(x), ::std::end(x)
+#define fo(from_0_to_non_incl_to) for(int i=0;i<from_0_to_non_incl_to;i++)
+//h CAREFUL if you put an expression as an argument it will give bugs, better assign expression to variable then put that in the foi() as argument
+#define foi(from,non_incl_to) for(int i=from;i<(non_incl_to);i++)
+#define foii(non_incl_to) for(int i=0;i<(non_incl_to);i++)
+#define foj(from,non_incl_to) for(int j=from;j<(non_incl_to);j++)
+#define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
+#define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
+#define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
+#define fa(x, dataStructure) for(auto x : dataStructure)
+#define fx(dataStructure) for(auto x : dataStructure)
+
+/*/---------------------------Abbreviations----------------------/*/
 #define ll long long
 #define sz(x) (int)(x).size()
-#define fo(from_0_to_non_incl_to) for(int i=0;i<from_0_to_non_incl_to;i++)
-#define foi(from,non_incl_to) for(int i=from;i<non_incl_to;i++)
-#define foj(from,non_incl_to) for(int j=from;j<non_incl_to;j++)
-#define fok(from,non_incl_to) for(int k=from;k<non_incl_to;k++)
-#define wasd(x) foi(-1,2) foj(-1,2) if(abs(i)+abs(j)==1){x};
-#define isvalid(x_plus_i,max_boundary_n,y_plus_j,max_boundary_m) (0<=x_plus_i and x_plus_i<max_boundary_n and 0<=y_plus_j and y_plus_j<max_boundary_m)
-//#define gcd __gcd
-#define mp make_pair
-//Makes % get floor remainder (towards -INF) and make it always positive
-#define MOD(x,y) (x%y+y)%y
-#define print(p) cout<<p<<endl;
 #define fi first
 #define sec second
+#define se second
+
+#define ALL(x) ::std::begin(x), ::std::end(x)
+#define all(a) a.begin(),a.end()
+#define rng(a) a.begin(),a.end()
+//#define gcd __gcd
+#define mp make_pair
+#define mt make_tuple
+#define pb push_back
+ll INF=LLONG_MAX;
+
+/*/---------------------------Data Structures----------------------/*/
+typedef pair<ll, ll> pl;
+//N.b. next() for next node in list, insert(iterator, value) "inserts" value at position right before iterator
+typedef list<ll> dll;
+using pll = pair<ll,ll>;
+using pi = pair<int,int>;
+typedef vector<long long> vll;
+typedef std::vector<std::vector<long long>> vvll;
+
+template<typename T> using vc = vector<T>;
+template<typename T> using vc = vector<T>;
+using vl = vc<ll>;
+
+//max heap priority queue i.e. top() gives largest value
+typedef priority_queue<ll> maxpq;
+//min heap priority queue i.e. top() gives smallest value
+typedef priority_queue<ll, vector<ll>, greater<ll>> minpq;
+
+//multiset provides automatic ordering on insertion but unlike set, keeps duplicate/multiple items of same value
+//n.b. set also provides autoamtic ordering on insertion n.b. maps are also sorted automatically on insertion according to key order
+//.count(x) O(num_of_x+logN)
+//.find(x) O(logN) -> so use find over count if possible
+//.insert(x) O(logN) -> inserts s.t. sorted order is maintained
+//.erase(x) O(logN)
+//begin() O(logN)
+typedef multiset<ll> msll;
+//doing mymultiset.erase(x) will erase all
+#define mserasesingle(mymultiset, x) mymultiset.erase(mymultiset.find(x))
+#define mseraseall(mymultiset, x) mymultiset.erase(x)
+//find smallest and biggest elements O(1)
+#define msmin(mymultiset) *mymultiset.begin()
+#define msmax(mymultiset) *mymultiset.rbegin()
+
+/*/---------------------------Misc----------------------/*/
+//Makes % get floor remainder (towards -INF) and make it always positive
+#define MOD(x,y) (x%y+y)%y
+// #define print(p) cout<<p<<endl
 #define prmap(m) {for(auto i: m) cout<<(i.fi)<<i.sec<<endl}
 #define pra(a) {for(auto i: a) cout<<i<<endl;}
 #define prm(a) {for(auto i: a) pra(i) cout<<endl;}
+#define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
+#define isvalid(checking,min_boundary,max_boundary) (0<=checking and checking<max_boundary)
+
+/*/---------------------------Base Conversions----------------------/*/
 //#define itobin(x) bitset<32> bin(x)
 #define itobin(intToConvertTo32BitBinaryNum) std::bitset<32>(intToConvertTo32BitBinaryNum)
 #define bintoi(binaryNum32BitToConvertToInt) binaryNum32BitToConvertToInt.to_ulong()
 #define binstoi(binaryStringToConvertToInt) stoi(binaryStringToConvertToInt, nullptr, 2)
-#define vecsum(vectorName) accumulate((vectorName).begin(), (vectorName).end(), 0)
-#define setbits(decimalnumber) __builtin_popcount(decimalnumber);
-typedef pair<ll, ll> pl;
+#define binstoll(binaryStringToConvertToInt) stoll(binaryStringToConvertToInt, nullptr, 2)
 
-#define pb push_back
+/*/---------------------------Bits----------------------/*/
+#define setbits(decimalnumber) __builtin_popcountll(decimalnumber)
 
-ll mod=1e9+7,INF=1e18;
 
+/*/---------------------------Strings----------------------/*/
+#define stringSplice(str, i, j) (str).erase(i, j) //j is the length of string to erase starting from index i
+#define string_pop_back(str) (str).pop_back()
+#define substring(str, i, j) (str).substr(i, j) //j is the length of substring from i
+
+/*/---------------------------Custom Hash----------------------/*/
+// gp_hash_table<long long, int, custom_hash> safe_hash_table;
+
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
 /*/---------------------------IO(Debugging)----------------------/*/
 template<class T> istream& operator >> (istream &is, vector<T>& V) {
@@ -61,40 +151,32 @@ template<class T> istream& operator >> (istream &is, vector<T>& V) {
         is >> e;
     return is;
 }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec);
+template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr);
+template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec);
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const pair<T, U> &pa);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec);
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec);
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa);
+template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp);
+template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp);
+template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl);
 
-template<typename CharT, typename Traits, typename T>
-ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, T const &val) {
-    return (out << val << " ");
-}
-template<typename CharT, typename Traits, typename T1, typename T2>
-ostream& _containerprint(std::basic_ostream<CharT, Traits> &out, pair<T1, T2> const &val) {
-    return (out << "(" << val.first << "," << val.second << ") ");
-}
-template<typename CharT, typename Traits, template<typename, typename...> class TT, typename... Args>
-ostream& operator << (std::basic_ostream<CharT, Traits> &out, TT<Args...> const &cont) {
-    out << "[ ";
-    for(auto&& elem : cont) _containerprint(out, elem);
-    return (out << "]");
-}
-template<class L, class R> ostream& operator << (ostream& out, pair<L, R> const &val){
-    return (out << "(" << val.first << "," << val.second << ") ");
-}
-template<class P, class Q = vector<P>, class R = less<P> > ostream& operator << (ostream& out, priority_queue<P, Q, R> const& M){
-    static priority_queue<P, Q, R> U;
-    U = M;
-    out << "{ ";
-    while(!U.empty())
-        out << U.top() << " ", U.pop();
-    return (out << "}");
-}
-template<class P> ostream& operator << (ostream& out, queue<P> const& M){
-    static queue<P> U;
-    U = M;
-    out << "{ ";
-    while(!U.empty())
-        out << U.front() << " ", U.pop();
-    return (out << "}");
-}
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec) { os << '['; for (auto v : vec) os << v << ','; os << ']'; return os; }
+template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr) { os << '['; for (auto v : arr) os << v << ','; os << ']'; return os; }
+template <class... T> std::istream &operator>>(std::istream &is, std::tuple<T...> &tpl) { std::apply([&is](auto &&... args) { ((is >> args), ...);}, tpl); return is; }
+template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl) { os << '('; std::apply([&os](auto &&... args) { ((os << args << ','), ...);}, tpl); return os << ')'; }
+template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec) { os << "deq["; for (auto v : vec) os << v << ','; os << ']'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
+template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa) { return os << '(' << pa.first << ',' << pa.second << ')'; }
+template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+
 
 void setIO(string name = "")
 { // name is nonempty for USACO file I/O
@@ -108,261 +190,189 @@ void setIO(string name = "")
     }
 }
 
-const int MAXA = 5000006;
-bool prime[MAXA];
+/*/---------------------------Custom library - most used only----------------------/*/
 
-void gen_primes() {
-    fill(prime, prime+MAXA, true);
-    prime[0] = 0;
-    // prime[1] = 1 for our purposes
-    for (int i = 4; i < MAXA; i += 2) {
-        prime[i] = 0;
-    }
 
-    for (int p = 3; p*p < MAXA; p += 2) {
-        if (!prime[p]) continue;
-        for (int x = p*p; x < MAXA; x += p) {
-            prime[x] = 0;
-        }
-    }
-}
+/*/---------------------------Syntax hints for mint once import mint.cpp----------------------/*/
+//n.b. it is a data type so declare variablesas: mint x;
+// to convert any other data type such as int or ll to mint, do: mint(x);
+// when you want to access the value of a mint, use x.val()
+// e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
+// using mint = modint998244353;
+// Custom operator<< for modint998244353
 
-//visited nodes
-vector<bool> v;
-//bool vis[61][61][61][61]={0};
-//graph as adjacency list
-vector<vector<int> > g;
+// //uncomment this code to allow dbg / ostream to handle mint
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
 
-void edge(int a, int b)
-{
-    g[a].pb(b);
- 
-    // for undirected graph add this line
-    // g[b].pb(a);
-}
-
-void bfs(int u)
-{
-    queue<int> q;
- 
-    q.push(u);
-    v[u] = true;
- 
-    //If want first time something happens/node reached then break when that happens
-    while (!q.empty()) {
- 
-        int f = q.front();
-        q.pop();
- 
-        cout << f << " ";
- 
-        // Enqueue all adjacent of f and mark them visited 
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!v[*i]) {
-                q.push(*i);
-                v[*i] = true;
-            }
-        }
-    }
-}
-
-vector<int> parent; // To store parent information
-
-vector<int> bfs(int start, int end) {
-    queue<int> q;
-    q.push(start);
-    v[start] = true;
-    parent[start] = -1; // Start node has no parent
-
-    while (!q.empty()) {
-        int f = q.front();
-        q.pop();
-
-        if (f == end) break; // Stop if we reach the end node
-
-        for (auto i = g[f].begin(); i != g[f].end(); i++) {
-            if (!v[*i]) {
-                q.push(*i);
-                v[*i] = true;
-                parent[*i] = f; // Set parent
-            }
-        }
-    }
-
-    vector<int> path;
-    for (int i = end; i != -1; i = parent[i]) {
-        path.push_back(i);
-    }
-    reverse(path.begin(), path.end()); // Reverse to get the correct order
-    return path;
-}
-
-string itobins(int n) {
-    if (n == 0) return "0";
-
-    string binary = "";
-    while (n > 0) {
-        binary += (n % 2) ? '1' : '0';
-        n /= 2;
-    }
-
-    reverse(binary.begin(), binary.end()); // Reverse to get the correct order
-    return binary;
-}
-
-string dtobx(int decimalNumber, int base) {
-    if (base < 2 || base > 36) {
-        return "Invalid base";
-    }
-
-    string result = "";
-    while (decimalNumber > 0) {
-        int remainder = decimalNumber % base;
-
-        // Convert remainder to corresponding character
-        if (remainder >= 10) {
-            result += 'A' + (remainder - 10);
-        } else {
-            result += '0' + remainder;
-        }
-
-        decimalNumber /= base;
-    }
-
-    // Reverse the string as the result is calculated in reverse order
-    reverse(result.begin(), result.end());
-
-    return result.empty() ? "0" : result;
-}
-
-ll ceildiv(ll n, ll d){
-    return((n+d-1)/d);
-}
-
-ll floordiv(ll n, ll d){
-    ll x = (n%d+d)%d;
-    return ((n-x)/d);
-}
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
 ll midpoint(ll L, ll R){
     return (L+(R-L)/2);
 }
 
-ll lcm(ll a, ll b) {
-    return std::abs(a * b) / std::gcd(a, b);
-}
+template<typename T, typename U>
+auto ceildiv(T n, U d) -> decltype(n / d + 0) {
+    static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "ceildiv requires arithmetic types");
 
-
-int stringToBinary(const std::string& s, char charAsOne) {
-    int x = 0;
-    for (int j = 0; j < s.length(); j++) {
-        x = 2 * x + (s[j] == charAsOne);
-    }
-    return x;
-}
-
-//returns index of first element greater than or equal to target
-ll findGreaterEqual(vector<ll> sortedVector, ll target){
-    auto it = lower_bound(sortedVector.begin(), sortedVector.end(), target);
-    return it-sortedVector.begin();
-}
-
-//returns index of first element less than or equal to target
-//if all elements are greater than target returns -1
-//if all elements are smaller than target, returns last element
-ll findLessEqual(vector<ll> sortedVector, ll target){
-    auto it = upper_bound(sortedVector.begin(), sortedVector.end(), target);
-    if(it != sortedVector.begin()){
-        --it;
-        if(*it<=target){
-            return it-sortedVector.begin()+1;
-        }
-    }
-    else{
-        return -1;
+    if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+        // Handle case where either n or d is a floating-point number
+        return static_cast<decltype(n / d + 0)>(std::ceil(n / static_cast<double>(d)));
+    } else {
+        // Handle case where both n and d are integers
+        return (n + d - 1) / d;
     }
 }
 
-struct loc
-{
-    inline static ll x=0;
-    inline static ll y=0;
-    inline static char dir='r';
-    //loc::x to access or modify x
-};
+/* ll ceildiv(ll n, ll d){
+return((n+d-1)/d);
+}
+*/
+/* ll floordiv(ll n, ll d){
+ll x = (n%d+d)%d;
+return ((n-x)/d);
+}
+ */
+template<typename T, typename U>
+auto floordiv(T n, U d) -> decltype(n / d + 0) {
+    static_assert(std::is_arithmetic<T>::value && std::is_arithmetic<U>::value, "floordiv requires arithmetic types");
 
-//Graph visualizer:
+    if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+        // Handle case where either n or d is a floating-point number
+        // Perform the division as floating-point operation and use std::floor to round down
+        return static_cast<decltype(n / d + 0)>(std::floor(n / static_cast<double>(d)));
+    } else {
+        // Handle case where both n and d are integers
+        // Original logic for floor division with integers
+        T x = (n % d + d) % d;
+        return (n - x) / d;
+    }
+}
+
+template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.begin(), vec.end()), vec.erase(unique(vec.begin(), vec.end()), vec.end()); return vec; }
+//index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
+template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
+//index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
+template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
+
+/*/---------------------------Useful Graph Visualizer----------------------/*/
 //https://csacademy.com/app/graph_editor/
 
-constexpr long long MOD = 998244353;
-long long solve(long long N, int M, long long K, const std::vector<long long> &u, const std::vector<long long> &v, const std::vector<long long> &w) {
-    
-}
+//h INSERT CODE SNIPPETS HERE
+/*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
+
+
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long N;
-    int M;
-    long long K;
-    std::cin >> N >> M;
-    std::vector<long long> u(M), v(M), w(M);
-    std::cin >> K;
-    REP (i, M) {
-        std::cin >> u[i] >> v[i] >> w[i];
+    ll N,M,K;
+    cin >> N >> M >> K;
+    vector<tuple<ll,ll,ll>> edges;
+    foi(0,M){
+        ll u,v,w;
+        cin >> u >> v >> w;
+        u--;
+        v--;
+        edges.pb({u,v,w});
     }
-    auto ans = solve(N, M, K, u, v, w);
-    std::cout << ans << '\n';
+    dbg(edges);
 
-    /* genprimes(1e5); */
+    ll ans = INF;
 
-    //Uncomment for BFS
-    /* int n, e;
-    //get number of nodes and edges
-    cin >> n >> e;
-    
-    //initialize your visited vector and your graph as adjacency list
-    v.assign(n, false);
-    g.assign(n, vector<int>());
-    
-    parent.assign(n, -1);
+    auto checkMST = [&](vll vedges)->bool{
+        dsu dd(N);
+        fx(vedges){
+            dd.merge(get<0>(edges[x]),get<1>(edges[x]));
+        }
+        dbg(dd.groups().size());
+        if(dd.groups().size()==1){
+            return true;
+        }
+        return false;
+    };
 
+    auto specialMST = [&](vll vedges)->ll{
+        ll count=0;
+        fx(vedges){
+            count+=get<2>(edges[x]);
+        }
+        return count%K;
+    };
 
-    //construct your graph as an adjacency list
-    int a, b;
-    for (int i = 0; i < e; i++) {
-        cin >> a >> b;
-        edge(a, b);
-    }
-    
-    //run the bfs and output order of traversed nodes
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    cout << endl;
-    
-    //run the bfs outputing  path traversed + shortest path
-    v.assign(n, false);
-    int startNode, endNode;
-    startNode = 0;
-    endNode = 7;
-    //cin >> startNode >> endNode;
-    vector<int> path = bfs(startNode, endNode);
+    auto dfs = [&](auto dfs, ll i, vll vedges)->void{
+        if(vedges.size()==N-1){
+            if(checkMST(vedges)){
+                ans = min(ans,specialMST(vedges));
+            }
+            return;
+        }
+        if(i==M) return;
+        dfs(dfs, i+1,vedges);
+        vedges.pb(i);
+        dfs(dfs, i+1,vedges);
+    };
 
-    // Output the path
-    for (int node : path) {
-        cout << node << " ";
-    }
-    cout << endl;
-    // Output the length of the path i.e. # of edges
-    cout << path.size()-1;
-    cout << endl; */
+    vll vedgesog;
+    dfs(dfs, 0,vedgesog);
 
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    /* wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << ans << endl;
+
     return 0;
 }
+
+// int main(){
+//     ll N,Q;
+//     cin >> N >> Q;
+//     atcoder::dsu uf(N+1);
+//     vector<set<ll>> ch(N+1);
+//     foi(1,N+1){
+//         ch[i].insert(i);
+//     }
+//     foi(0,Q){
+//         ll type, a, b;
+//         cin >> type >> a >> b;
+//         if(type==1){
+//             if(uf.leader(a)==uf.leader(b)) continue;
+//             ll ar = uf.leader(a);
+//             ll br = uf.leader(b);
+//             uf.merge(a,b);
+//             ll newr = uf.leader(a);
+//             dbg(mt(ar,br,newr));
+//             if(newr==ar){
+//                 ch[ar].insert(all(ch[br]));
+//                 ch[br].clear();
+//             }
+//             else{
+//                 ch[br].insert(all(ch[ar]));
+//                 ch[ar].clear();
+//             }
+//             dbg(ch);
+//         }
+//         else{
+//             ll vr = uf.leader(a);
+//             dbg(ch[vr]);
+//             if(ch[vr].size()<b){
+//                 cout << -1 << endl;
+//             }
+//             else{
+//                 auto p = ch[vr].rbegin();
+//                 advance(p, b-1);
+//                 cout << *p << endl;
+//                 // cout << "yo" << endl;
+//             }
+//         }
+//     }
+//     return 0;
+// }
+
