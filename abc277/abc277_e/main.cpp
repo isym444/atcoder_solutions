@@ -818,43 +818,33 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(long long N, int M, int K, const std::vector<long long> &u, const std::vector<long long> &v, const std::vector<long long> &a, const std::vector<long long> &s) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    int M, K;
-    std::cin >> N >> M;
-    std::vector<long long> u(M), v(M), a(M);
-    std::cin >> K;
-    std::vector<long long> s(K);
-    REP (i, M) {
-        std::cin >> u[i] >> v[i] >> a[i];
+int main(){
+    ll N,M,K;
+    cin >> N >> M >> K;
+    // vvll g(2*N);
+    vector<vector<pair<ll,ll>>> g(2*N);
+    foi(0,M){
+        ll u,v,a;
+        cin >> u >> v >> a;
+        u--;
+        v--;
+        if(a==1){
+            g[u].pb({v,1});
+            g[v].pb(mp(u,1));
+        }
+        if(a==0){
+            g[u+N].pb({v+N,1});
+            g[v+N].pb({u+N,1});
+        }
     }
-    REP (i, K) {
-        std::cin >> s[i];
+    foi(0,K){
+        ll s;
+        cin >> s;
+        s--;
+        g[s].pb({s+N,0});
+        g[s+N].pb({s,0});
     }
-    auto ans = solve(N, M, K, u, v, a, s);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    priority_queue<pair<ll,ll>, greater<pair<ll,ll>>> pq;
+    pq.insert({})
     return 0;
 }
