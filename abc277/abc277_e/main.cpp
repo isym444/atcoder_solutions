@@ -817,6 +817,14 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
 int main(){
     ll N,M,K;
@@ -844,7 +852,29 @@ int main(){
         g[s].pb({s+N,0});
         g[s+N].pb({s,0});
     }
-    priority_queue<pair<ll,ll>, greater<pair<ll,ll>>> pq;
-    pq.insert({})
+    priority_queue<pair<ll,ll>, vector<pair<ll,ll>>, greater<pair<ll,ll>>> pq;
+    pq.push(mp(0,0));
+    vll dist(N*2, INF);
+    dist[0]=0;
+    while(!pq.empty()){
+        auto [d,v] = pq.top();
+        pq.pop();
+        if(d>dist[v]) continue;
+        for(auto x:g[v]){
+            if (x.second + d >= dist[x.first])
+            {
+                continue;
+            }
+            dist[x.first] = x.second + d;
+            pq.push(mp(d+x.second,x.first));
+        }
+    }
+    dbg(dist);
+    ll ans = min(dist[N-1],dist[2*N-1]);
+    if(ans==INF){
+        cout << -1 << endl;
+        return 0;
+    }
+    cout << ans << endl;
     return 0;
 }
