@@ -201,11 +201,10 @@ void setIO(string name = "")
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
 
-using mint = modint998244353;
 // //uncomment this code to allow dbg / ostream to handle mint
-std::ostream& operator<<(std::ostream& os, const mint& m) {
-    return os << m.val();
-}
+// std::ostream& operator<<(std::ostream& os, const mint& m) {
+//     return os << m.val();
+// }
 
 #ifdef isym444_LOCAL
 const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
@@ -273,11 +272,13 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-constexpr long long MOD = 998244353;
 
-vector<int> dx_wasd = {1,-1,0,0};
-vector<int> dy_wasd = {0,0,1,-1};
-#define isvalidsingle(value,min_valid_value,max_valid_value) (min_valid_value<=value and value<max_valid_value)
+long long solve(int N, const std::vector<long long> &A, const std::vector<long long> &B) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -286,68 +287,30 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    ll H,W;
-    cin >> H >> W;
-    vector<string> S(H);
-    foi(0,H){
-        cin >> S[i];
+    ll N;
+    cin >> N;
+    vll A(N);
+    vll B(N);
+    cin >> A >> B;
+    dbg(A);
+    dbg(B);
+    sort(all(A));
+    sort(all(B));
+    cout << A[A.size()-1]+B[B.size()-1] << endl;
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    dbg(S);
-
-    ll initialGreenCount=0;
-    vvll g(H, vll(W,-1));
-
-    foi(0,H) foj(0,W){
-        if(S[i][j]=='#'){
-            g[i][j]=initialGreenCount;
-            initialGreenCount++;
-        }
-    }
-
-    dbg(g);
-
-    dsu dd(initialGreenCount);
-
-
-    foi(0,H) foj(0,W){
-        if(S[i][j]=='#'){
-            fok(0,4){
-                ll ni = i+dy_wasd[k];
-                ll nj = j+dx_wasd[k];
-                if(!isvalidsingle(ni,0,H)) continue;
-                if(!isvalidsingle(nj,0,W)) continue;
-                if(S[ni][nj]!='#') continue;
-                dd.merge(g[i][j],g[ni][nj]);
-            }
-        }
-    }
-
-    dbg(dd.groups());
-
-    ll components = dd.groups().size();
-    mint sum = 0;
-
-    ll reds = 0;
-
-    foi(0,H) foj(0,W){
-        if(S[i][j]!='#'){
-            reds++;
-            ll tempcomp = components+1;
-            set<ll> s;
-            fok(0,4){
-                ll ni = i+dy_wasd[k];
-                ll nj = j+dx_wasd[k];
-                if(!isvalidsingle(ni,0,H)) continue;
-                if(!isvalidsingle(nj,0,W)) continue;
-                if(S[ni][nj]!='#') continue;
-                s.insert(dd.leader(g[ni][nj]));
-            }
-            tempcomp-=s.size();
-            sum+=tempcomp;
-        }
-    }
-    auto ans = sum/reds;
-    cout << ans.val() << endl;
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
 
     return 0;
 }
