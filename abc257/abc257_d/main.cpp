@@ -1870,39 +1870,69 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-long long solve(int N, const std::vector<long long> &x, const std::vector<long long> &y, const std::vector<long long> &P) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+// int main(){
+//     ll N;
+//     cin >> N;
+//     vector<tuple<ll,ll,ll>> trampolines;
+//     foi(0,N){
+//         ll x,y,p;
+//         cin >> x >> y >> p;
+//         trampolines.pb(make_tuple(x,y,p));
+//     }
+//     dbg(trampolines);
+//     vvll d(N, vll(N,0));
+//     foi(0,N) foj(0,N){
+//         if(i==j) continue;
+//         ll distance = abs(get<0>(trampolines[i])-get<0>(trampolines[j]))+abs(get<1>(trampolines[i])-get<1>(trampolines[j]));
+//         ll s = ceildiv(distance,get<2>(trampolines[i]));
+//         d[i][j]=s;
+//     }
+//     dbg(d);
+//     fok(0,N) foi(0,N) foj(0,N){
+//         d[i][j]=min(d[i][j],max(d[i][k],d[k][j]));
+//     }
+//     dbg(d);
+//     ll ans=INF;
+//     foi(0,N){
+//         ll cur=0;
+//         foj(0,N){
+//             cur=max(cur,d[i][j]);
+//         }
+//         ans=min(ans,cur);
+//     }
+//     cout << ans << endl;
+//     return 0;
+// }
+
+#define rep(i,n) for (int i = 0; i < (n); ++i)
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    int N;
-    std::cin >> N;
-    std::vector<long long> x(N), y(N), P(N);
-    REP (i, N) {
-        std::cin >> x[i] >> y[i] >> P[i];
-    }
-    auto ans = solve(N, x, y, P);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-    return 0;
+  int n;
+  cin >> n;
+  vector<int> x(n), y(n), p(n);
+  rep(i,n) cin >> x[i] >> y[i] >> p[i];
+  ll wa = 0, ac = 4e9;
+  while (abs(wa-ac) > 1) {
+    ll wj = (wa+ac)/2;
+    bool judge = [&] {
+      vector d(n, vector<int>(n));
+      rep(i,n)rep(j,n) {
+        ll dist = (ll)abs(x[i]-x[j])+abs(y[i]-y[j]);
+        if (wj*p[i] >= dist) d[i][j] = 1;
+      }
+      rep(k,n)rep(i,n)rep(j,n) {
+        d[i][j] |= d[i][k]&d[k][j];
+      }
+      dbg(d);
+      rep(i,n) {
+        bool ok = true;
+        rep(j,n) if (d[i][j] != 1) ok = false;
+        if (ok) return true;
+      }
+      return false;
+    }();
+    if (judge) ac = wj; else wa = wj;
+  }
+  cout << ac << endl;
+  return 0;
 }

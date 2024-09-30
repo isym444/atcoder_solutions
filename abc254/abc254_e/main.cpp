@@ -818,46 +818,58 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-auto solve(long long N, int M, const std::vector<long long> &a, const std::vector<long long> &b, int Q, const std::vector<long long> &x, const std::vector<long long> &k) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    int M, Q;
-    std::cin >> N >> M;
-    std::vector<long long> a(M), b(M);
-    REP (i, M) {
-        std::cin >> a[i] >> b[i];
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    vvll g(N);
+    foi(0,M){
+        ll a,b;
+        cin >> a >> b;
+        a--;
+        b--;
+        g[a].pb(b);
+        g[b].pb(a);
     }
-    std::cin >> Q;
-    std::vector<long long> x(Q), k(Q);
-    REP (i, Q) {
-        std::cin >> x[i] >> k[i];
+    ll Q;
+    cin >> Q;
+    vll visited(N,0);
+    foi(0,Q){
+        ll x,k;
+        cin >> x >> k;
+        x--;
+        ll ans=0;
+        queue<pair<ll,ll>> q;
+        q.push(mp(x,0));
+        // ans+=x+1;
+        ll counter=0;
+        vll vs;
+        visited[x]=1;
+        vs.pb(x);
+        while(!q.empty()){
+            auto [v,num] = q.front();
+            q.pop();
+            // if(visited[v]) continue;
+            // visited[v]=1;
+            ans+=v+1;
+            // cerr << v << endl;
+            if(num==k) continue;
+            for(auto u:g[v]){
+                if(visited[u]) continue;
+                // if(num+1<=k){
+                q.push(mp(u,num+1));
+                // }
+                visited[u]=1;
+                vs.pb(u);
+            }
+            // counter++;
+            // if(counter==3) break;
+        }
+        // cerr << endl;
+        cout << ans << endl;
+        // cerr << vs << endl;
+        fx(vs){
+            visited[x]=0;
+        }
     }
-    auto ans = solve(N, M, a, b, Q, x, k);
-    std::cout << d << '\n';
-    REP (i, N) {
-        std::cout << f[i] << '\n';
-    }
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }
