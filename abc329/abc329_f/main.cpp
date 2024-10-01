@@ -525,46 +525,63 @@ struct loc
 
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <utility>
+#include <queue>
+#include <array>
+#include <climits>
+#include <cmath>
+#include <set>
+#include <map>
+#include <bitset>
+#include <deque>
+#include <numeric>
+#include <assert.h>
+#include <cassert>
+#include <unordered_map>
+#include <type_traits> // For std::is_floating_point
+#include <cmath>       // For std::ceil
+#include <iomanip>
+#include <unordered_set>
+#include <functional>
+#include <type_traits>
+#include <chrono>
+#include <list>
+#include <atcoder/all>
 
 
-auto solve(int a, int b, const std::vector<long long> &c, const std::vector<long long> &d, const std::vector<long long> &e) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+int main(){
+    ll N,Q;
+    cin >> N >> Q;
+    vector<ll> C(N);
+    cin >> C;
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int a, b;
-    std::cin >> a;
-    std::vector<long long> c(a);
-    std::cin >> b;
-    std::vector<long long> d(b), e(b);
-    REP (i, a) {
-        std::cin >> c[i];
+    vector<unordered_set<ll>> boxes(N);
+
+    foi(0,N){
+        boxes[i].insert(C[i]);
     }
-    REP (i, b) {
-        std::cin >> d[i] >> e[i];
-    }
-    auto ans = solve(a, b, c, d, e);
-    REP (i, b) {
-        std::cout << f[i] << '\n';
-    }
+    // dbg(boxes);
+    // cerr << boxes << endl;
+    // cerr << boxes[0] << endl;
 
-    /* genprimes(1e5); */
+    foi(0,Q){
+        ll a,b;
+        cin >> a >> b;
+        a--;
+        b--;
+        if(boxes[a].size()>boxes[b].size()) swap(boxes[a],boxes[b]);
+        boxes[b].merge(boxes[a]);
+        boxes[a].clear();
+        cout << boxes[b].size() << endl;
 
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }
