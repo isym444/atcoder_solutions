@@ -439,7 +439,7 @@ int main(){
     while(!empty(pq)){
         auto [d,v] = pq.top();
         pq.pop();
-        if(d!=distance[v]) continue;
+        // if(d!=distance[v]) continue;
         for(auto x : cpg[v]){
             auto[u,cost]=x;
             if(d+cost>=distance[u]) continue;
