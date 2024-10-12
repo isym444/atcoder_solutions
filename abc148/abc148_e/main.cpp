@@ -274,26 +274,18 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 
-
-
-// int64_t countTrailingZerosInDoubleFactorial(int64_t n) {
-//     // If n is odd, return 0 because odd numbers' double factorial cannot have trailing zeros
-//     if (n % 2 != 0) {
-//         return 0;
-//     }
-
-//     int64_t count = 0;
-//     // Loop through powers of 5, counting even multiples of 5
-//     for (int64_t i = 5; i <= n; i *= 5) {
-//         count += (n/i)/2;
-//     }
-
-//     return count;
-// }
-
-// int main() {
-//     int64_t n;
-//     std::cin >> n;  // Input the value of N
-//     std::cout << countTrailingZerosInDoubleFactorial(n) << std::endl;  // Output the result
-//     return 0;
-// }
+int main(){
+    ll N;
+    cin >> N;
+    if(N%2==1){
+        cout << 0 << endl;
+        return 0;
+    }
+    ll ans = 0;
+    for(ll i = 5; i<=N; i*=5){
+        ans+=(N/i)/2;
+        // dbg(i);
+    }
+    cout << ans << endl;
+    return 0;
+}
