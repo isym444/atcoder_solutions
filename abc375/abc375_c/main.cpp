@@ -269,54 +269,48 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-
+template <typename T> std::vector<std::vector<T>> rotate90(const std::vector<std::vector<T>> &in) {
+    const int H = in.size(), W = in[0].size();
+    std::vector<std::vector<T>> ret(W, std::vector<T>(H));
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < W; j++) ret[j][i] = in[i][W - 1 - j];
+    }
+    return ret;
+}
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-auto solve(auto N, const std::vector<std::vector<auto> > &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    auto N;
-    std::cin >> N;
-    std::vector<std::vector<auto> > A(2 * N + 4, std::vector<auto>((2 * N + 4)));
-    REP (j, N + 4) {
-        REP (i, N) {
-            std::cin >> A[i + j][i + j];
+int main(){
+    ll N;
+    cin >> N;
+    // vector<vector<char>> A(N, vll(N));
+    vector<vector<char>> A(N, vector<char>(N));
+    foi(0,N){
+        foj(0,N){
+            cin >> A[i][j];
         }
     }
-    auto ans = solve(N, A);
-    REP (j, N + 4) {
-        REP (i, N) {
-            std::cout << B[i + j][i + j] << ' ';
+    dbg(A);
+    vector<vector<char>> ans(N, vector<char>(N));
+    foi(0,N){
+        foj(0,N){
+            ll depth = min({(ll)i+1,(ll)N-i,(ll)j+1,(ll)N-j});
+            ll rotations = depth%4;
+            ll ni,nj;
+            ni=i;
+            nj=j;
+            fok(0,rotations){
+                swap(ni,nj);
+                nj = N-1-nj;
+            }
+            ans[ni][nj]=A[i][j];
         }
-        std::cout << '\n';
     }
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    foi(0,N){
+        foj(0,N){
+            cout << ans[i][j];
+        }
+        cout << endl;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
     return 0;
 }
