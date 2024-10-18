@@ -1,4 +1,4 @@
-// #include <iostream>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <cstdio>
@@ -269,43 +269,39 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
+ll gcd(ll a,ll b){return a?gcd(b%a,a):b;}
 
+map<ll,int> enumpr(ll n) {
+	map<ll,int> V;
+	for(ll i=2;i*i<=n;i++) while(n%i==0) V[i]++,n/=i;
+	if(n>1) V[n]++;
+	return V;
+}
+
+vector<pll> factor(ll x) {
+    vector<pll> ans;
+    for(ll i = 2; i * i <= x; i++)
+        if(x % i == 0) {
+            ans.push_back({i, 1});
+            while((x /= i) % i == 0) ans.back().second++;
+        }
+    if(x != 1) ans.push_back({x, 1});
+    return ans;
+}
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-std::pair<double, double> solve(long long a, long long b, long long c, long long d, long long e) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
+ll A, B;
+//---------------------------------------------------------------------------------------------------
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long a, b, c, d, e;
-    std::cin >> a >> b >> c >> d >> e;
-    auto [h, m] = solve(a, b, c, d, e);
-    std::cout << h << ' ' << m << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    cin >> A >> B;
+    // auto ep = enumpr(gcd(A, B));
+    ll temp = gcd(A,B);
+    dbg(temp);
+    dbg(factor(temp));
+    dbg(enumpr(gcd(A,B)));
+    cout << factor(temp).size()+1 << endl;
+    // int ans = ep.size() + 1;
+    // cout << ans << endl;
     return 0;
 }

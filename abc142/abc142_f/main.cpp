@@ -1,4 +1,4 @@
-// #include <iostream>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <cstdio>
@@ -273,7 +273,7 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-std::pair<double, double> solve(long long a, long long b, long long c, long long d, long long e) {
+auto solve(long long N, int M, const std::vector<long long> &A, const std::vector<long long> &B) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
@@ -287,10 +287,18 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    long long a, b, c, d, e;
-    std::cin >> a >> b >> c >> d >> e;
-    auto [h, m] = solve(a, b, c, d, e);
-    std::cout << h << ' ' << m << '\n';
+    long long N;
+    int M;
+    std::cin >> N >> M;
+    std::vector<long long> A(M), B(M);
+    REP (i, M) {
+        std::cin >> A[i] >> B[i];
+    }
+    auto ans = solve(N, M, A, B);
+    std::cout << K << '\n';
+    REP (i, K) {
+        std::cout << v[i] << '\n';
+    }
 
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
