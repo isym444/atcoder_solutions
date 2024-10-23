@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <chrono>
 #include <list>
+#include <complex>
 #include <atcoder/all>
 
 using namespace std;
@@ -273,39 +274,22 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-std::pair<double, double> solve(long long a, long long b, long long c, long long d, long long e) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
+int main(){
     cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long a, b, c, d, e;
-    std::cin >> a >> b >> c >> d >> e;
-    auto [h, m] = solve(a, b, c, d, e);
-    std::cout << h << ' ' << m << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    ll N;
+    cin >> N;
+    ll a,b,c,d;
+    cin >> a >> b >> c >> d;
+    complex<double> p0 = complex<double>(a,b);
+    complex<double> pOpposite = complex<double>(c,d);
+    complex<double> midpoint = (p0+pOpposite)/2.0;
+    dbg(midpoint);
+    complex<double> radius = p0-midpoint;
+    double PI = acos(-1);
+    double angle = (2*PI)/N;
+    complex<double> rotator = complex<double>(cos(angle),sin(angle));
+    complex<double> rotated = radius*rotator;
+    complex<double> answer = midpoint+rotated;
+    cout << answer.real() << " " << answer.imag() << endl;
     return 0;
 }
