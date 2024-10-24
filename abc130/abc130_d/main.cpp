@@ -1700,39 +1700,35 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(int N, long long K, const std::vector<long long> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    long long K;
-    std::cin >> N;
-    std::vector<long long> a(N);
-    std::cin >> K;
-    REP (i, N) {
-        std::cin >> a[i];
+int main(){
+    ll N,K;
+    cin >> N >> K;
+    vll A(N);
+    cin >> A;
+    // dbg(A);
+    ll l,r;
+    l=0;
+    r=0;
+    ll cursum=0;
+    ll ans = 0;
+    while(l<N){
+        while(cursum<K){
+            if(r>=N){
+                cout << ans << endl;
+                return 0;
+            }
+            cursum+=A[r];
+            cerr << cursum << endl;
+            r++;
+        }
+        if(cursum>=K){
+            ans+=N+1-r;
+            cerr << "ans: " << ans << " " << r << endl;
+            cursum-=A[l];
+            l++;
+            if(l>r) r++;
+        }
     }
-    auto ans = solve(N, K, a);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << ans << endl;
     return 0;
 }
