@@ -1002,38 +1002,34 @@ vector<int> dy_wasd = {0,0,1,-1};
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
 
-std::pair<long long, long long> solve(int n, const std::vector<long long> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    sort(all(A));
+    ll n=A[A.size()-1];
+    ll ans;
+    pair<ll,ll> ab;
+    // foi(max((ll)A.size()/2-1,(ll)0),min(A.size()/2+1,A.size()-1)){
+    //     if(nCx(n,A[i])>ans){
+    //         ab=mp(n,A[i]);
+    //     }
+    //     ans=max(ans,nCx(n,A[i]));
+    // }
+    // cout << ans << endl;
+    ll checker = INF;
+    foi(0,N){
+        double temp = abs(n/(double)2-A[i]);
+        // cerr << temp << endl;
+        if(temp<checker){
+            ans=i;
+            checker=temp;
+        }
     }
-    auto [d, e] = solve(n, a);
-    std::cout << d << ' ' << e << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << n << " " << A[ans] << endl;
     return 0;
 }
