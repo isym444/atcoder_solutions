@@ -2175,38 +2175,22 @@ vector<int> dy_wasd = {0,0,1,-1};
 // to convert any other data type such as int or ll to mint, do: mint(x);
 // when you want to access the value of a mint, use x.val()
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
-using mint = modint998244353;
+// using mint = modint998244353;
+using mint = modint1000000007;
 
 constexpr long long MOD = 1000000007;
-long long solve(long long S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    long long S;
-    std::cin >> S;
-    auto ans = solve(S);
-    std::cout << ans << '\n';
 
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+int main(){
+    ll S;
+    cin >> S;
+    vector<mint> dp(S+1,0);
+    mint sum=0;
+    // dp[0]=1;
+    foi(3,S+1){
+        sum+=dp[i-3].val();
+        dp[i]=sum.val()+1;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << dp[S].val() << endl;
     return 0;
 }
