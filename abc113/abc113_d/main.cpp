@@ -274,15 +274,39 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
+long long solve(long long H, long long W, long long K) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long H, W, K;
+    std::cin >> H >> W >> K;
+    auto ans = solve(H, W, K);
+    std::cout << ans << '\n';
 
 
-int main(){
-    ll a,b,x;
-    cin >> a >> b >> x;
-    ll tob = b/x;
-    ll toa = a/x;
-    ll ans = tob-toa;
-    if(a%x==0) ans++;
-    cout << ans << endl;
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

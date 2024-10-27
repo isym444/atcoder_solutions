@@ -274,15 +274,41 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
-
 int main(){
-    ll a,b,x;
-    cin >> a >> b >> x;
-    ll tob = b/x;
-    ll toa = a/x;
-    ll ans = tob-toa;
-    if(a%x==0) ans++;
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    foi(0,N){
+        A[i]=A[i]-1;
+        // dbg(i);
+    }
+    // dbg(N);
+    // dbg(A);
+    dsu dd((ll)2e5+29);
+    // dsu dd((ll)10);
+    ll l=0;
+    ll r=N-1;
+    ll checker=INF;
+    while(l<r){
+        if(A[l]==A[r]){
+            l++;
+            r--;
+            continue;
+        }
+        // checker = A[l];
+        dd.merge(A[l],A[r]);
+        l++;
+        r--;
+    }
+    dbg(dd.groups());
+    dbg(checker);
+    ll ans = 0;
+    dbg(dd.groups());
+    fx(dd.groups()){
+        dbg(x);
+        ans+=x.size()-1;
+    }
     cout << ans << endl;
     return 0;
 }

@@ -274,15 +274,66 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
-
 int main(){
-    ll a,b,x;
-    cin >> a >> b >> x;
-    ll tob = b/x;
-    ll toa = a/x;
-    ll ans = tob-toa;
-    if(a%x==0) ans++;
-    cout << ans << endl;
+    ll N,M;
+    cin >> N >> M;
+    vector<tuple<ll,ll,ll>> v;
+    foi(0,M){
+        ll a,b;
+        cin >> a >> b;
+        v.pb(mt(i,a,b));
+    }
+    dbg(v);
+    sort(v.begin(), v.end(), [](tuple<ll,ll,ll> a, tuple<ll,ll,ll> b){
+        if(get<1>(a)==get<1>(b)){
+            return get<2>(a)<get<2>(b);
+        }
+        return get<1>(a)<get<1>(b);
+    });
+    dbg(v);
+    ll curb = get<1>(v[0]);
+    ll curi=1;
+    foi(0,v.size()){
+        if(get<1>(v[i])!=curb){
+            curi=1;
+            curb=get<1>(v[i]);
+        }
+        get<2>(v[i])=curi;
+        curi++;
+    }
+    dbg(v);
+    sort(all(v),[](tuple<ll,ll,ll> a, tuple<ll,ll,ll> b){
+        return get<0>(a)<get<0>(b);
+    });
+    dbg(v);
+    fx(v){
+        ll a = get<1>(x);
+        deque<ll> da;
+        while(a){
+            da.push_front(a%10);
+            a=a/10;
+        }
+        // da.pb(a);
+        ll b = get<2>(x);
+        deque<ll> db;
+        while(b){
+            db.push_front(b%10);
+            b=b/10;
+        }
+        // db.pb(b);
+        while(da.size()<6){
+            da.push_front(0);
+        }
+        while(db.size()<6){
+            db.push_front(0);
+        }
+        fx(da){
+            cout << x;
+        }
+        fx(db){
+            cout << x;
+        }
+        cout << endl;
+    }
     return 0;
 }
