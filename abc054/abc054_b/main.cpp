@@ -273,50 +273,54 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-const std::string YES = "Yes";
-const std::string NO = "No";
-bool solve(int N, int M, const std::vector<std::string> &A, const std::vector<std::string> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N, M;
-    std::cin >> N;
-    std::vector<std::string> A(N);
-    std::cin >> M;
-    std::vector<std::string> B(M);
-    REP (i, N) {
-        std::cin >> A[i];
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    vector<string> inpt(N);
+    vector<string> secnd(M);
+    foi(0,N){
+        cin >> inpt[i];
     }
-    REP (i, M) {
-        std::cin >> B[i];
+    foi(0,M){
+        cin >> secnd[i];
     }
-    auto ans = solve(N, M, A, B);
-    std::cout << (ans ? YES : NO) << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    dbg(inpt);
+    dbg(secnd);
+    if(M>N){
+        cout << "No" << endl;
+        return 0;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    if(M==N){
+        ll checker = 0;
+            fok(0,M){
+                for(int l=0; l<M; l++){
+                    if(secnd[k][l]!=inpt[k][l]){
+                        checker = 1;
+                    }
+                }
+            }
+            if(checker == 0){
+                cout << "Yes" << endl;
+                return 0;
+            }
+    }
+    foi(0,N-M){
+        foj(0,N-M){
+            ll checker = 0;
+            fok(0,M){
+                for(int l=0; l<M; l++){
+                    if(secnd[k][l]!=inpt[k+i][l+j]){
+                        checker = 1;
+                    }
+                }
+            }
+            if(checker == 0){
+                cout << "Yes" << endl;
+                return 0;
+            }
+        }
+    }
+    cout << "No" << endl;
     return 0;
 }
