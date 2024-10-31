@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -275,30 +274,45 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-ll numdig(ll x){
-    ll count = 0;
-    while(x){
-        count++;
-        x=x/10;
-    }
-    return count;
-}
 
 int main(){
-    ll N;
-    cin >> N;
-    ll ans = INF;
-    ll newN = sqrtl(N);
-    foi(1,newN+1){
-        ll A,B;
-        A=i;
-        B=N/A;
-        if(A*B==N){
-            ll digA = numdig(A);
-            ll digB = numdig(B);
-            ans = min(ans,max(digA,digB));
-        }
+    ll N,Q;
+    cin >> N >> Q;
+    vvll g(N);
+    foi(0,N-1){
+        ll a,b;
+        cin >> a >> b;
+        a--;
+        b--;
+        g[a].pb(b);
+        g[b].pb(a);
     }
-    cout << ans << endl;
+    vll increments(N,0);
+    foi(0,Q){
+        ll p,x;
+        cin >> p >> x;
+        p--;
+        increments[p]+=x;
+    }
+    vll visited(N,0);
+    vll ans(N,0);
+    dbg(increments);
+    auto dfs = [&](auto dfs, ll v)->void{
+        if(visited[v]){
+            return;
+        }
+        visited[v]=1;
+        ans[v]=ans[v]+increments[v];
+        for(auto u:g[v]){
+            if(visited[u]) continue;
+            ans[u]+=ans[v];
+            dfs(dfs, u);
+        }
+    };
+
+    dfs(dfs, 0);
+    fx(ans){
+        cout << x << " ";
+    }
     return 0;
 }

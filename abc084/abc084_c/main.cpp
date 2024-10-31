@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -275,30 +274,36 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-ll numdig(ll x){
-    ll count = 0;
-    while(x){
-        count++;
-        x=x/10;
-    }
-    return count;
-}
-
 int main(){
     ll N;
     cin >> N;
-    ll ans = INF;
-    ll newN = sqrtl(N);
-    foi(1,newN+1){
-        ll A,B;
-        A=i;
-        B=N/A;
-        if(A*B==N){
-            ll digA = numdig(A);
-            ll digB = numdig(B);
-            ans = min(ans,max(digA,digB));
-        }
+    vll C(N);
+    vll S(N);
+    vll F(N);
+    foi(0,N){
+        cin >> C[i] >> S[i] >> F[i];
     }
-    cout << ans << endl;
+    dbg(C);
+    dbg(S);
+    dbg(F);
+    foi(0,N){
+        ll curans = 0;
+        ll curcum = 0;
+        foj(i,N-1){
+            ll correctedS=S[j];
+            if(S[j]<curcum){
+                ll a=ceildiv(curcum-S[j],F[j]);
+                correctedS = S[j]+a*F[j];
+            }
+            curcum = max(curcum, correctedS);
+            dbg(curcum);
+            curcum +=C[j];
+            dbg(curcum);
+            // curans += curcum;
+        }
+        dbg("");
+        cout << curcum << endl;
+
+    }
     return 0;
 }
