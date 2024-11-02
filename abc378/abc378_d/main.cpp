@@ -270,54 +270,48 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-
+vector<int> dx_wasd = {1,-1,0,0};
+vector<int> dy_wasd = {0,0,1,-1};
+#define isvalidsingle(value,min_valid_value,max_valid_value) (min_valid_value<=value and value<max_valid_value)
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main(){
-    ll N;
-    cin >> N;
-    vll a(N);
-    cin >> a;
-    vll ans(N,0);
-    for(int i = N-1; i>=0; i--){
-        if(a[i]==1){
-            ll temp = i+1;
-            ans[i]=1;
-            temp+=i+1;
-            while(temp<N+1){
-                // dbg(temp);
-                a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
-            }
-        }
-        else{
-            ll temp = i+1;
-            ans[i]=0;
-            while(temp<N+1){
-                a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
-            }
-        }
+    ll H,W,K;
+    cin >> H >> W >> K;
+    vector<string> S(H);
+    foi(0,H){
+        cin >> S;
     }
-    vll finans;
-    foi(0,N){
-        if(ans[i]==1){
-            finans.pb(i);
+    dbg(S);
+    ll ans=0;
+    vvll visited(H, vll(W,0));
+    auto dfs = [&](auto dfs, int i, int j, int pathlength){
+        // dbg(mt(i,j,pathlength));
+        if(pathlength == K){
+            ans++;
+            return;
+        }
+        visited[i][j]=1;
+        fok(0,4){
+            ll ni = i+dy_wasd[k];
+            ll nj = j+dx_wasd[k];
+            // dbg(mp(ni,nj));
+            if(!isvalidsingle(ni,0,H) || !isvalidsingle(nj,0,W)) continue;
+            if(S[ni][nj]=='#') continue;
+            if(visited[ni][nj]) continue;
+            dfs(dfs, ni, nj, pathlength+1);
+        }
+        visited[i][j]=0;
+    };
+    foi(0,H){
+        foj(0,W){
+            auto cur = S[i][j];
+            if(cur=='#') continue;
+            // dbg(cur);
+            dfs(dfs, i,j, 0);
         }
     }
-    cout << finans.size() << endl;
-    fx(finans){
-        cout << x+1 << " ";
-    }
-    cout << endl;
+    cout << ans << endl;
     return 0;
 }

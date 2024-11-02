@@ -271,53 +271,31 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-
+long long nC2(int n) {
+    return static_cast<long long>(n) * (n - 1) / 2;
+}
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main(){
-    ll N;
-    cin >> N;
-    vll a(N);
-    cin >> a;
-    vll ans(N,0);
-    for(int i = N-1; i>=0; i--){
-        if(a[i]==1){
-            ll temp = i+1;
-            ans[i]=1;
-            temp+=i+1;
-            while(temp<N+1){
-                // dbg(temp);
-                a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
-            }
-        }
-        else{
-            ll temp = i+1;
-            ans[i]=0;
-            while(temp<N+1){
-                a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
-            }
-        }
+    ll a,b,c,d;
+    set<ll> s;
+    map<ll,ll> m;
+    vll v;
+    // cin >> v;
+    cin >> a >> b >> c >> d;
+    // s.insert(a);
+    // s.insert(b);
+    // s.insert(c);
+    // s.insert(d);
+    m[a]++;
+    m[b]++;
+    m[c]++;
+    m[d]++;
+    ll ans=0;
+    for(auto x:m){
+        ans+=x.second/2;
+        // ans+=nC2(x.second);
     }
-    vll finans;
-    foi(0,N){
-        if(ans[i]==1){
-            finans.pb(i);
-        }
-    }
-    cout << finans.size() << endl;
-    fx(finans){
-        cout << x+1 << " ";
-    }
-    cout << endl;
+    cout << ans << endl;
     return 0;
 }

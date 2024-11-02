@@ -274,50 +274,116 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-int main(){
-    ll N;
-    cin >> N;
-    vll a(N);
-    cin >> a;
-    vll ans(N,0);
-    for(int i = N-1; i>=0; i--){
-        if(a[i]==1){
-            ll temp = i+1;
-            ans[i]=1;
-            temp+=i+1;
-            while(temp<N+1){
-                // dbg(temp);
-                a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
+auto solve(int N, const std::vector<long long> &q, const std::vector<long long> &r, int Q, const std::vector<long long> &t, const std::vector<long long> &d) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+    dbg(q);
+    foi(0,Q){
+        ll ct = t[i]-1;
+        ll cq = q[ct];
+        ll cr = r[ct];
+        auto check = MOD(d[i],cq);
+        dbg(check);
+        dbg(cr);
+        if(check==cr){for((i = 1; ; ++i)); do
+            echo class main
+            {
+            private:
+                /* data */
+            public:
+                main(/* args */);
+                ~main();
+            };
+            
+            main::main(/* args */)
+            {
             }
-        }
-        else{
-            ll temp = i+1;
-            ans[i]=0;
-            while(temp<N+1){
-                a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
+            
+            main::~main()
+            {
             }
+            
+            ./generator_filename class main
+            {
+            private:
+                /* data */
+            public:
+                main(/* args */);
+                ~main();
+            };
+            
+            main::main(/* args */)
+            {
+            }
+            
+            main::~main()
+            {
+            }
+             > int
+            ./my_solution_filename > out1
+            ./model_solution_or_bruteforce_filenmae > out2
+            diff -w out1 out2 || break
+            # diff -w <(./my_solution_filename < int) <(./model_solution_or_bruteforce_filenmae < int) || break
+        done
+            cout << d[i] << endl;
+            continue;
         }
-    }
-    vll finans;
-    foi(0,N){
-        if(ans[i]==1){
-            finans.pb(i);
+        if(check>cr){
+            ll temp = cq-check;
+            temp+=cr;
+            cout << d[i]+temp << endl;
+            continue;
         }
+        if(check<cr){
+            cout << d[i]+(cr-check) << endl;
+            continue;
+        }
+        cout << d[i]+abs(cr-check) << endl;
     }
-    cout << finans.size() << endl;
-    fx(finans){
-        cout << x+1 << " ";
+    return;
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    int N, Q;
+    std::cin >> N;
+    std::vector<long long> q(N), r(N);
+    REP (i, N) {
+        std::cin >> q[i] >> r[i];
     }
-    cout << endl;
+    std::cin >> Q;
+    std::vector<long long> t(Q), d(Q);
+    REP (i, Q) {
+        std::cin >> t[i] >> d[i];
+    }
+    solve(N, q, r, Q, t, d);
+    // REP (i, N) {
+    //     std::cout << e[i] << '\n';
+    // }
+    // std::cout << f << '\n';
+    // std::cout << g << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }
