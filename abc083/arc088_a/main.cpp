@@ -274,63 +274,39 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-int main(){
-    ll N;
-    cin >> N;
-    vll a(N);
-    cin >> a;
-    vll ans(N,0);
-    for(int i = N-1; i>=0; i--){
-        if(a[i]==1){
-            ll temp = i+1;
-            ans[i]=0;
-            temp+=i+1;
-            ll count=0;
-            while(temp<N+1){
-                // dbg(temp);
-                if(ans[temp-1]==1) count++;
-                // a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
-            }
-            if(count%2==0){
-                ans[i]=1;
-                continue;
-            }
-        }
-        else{
-            ll temp = i+1;
-            ans[i]=0;
-            temp+=i+1;
-            ll count = 0;
-            while(temp<N+1){
-                if(ans[temp-1]==1) count++;
-                // a[temp-1]=0;
-                // if(a[temp-1]!=a[i]){
-                //     cout << -1 << endl;
-                //     return 0;
-                // }
-                temp+=i+1;
-            }
-            if(count%2==1){
-                ans[i]=1;
-                continue;
-            }
-        }
+long long solve(long long X, long long Y) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long X, Y;
+    std::cin >> X >> Y;
+    auto ans = solve(X, Y);
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    vll finans;
-    foi(0,N){
-        if(ans[i]==1){
-            finans.pb(i);
-        }
-    }
-    cout << finans.size() << endl;
-    fx(finans){
-        cout << x+1 << " ";
-    }
-    cout << endl;
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }
