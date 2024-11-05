@@ -786,40 +786,32 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-
-long long solve(int N, long long K, const std::vector<long long> &x) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    long long K;
-    std::cin >> N;
-    std::vector<long long> x(N);
-    std::cin >> K;
-    REP (i, N) {
-        std::cin >> x[i];
-    }
-    auto ans = solve(N, K, x);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
+int main(){
+    ll N,K;
+    cin >> N >> K;
+    vll x(N);
+    cin >> x;
+    ll L=0;
+    ll R=K-1;
+    ll ans = INF;
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    while(R<N){
+        ll cur=x[R]-x[L];
+        if(x[R]<0){
+            cur+=abs(x[R]);
+        }
+        if(x[L]<0 && x[R]>0){
+            // ll cur = x[R]-x[L];
+            ll mindouble = min(abs(x[R]),abs(x[L]));
+            cur+=mindouble;
+        }
+        if(x[L]>0){
+            cur+=abs(x[L]);
+        }
+        ans=min(ans,cur);
+        L++;
+        R++;
+    }
+    cout << ans << endl;
     return 0;
 }

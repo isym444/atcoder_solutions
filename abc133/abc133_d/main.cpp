@@ -1644,40 +1644,26 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-std::vector<auto> solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    vll ans(N);
+    ll acum=0;
+    foi(0,N){
+        if(i%2==0){
+            acum+=A[i];
+        } else{
+            acum-=A[i];
+        }
     }
-    auto ans = solve(N, A);
-    REP (i, (int)ans.size()) {
-        std::cout << ans[i] << ' ';
+    ans[0]=acum;
+    foi(1,N){
+        ans[i]=2*A[i-1]-ans[i-1];
     }
-    std::cout << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    fx(ans){
+        cout << x << " ";
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }

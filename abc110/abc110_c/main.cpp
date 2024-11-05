@@ -272,60 +272,45 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 
-int main(){
-    ll N,M,Q;
-    cin >> N >> M >> Q;
-    vll W(N);
-    vll V(N);
-    vector<pair<ll,ll>> items(N);
-    foi(0,N){
-        ll w,v;
-        cin >> w >> v;
-        items[i]=mp(w,v);
-    }
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-    sort(items.begin(),items.end(),[](pair<ll,ll> a, pair<ll,ll> b){
-        return(a.second>b.second);
-    });
-    dbg(items);
-    vll X(M);
-    cin >> X;
-    foi(0,Q){
-        ll L,R;
-        cin >> L >> R;
-        vll remboxes;
-        vll taken;
-        L--;
-        R--;
-        dbg(mp(L,R));
-        foj(0,M){
-            if(j>=L && j<=R) continue;
-            // dbg(j);
-            remboxes.pb(X[j]);
-            taken.pb(0);
-        }
-        sort(remboxes.begin(),remboxes.end());
-        dbg(remboxes);
-        ll count=0;
-        ll ans=0;
-        foj(0, items.size()){
-            auto curitem=items[j];
-            ll checker = -1;
-            fok(0,remboxes.size()){
-                if(taken[k]) continue;
-                if(curitem.first<=remboxes[k]){
-                    checker = k;
-                    taken[k]=1;
-                    count++;
-                    break;
-                }
-            }
-            if(checker!=-1){
-                dbg(curitem.second);
-                ans+=curitem.second;
-            }
-        }
-        cout << ans << endl;
+int main(){
+    string S,T;
+    cin >> S >> T;
+    vll sv;
+    vll tv;
+    foi(0,S.length()){
+        char x = S[i];
+        sv.pb(x-'a');
     }
+    foi(0,T.length()){
+        char x = T[i];
+        tv.pb(x-'a');
+    }
+    vector<vector<ll>> m(26,vll(26,0));
+    foi(0,sv.size()){
+        m[sv[i]][tv[i]]=1;
+    }
+    foi(0,26){
+        ll count=0;
+        foj(0,26){
+            if(m[i][j]) count++;
+        }
+        if(count>1){
+            cout << "No" << endl;
+            return 0;
+        }
+    }
+    foi(0,26){
+        ll count = 0;
+        foj(0,26){
+            if(m[j][i]) count++;
+        }
+        if(count>1){
+            cout << "No" << endl;
+            return 0;
+        }
+    }
+    cout << "Yes" << endl;
     return 0;
 }
