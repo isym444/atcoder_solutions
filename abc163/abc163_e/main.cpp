@@ -201,6 +201,9 @@ void setIO(string name = "")
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
+// How to use the ACL modular exponentiation function?
+// e.g. to do pow(10,6)
+// mint(10).pow(6)
 
 // //uncomment this code to allow dbg / ostream to handle mint
 // std::ostream& operator<<(std::ostream& os, const mint& m) {
@@ -274,17 +277,43 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-int main(){
-    ll N;
-    cin >> N;
-    ll ans = 0;
-    foi(1,N+1){
-        ll j=i;
-        while(j<=N){
-            ans+=j;
-            j+=i;
-        }
+long long solve(int N, const std::vector<long long> &A) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    int N;
+    std::cin >> N;
+    std::vector<long long> A(N);
+    REP (i, N) {
+        std::cin >> A[i];
     }
-    cout << ans << endl;
+    auto ans = solve(N, A);
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

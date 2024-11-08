@@ -201,6 +201,9 @@ void setIO(string name = "")
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
+// How to use the ACL modular exponentiation function?
+// e.g. to do pow(10,6)
+// mint(10).pow(6)
 
 // //uncomment this code to allow dbg / ostream to handle mint
 // std::ostream& operator<<(std::ostream& os, const mint& m) {
@@ -270,20 +273,61 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
+const int mod = 1000000007;
+struct mint {
+  ll x; // typedef long long ll;
+  mint(ll x=0):x((x%mod+mod)%mod){}
+  mint operator-() const { return mint(-x);}
+  mint& operator+=(const mint a) {
+    if ((x += a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint& operator-=(const mint a) {
+    if ((x += mod-a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint& operator*=(const mint a) { (x *= a.x) %= mod; return *this;}
+  mint operator+(const mint a) const { return mint(*this) += a;}
+  mint operator-(const mint a) const { return mint(*this) -= a;}
+  mint operator*(const mint a) const { return mint(*this) *= a;}
+  mint pow(ll t) const {
+    if (!t) return 1;
+    mint a = pow(t>>1);
+    a *= a;
+    if (t&1) a *= *this;
+    return a;
+  }
+
+  // for prime mod
+  mint inv() const { return pow(mod-2);}
+  mint& operator/=(const mint a) { return *this *= a.inv();}
+  mint operator/(const mint a) const { return mint(*this) /= a;}
+};
+istream& operator>>(istream& is, const mint& a) { return is >> a.x;}
+ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 
 
-/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main(){
-    ll N;
-    cin >> N;
-    ll ans = 0;
-    foi(1,N+1){
-        ll j=i;
-        while(j<=N){
-            ans+=j;
-            j+=i;
-        }
+    ll N,K;
+    cin >> N >> K;
+    mint ans=0;
+    auto sum = [&](ll l, ll r)->ll{
+        return((r-l+1)*(l+r)/2);
+    };
+    foi(K,N+2){
+        ll L,R;
+        L=1;
+        R=i;
+        ll minsum = sum(L,R);
+        // dbg(mt(L,R,minsum));
+        R=N+1;
+        L=N+1-i+1;
+        ll maxsum = sum(L,R);
+        // dbg(mt(L,R,maxsum));
+        // dbg(mp(maxsum,minsum));
+        // dbg(maxsum-minsum);
+        ans+=maxsum-minsum+1;
     }
     cout << ans << endl;
     return 0;
