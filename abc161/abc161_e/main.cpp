@@ -201,6 +201,9 @@ void setIO(string name = "")
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
+// How to use the ACL modular exponentiation function?
+// e.g. to do pow(10,6)
+// mint(10).pow(6)
 
 // //uncomment this code to allow dbg / ostream to handle mint
 // std::ostream& operator<<(std::ostream& os, const mint& m) {
@@ -270,54 +273,46 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-bool IsPrime(int num)
-{
-    if (num < 2) return false;
-    else if (num == 2) return true;
-    else if (num % 2 == 0) return false; // 偶数はあらかじめ除く
 
-    double sqrtNum = sqrt(num);
-    for (int i = 3; i <= sqrtNum; i += 2)
-    {
-        if (num % i == 0)
-        {
-            // 素数ではない
-            return false;
-        }
-    }
-    return true;
-}
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-const ll MM = (ll)1e5+3;
+auto solve(long long N, long long K, long long C, std::string S) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
-int main(){
-    ll Q;
-    cin >> Q;
-    vll v(MM);
-    vll psum(MM+1);
-    auto isSimilar = [&](ll num)->ll{
-        if(IsPrime(num)&&IsPrime((num+1)/2)){
-            return 1;
-        }
-        return 0;
-    };
-    foi(1,MM+1){
-        if(i%2==0) continue;
-        if(isSimilar(i)){
-            v[i]=1;
-        }
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N, K, C;
+    std::string S;
+    std::cin >> N >> K >> C >> S;
+    auto ans = solve(N, K, C, S);
+    // failed to analyze output format
+    // TODO: edit here
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    foi(0,MM+1){
-        psum[i+1]=psum[i]+v[i];
-    }
-    // dbg(v);
-    // dbg(psum);
-    foi(0,Q){
-        ll l,r;
-        cin >> l >> r;
-        cout << psum[r+1] - psum[l] << endl;
-    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

@@ -201,6 +201,9 @@ void setIO(string name = "")
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
+// How to use the ACL modular exponentiation function?
+// e.g. to do pow(10,6)
+// mint(10).pow(6)
 
 // //uncomment this code to allow dbg / ostream to handle mint
 // std::ostream& operator<<(std::ostream& os, const mint& m) {
@@ -270,54 +273,44 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-bool IsPrime(int num)
-{
-    if (num < 2) return false;
-    else if (num == 2) return true;
-    else if (num % 2 == 0) return false; // 偶数はあらかじめ除く
 
-    double sqrtNum = sqrt(num);
-    for (int i = 3; i <= sqrtNum; i += 2)
-    {
-        if (num % i == 0)
-        {
-            // 素数ではない
-            return false;
-        }
-    }
-    return true;
-}
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-const ll MM = (ll)1e5+3;
-
 int main(){
-    ll Q;
-    cin >> Q;
-    vll v(MM);
-    vll psum(MM+1);
-    auto isSimilar = [&](ll num)->ll{
-        if(IsPrime(num)&&IsPrime((num+1)/2)){
-            return 1;
-        }
-        return 0;
-    };
-    foi(1,MM+1){
-        if(i%2==0) continue;
-        if(isSimilar(i)){
-            v[i]=1;
+    ll K;
+    cin >> K;
+    vll v;
+    foi(1,10){
+        v.pb(i);
+        K--;
+        if(!K){
+            cout << i << endl;
+            return 0;
         }
     }
-    foi(0,MM+1){
-        psum[i+1]=psum[i]+v[i];
-    }
-    // dbg(v);
-    // dbg(psum);
-    foi(0,Q){
-        ll l,r;
-        cin >> l >> r;
-        cout << psum[r+1] - psum[l] << endl;
+    ll checker = 0;
+    while(true){
+        vll nv;
+        fx(v){
+            // checker=1;
+            // dbg(x);
+            ll d = x%10;
+            foi(-1,2){
+                ll t = d+i;
+                if(t<0) continue;
+                if(t>9) continue;
+                // dbg(K);
+                nv.pb(x*10+t);
+                // dbg(nv);
+                K--;
+                if(K==0){
+                    cout << x*10+t << endl;
+                    return 0;
+                }
+            }
+        }
+        v=nv;
     }
     return 0;
 }

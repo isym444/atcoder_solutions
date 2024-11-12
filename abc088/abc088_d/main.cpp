@@ -792,40 +792,54 @@ bool isPalindrome(long long n) {
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+vector<int> dx_wasd = {1,-1,0,0};
+vector<int> dy_wasd = {0,0,1,-1};
+#define isvalidsingle(value,min_valid_value,max_valid_value) (min_valid_value<=value and value<max_valid_value)
 
-long long solve(int n, long long k, const std::vector<std::string> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int n;
-    long long k;
-    std::cin >> n;
-    std::vector<std::string> a(n);
-    std::cin >> k;
-    REP (i, n) {
-        std::cin >> a[i];
+int main(){
+    ll H,W;
+    cin >> H >> W;
+    vector<string> v(H);
+    foi(0,H){
+        cin >> v[i];
     }
-    auto ans = solve(n, k, a);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    ll black=0;
+    ll white=0;
+    foi(0,H){
+        foj(0,W){
+            if(v[i][j]=='#'){
+                black++;
+                continue;
+            }
+            white++;
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    ll total=black+white;
+    queue<tuple<ll,ll,ll>> q;
+    // h,w,dist
+    q.emplace(make_tuple(0,0,0));
+    vvll visited(H,vll(W));
+    ll mindist=-1;
+    while(!q.empty()){
+        auto [h,w,d] = q.front();
+        if(h==H-1&&w==W-1) mindist=d;
+        q.pop();
+        foi(0,4){
+            ll nh,nw;
+            nh = h+dy_wasd[i];
+            nw = w+dx_wasd[i];
+            if(!isvalidsingle(nh,0,H)) continue;
+            if(!isvalidsingle(nw,0,W)) continue;
+            if(visited[nh][nw]) continue;
+            if(v[nh][nw]=='#') continue;
+            visited[nh][nw]=1;
+            q.emplace(make_tuple(nh,nw,d+1));
+        }
+    }
+    if(mindist==-1){
+        cout << -1 << endl;
+        return 0;
+    }
+    cout << white-mindist-1 << endl;
     return 0;
 }
