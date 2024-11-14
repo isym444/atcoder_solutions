@@ -273,48 +273,59 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-ll op(long f,long x){return f^x;}       // Defines the operation for the segment tree (sum operation).
-ll e(){return 0L;}                      // Defines the identity element for the segment tree (0 for sum, 0 for xor, 0 for GCD, 1 for LCM, 1 for multiplication, INF for min, -INF for max).
+string integerToString(ll num){
+    return to_string(num);
+}
+
+ll stringToInteger(string s){
+    return stoll(s);
+}
+
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main(){
-    ll N,Q;
-    cin >> N >> Q;
-    vll A(N);
-    cin >> A;
-
-
-    // vector<ll>A(N);                     // Create a vector to hold the initial value at each element of segment tree.
-
-    atcoder::lazy_segtree<ll,op,e,ll,op,op,e>seg(A); // Initialize a lazy segment tree with the array A.
-
-    //Point query:
-    // seg.get(b);              // Get the current number at index `b`.
-
-    //Range query:
-    // seg.prod(l, r);         // Returns the sum (or the result of the op function) of all elements in the range [l, r), i.e., from index l to index r-1.
-
-    //Point set with specific value:
-    // seg.set(b, (ll)0);                   // Set the number of balls in box `b` to 0.
-
-    //Range update with op function
-    // seg.apply(0, N, x);             // Update with `x` across all indexes using op function to update each index
-
-    foi(0,Q){
-        ll T,X,Y;
-        cin >> T >> X >> Y;
-        X--;
-        // Y--;
-        if(T==1){
-            auto axi = seg.get(X);
-            auto temp = axi^Y;
-            seg.set(X,temp);
-        }
-        if(T==2){
-            cout << seg.prod(X,Y) << endl;
-        }
-        // foi(0,N){
-        //     dbg(seg.pr)
+    ll N;
+    cin >> N;
+    ll count=0;
+    // map<ll,ll> m;
+    //map where key is pairs of sorted beginning&end numbers
+    map<pair<ll,ll>,ll> m;
+    foi(1,N+1){
+        string temp = integerToString(i);
+        // if(temp[0]==temp[temp.size()-1]){
+        //     // count++;
+        //     dbg(temp);
+        //     m[temp[0]-'0']++;
         // }
+        // dbg(temp);
+        auto first = temp[0];
+        auto last = temp[temp.size()-1];
+        ll firstLL = first-'0';
+        ll lastLL = last-'0';
+        if(firstLL==0 || lastLL==0) continue;
+        // ll biggest = max(firstLL,lastLL);
+        // ll smallest = min(firstLL,lastLL);
+        m[mp(firstLL,lastLL)]++;
+        // if(biggest!=smallest) m[mp(smallest,biggest)]++;
     }
+    // dbg(m);
+    for(auto [k,v]:m){
+        // if(k.first!=k.second){
+        // if(m[mp(k.first,k.second)]!=0 && m[mp(k.second,k.first)]!=0){
+        //     dbg(mp(k.first,k.second));
+        //     dbg(m[mp(k.first,k.second)]);
+        //     dbg(m[mp(k.second,k.first)]);
+        //     cerr << endl;
+        // }
+        count+=v*m[mp(k.second,k.first)];
+        if(k.first!=k.second) count+=v*m[mp(k.second,k.first)];
+        m[mp(k.second,k.first)]=0;
+            // continue;
+        // }
+        // count+=v*v;
+        // if(v>1) count++;
+    }
+    // dbg(m);
+    cout << count << endl;
     return 0;
 }

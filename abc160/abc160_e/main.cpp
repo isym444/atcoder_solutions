@@ -274,54 +274,92 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-long long solve(long long X, long long Y, int A, int B, int C, const std::vector<long long> &p, const std::vector<long long> &q, const std::vector<long long> &r) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+int main(){
+    ll X,Y,A,B,C;
+    cin >> X >> Y >> A >> B >> C;
+    vll p(A);
+    vll q(B);
+    vll r(C);
+    cin >> p >> q >> r;
+    // sort(all(p),[](ll aa, ll bb){
+    //     return aa>bb;
+    // });
+    sort(all(p),[](ll aa, ll bb){
+        return aa>bb;
+    });
+    sort(all(q),[](ll aa, ll bb){
+        return aa>bb;
+    });
+    sort(all(r),[](ll aa, ll bb){
+        return aa>bb;
+    });
+    p.assign(p.begin(),p.begin()+X);
+    q.assign(q.begin(),q.begin()+Y);
+    sort(all(p));
+    sort(all(q));
+    dbg(p);
+    dbg(q);
+    dbg(r);
+    ll pptr=0;
+    ll qptr=0;
+    ll rptr=0;
+    ll count=0;
+    while(true){
+        if(rptr>=r.size()) break;
+        if(count>=X+Y) break;
+        if(pptr>=X){
+            if(q[qptr]<r[rptr]){
+                q[qptr]=r[rptr];
+                qptr++;
+                rptr++;
+                count++;
+                continue;
+            }
+            break;
+        }
+        if(qptr>=Y){
+            if(p[pptr]<r[rptr]){
+                p[pptr]=r[rptr];
+                pptr++;
+                rptr++;
+                count++;
+                continue;
+            }
+            break;
+        }
+        ll numtoreplace = min(p[pptr],q[qptr]);
+        dbg(numtoreplace);
+        if(numtoreplace>=r[rptr]) break;
+        ll colourtoreplace = 0;
+        if(q[qptr]<p[pptr]) colourtoreplace = 1;
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long X, Y;
-    int A, B, C;
-    std::cin >> X >> Y >> A;
-    std::vector<long long> p(A);
-    std::cin >> B;
-    std::vector<long long> q(B);
-    std::cin >> C;
-    std::vector<long long> r(C);
-    REP (i, A) {
-        std::cin >> p[i];
+        if(colourtoreplace==0){
+            p[pptr]=r[rptr];
+            pptr++;
+        }
+        if(colourtoreplace==1){
+            q[qptr]=r[rptr];
+            qptr++;
+        }
+        count++;
+        rptr++;
     }
-    REP (i, B) {
-        std::cin >> q[i];
+    sort(all(p),[](ll aa, ll bb){
+        return aa>bb;
+    });
+    sort(all(q),[](ll aa, ll bb){
+        return aa>bb;
+    });
+    dbg(p);
+    dbg(q);
+    ll ans = 0;
+    foi(0,X){
+        ans+=p[i];
     }
-    REP (i, C) {
-        std::cin >> r[i];
+    foi(0,Y){
+        ans+=q[i];
     }
-    auto ans = solve(X, Y, A, B, C, p, q, r);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << ans << endl;
 
     return 0;
 }

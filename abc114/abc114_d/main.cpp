@@ -273,48 +273,43 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-ll op(long f,long x){return f^x;}       // Defines the operation for the segment tree (sum operation).
-ll e(){return 0L;}                      // Defines the identity element for the segment tree (0 for sum, 0 for xor, 0 for GCD, 1 for LCM, 1 for multiplication, INF for min, -INF for max).
-
-int main(){
-    ll N,Q;
-    cin >> N >> Q;
-    vll A(N);
-    cin >> A;
 
 
-    // vector<ll>A(N);                     // Create a vector to hold the initial value at each element of segment tree.
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-    atcoder::lazy_segtree<ll,op,e,ll,op,op,e>seg(A); // Initialize a lazy segment tree with the array A.
+long long solve(long long N) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
-    //Point query:
-    // seg.get(b);              // Get the current number at index `b`.
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N;
+    std::cin >> N;
+    auto ans = solve(N);
+    std::cout << ans << '\n';
 
-    //Range query:
-    // seg.prod(l, r);         // Returns the sum (or the result of the op function) of all elements in the range [l, r), i.e., from index l to index r-1.
 
-    //Point set with specific value:
-    // seg.set(b, (ll)0);                   // Set the number of balls in box `b` to 0.
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
 
-    //Range update with op function
-    // seg.apply(0, N, x);             // Update with `x` across all indexes using op function to update each index
-
-    foi(0,Q){
-        ll T,X,Y;
-        cin >> T >> X >> Y;
-        X--;
-        // Y--;
-        if(T==1){
-            auto axi = seg.get(X);
-            auto temp = axi^Y;
-            seg.set(X,temp);
-        }
-        if(T==2){
-            cout << seg.prod(X,Y) << endl;
-        }
-        // foi(0,N){
-        //     dbg(seg.pr)
-        // }
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

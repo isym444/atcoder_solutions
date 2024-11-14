@@ -273,48 +273,48 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-ll op(long f,long x){return f^x;}       // Defines the operation for the segment tree (sum operation).
-ll e(){return 0L;}                      // Defines the identity element for the segment tree (0 for sum, 0 for xor, 0 for GCD, 1 for LCM, 1 for multiplication, INF for min, -INF for max).
+int countDigits(int n) {
+    if (n == 0) return 1; // Special case for 0
+    return std::floor(std::log10(std::abs(n))) + 1;
+}
+
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main(){
-    ll N,Q;
-    cin >> N >> Q;
-    vll A(N);
-    cin >> A;
+    ll N;
+    cin >> N;
+    vll valids;
 
-
-    // vector<ll>A(N);                     // Create a vector to hold the initial value at each element of segment tree.
-
-    atcoder::lazy_segtree<ll,op,e,ll,op,op,e>seg(A); // Initialize a lazy segment tree with the array A.
-
-    //Point query:
-    // seg.get(b);              // Get the current number at index `b`.
-
-    //Range query:
-    // seg.prod(l, r);         // Returns the sum (or the result of the op function) of all elements in the range [l, r), i.e., from index l to index r-1.
-
-    //Point set with specific value:
-    // seg.set(b, (ll)0);                   // Set the number of balls in box `b` to 0.
-
-    //Range update with op function
-    // seg.apply(0, N, x);             // Update with `x` across all indexes using op function to update each index
-
-    foi(0,Q){
-        ll T,X,Y;
-        cin >> T >> X >> Y;
-        X--;
-        // Y--;
-        if(T==1){
-            auto axi = seg.get(X);
-            auto temp = axi^Y;
-            seg.set(X,temp);
+    auto checker = [&](ll cur)->bool{
+        vll present(10,0);
+        while(cur){
+            ll units = cur%10;
+            present[units]=1;
+            cur/=10;
         }
-        if(T==2){
-            cout << seg.prod(X,Y) << endl;
+        if(present[3]&&present[5]&&present[7]){
+            return true;
         }
-        // foi(0,N){
-        //     dbg(seg.pr)
-        // }
+        return false;
+    };
+
+    auto builder = [&](auto builder, ll cur, ll targlength){
+        if(countDigits(cur)==targlength){
+            if(checker(cur)) valids.pb(cur);
+            return;
+        }
+            vll opts = {3,5,7};
+            fok(0,3){
+                builder(builder, cur*10+opts[k], targlength);
+            }
+    };
+    
+    //for i digit length number
+    foi(3,10){
+        builder(builder, 0, i);
     }
+    sort(all(valids));
+    // dbg(valids);
+    cout << indub(valids,N) << endl;
     return 0;
 }
