@@ -2178,39 +2178,20 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-long long solve(int N, const std::vector<long long> &x, const std::vector<long long> &y) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    int N;
-    std::cin >> N;
-    std::vector<long long> x(N), y(N);
-    REP (i, N) {
-        std::cin >> x[i] >> y[i];
+int main(){
+    ll N;
+    cin >> N;
+    vll x(N);
+    vll y(N);
+    vll xp(N);
+    vll yp(N);
+    foi(0,N){
+        cin >> x[i] >> y[i];
+        xp[i]=x[i]-y[i];
+        yp[i]=x[i]+y[i];
     }
-    auto ans = solve(N, x, y);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    sort(all(xp));
+    sort(all(yp));
+    cout << max(xp[xp.size()-1]-xp[0],yp[yp.size()-1]-yp[0]) << endl;
     return 0;
 }

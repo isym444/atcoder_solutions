@@ -277,45 +277,23 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-long long solve(int N, long long A, long long B, const std::vector<long long> &X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    long long A, B;
-    std::cin >> N;
-    std::vector<long long> X(N);
-    std::cin >> A >> B;
-    REP (i, N) {
-        std::cin >> X[i];
+int main(){
+    ll N,A,B;
+    cin >> N >> A >> B;
+    vll X(N);
+    cin >> X;
+    if(B<A){
+        cout << B*(N-1) << endl;
+        return 0;
     }
-    auto ans = solve(N, A, B, X);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    ll ans = 0;
+    foi(0,N-1){
+        if((X[i+1]-X[i])*A<B){
+            ans+=(X[i+1]-X[i])*A;
+            continue;
+        }
+        ans+=B;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    cout << ans << endl;
     return 0;
 }

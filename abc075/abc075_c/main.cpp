@@ -799,38 +799,27 @@ bool isPalindrome(long long n) {
 //https://csacademy.com/app/graph_editor/
 
 
-long long solve(long long N, int M, const std::vector<long long> &a, const std::vector<long long> &b) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    int M;
-    std::cin >> N >> M;
-    std::vector<long long> a(M), b(M);
-    REP (i, M) {
-        std::cin >> a[i] >> b[i];
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    ll count = 0;
+    vll a(M);
+    vll b(M);
+    foi(0,M){
+        cin >> a[i] >> b[i];
+        a[i]--;
+        b[i]--;
     }
-    auto ans = solve(N, M, a, b);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    // cerr << a << endl;
+    // cerr << b << endl;
+    foi(0,M){
+        dsu dd(N);
+        foj(0,M){
+            if(j==i) continue;
+            dd.merge(a[j],b[j]);
+        }
+        if(dd.size(0)!=N) count++;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << count << endl;
     return 0;
 }

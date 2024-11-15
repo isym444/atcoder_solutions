@@ -1840,41 +1840,43 @@ vector<int> dy_wasd = {0,0,1,-1};
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 using mint = modint998244353;
 
-
-std::pair<std::string, std::string> solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+map<ll,ll> factor(ll n) {
+	map<ll,ll> V;
+	for(ll i=2;i*i<=n;i++) while(n%i==0) V[i]++,n/=i;
+	if(n>1) V[n]++;
+	return V;
 }
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
-    }
-    auto [c, d] = solve(N, A);
-    std::cout << c << ' ' << d << '\n';
+ll gcd(ll a,ll b){return a?gcd(b%a,a):b;}
 
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    map<ll,ll> cf;
+    fx(A){
+        auto temp = factor(x);
+        for(auto [k,v]:temp){
+            cf[k]++;
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    ll mv=1;
+    for(auto [k,v]:cf){
+        mv=max(mv,(ll)v);
+    }
+    dbg(cf);
+    dbg(mv);
+    if(mv==1){
+        cout << "pairwise coprime" << endl;
+        return 0;
+    }
+    if(mv<N){
+        cout << "setwise coprime" << endl;
+        return 0;
+    }
+    if(mv==N){
+        cout << "not coprime" << endl;
+    }
     return 0;
 }
