@@ -280,86 +280,26 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 int main(){
-    ll N,X;
-    cin >> N >> X;
-    ll layers = 1;
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    vll X(N);
     foi(0,N){
-        ll temp = layers*2+3;
-        layers=temp;
+        X[i]=A[i]-i;
     }
-    dbg(layers);
-    ll buns = floordiv(layers,2);
-    ll patties = buns+1;
-    dbg(buns);
-    dbg(patties);
-
+    sort(all(X));
+    ll median;
+    if(N%2==1){
+        median = X[floordiv(N,2)];
+    }
+    if(N%2==0){
+        median = (X[N/2]+X[N/2-1])/2;
+    }
     ll ans = 0;
-    ll temp = INF;
-    while(layers>1){
-        temp=ceildiv(layers,2);
-        if(X==temp){
-            ans+=ceildiv(patties,2);
-            break;
-        }
-        else if(X>temp){
-            ans+=ceildiv(patties,2);
-            // layers/=2;
-            // layers-=1;
-            layers=(layers-3)/2;
-            // patties/=2;
-            patties = (patties - 1) / 2; // Patties in upper sub-burger
-
-            X-=temp;
-            // X-=1;
-        }else{
-            layers=(layers-3)/2;
-            // patties/=2;
-            patties = (patties - 1) / 2; // Patties in upper sub-burger
-            // layers-=1;
-            X-=1;
-        }
+    foi(0,N){
+        ans+=abs(X[i]-median);
     }
-    dbg(temp);
-    // if (X == 1) ans += 1; // Final layer is a single patty
-
-    if (layers == 1 && X > 0) ans += 1; // Final patty
     cout << ans << endl;
     return 0;
 }
-// int main(){
-//     ll N, X;
-//     cin >> N >> X;
-
-//     ll layers = 1;
-//     for (ll i = 0; i < N; i++) {
-//         layers = layers * 2 + 3;
-//     }
-
-//     ll buns = floordiv(layers,2);
-//     ll patties = buns+1;
-
-//     ll ans = 0;
-//     ll temp;
-//     while (layers > 1) {
-//         temp = (layers + 1) / 2; // Correct position of central patty
-
-//         if (X == temp) {
-//             ans += (patties - 1) / 2 + 1;
-//             break;
-//         } else if (X > temp) {
-//             ans += (patties - 1) / 2 + 1; // Eat lower patties and central patty
-//             layers = (layers - 3) / 2;
-//             patties = (patties - 1) / 2;
-//             X -= temp;
-//         } else {
-//             layers = (layers - 3) / 2;
-//             patties = (patties - 1) / 2;
-//             X -= 1;
-//         }
-//     }
-
-//     if (layers == 1 && X > 0) ans += 1; // Final patty
-
-//     cout << ans << endl;
-//     return 0;
-// }

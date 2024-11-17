@@ -279,87 +279,39 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-int main(){
-    ll N,X;
-    cin >> N >> X;
-    ll layers = 1;
-    foi(0,N){
-        ll temp = layers*2+3;
-        layers=temp;
+long long solve(long long N) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N;
+    std::cin >> N;
+    auto ans = solve(N);
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    dbg(layers);
-    ll buns = floordiv(layers,2);
-    ll patties = buns+1;
-    dbg(buns);
-    dbg(patties);
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
 
-    ll ans = 0;
-    ll temp = INF;
-    while(layers>1){
-        temp=ceildiv(layers,2);
-        if(X==temp){
-            ans+=ceildiv(patties,2);
-            break;
-        }
-        else if(X>temp){
-            ans+=ceildiv(patties,2);
-            // layers/=2;
-            // layers-=1;
-            layers=(layers-3)/2;
-            // patties/=2;
-            patties = (patties - 1) / 2; // Patties in upper sub-burger
-
-            X-=temp;
-            // X-=1;
-        }else{
-            layers=(layers-3)/2;
-            // patties/=2;
-            patties = (patties - 1) / 2; // Patties in upper sub-burger
-            // layers-=1;
-            X-=1;
-        }
-    }
-    dbg(temp);
-    // if (X == 1) ans += 1; // Final layer is a single patty
-
-    if (layers == 1 && X > 0) ans += 1; // Final patty
-    cout << ans << endl;
     return 0;
 }
-// int main(){
-//     ll N, X;
-//     cin >> N >> X;
-
-//     ll layers = 1;
-//     for (ll i = 0; i < N; i++) {
-//         layers = layers * 2 + 3;
-//     }
-
-//     ll buns = floordiv(layers,2);
-//     ll patties = buns+1;
-
-//     ll ans = 0;
-//     ll temp;
-//     while (layers > 1) {
-//         temp = (layers + 1) / 2; // Correct position of central patty
-
-//         if (X == temp) {
-//             ans += (patties - 1) / 2 + 1;
-//             break;
-//         } else if (X > temp) {
-//             ans += (patties - 1) / 2 + 1; // Eat lower patties and central patty
-//             layers = (layers - 3) / 2;
-//             patties = (patties - 1) / 2;
-//             X -= temp;
-//         } else {
-//             layers = (layers - 3) / 2;
-//             patties = (patties - 1) / 2;
-//             X -= 1;
-//         }
-//     }
-
-//     if (layers == 1 && X > 0) ans += 1; // Final patty
-
-//     cout << ans << endl;
-//     return 0;
-// }
