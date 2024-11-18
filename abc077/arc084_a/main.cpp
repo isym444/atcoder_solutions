@@ -278,47 +278,100 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-const std::string YES = "YES";
-const std::string NO = "NO";
-bool solve(int n, const std::vector<int64_t> &a) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
-    std::cout << (ans ? YES : NO) << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
+int main(){
+    ll N;
+    cin >> N;
+    // upper
+    vll A(N);
+    // middle
+    vll B(N);
+    // lower
+    vll C(N);
+    cin >> A;
+    cin >> B;
+    cin >> C;
+    A.pb(-1);
+    A.pb(INF);
+    B.pb(-1);
+    B.pb(INF);
+    C.pb(-1);
+    C.pb(INF);
+    sort(all(A));
+    sort(all(B));
+    sort(all(C));
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    // map<ll,ll> mtol;
+    vll mtol;
+    foi(0,N+2){
+        ll cur = B[i];
+        if(cur==-1 || cur==INF) continue;
+        // mtol[i]=C.size()-indub(C,cur);
+        mtol.pb(C.size()-1-indub(C,cur));
+    }
+    dbg(A);
+    dbg(B);
+    dbg(C);
+    dbg(mtol);
+    vll mtolpsum(N+4);
+    mtolpsum.pb(0);
+    foi(0,mtol.size()){
+        mtolpsum[i+1]=mtolpsum[i]+mtol[i];
+    }
+    dbg(mtolpsum);
+    ll ans=0;
+    foi(0,N+2){
+        ll cur = A[i];
+        if(cur==-1 || cur == INF) continue;
+        dbg(mtolpsum[indub(B,cur)]);
+        ans+=mtolpsum[N]-mtolpsum[indub(B,cur)-1];
+    }
+    cout << ans << endl;
     return 0;
 }
+// long long solve(int N, const std::vector<long long> &A, const std::vector<long long> &B, const std::vector<long long> &C) {
+//     /* vis.assign(n+1, false);
+//     g.assign(n+1, vector<ll>());
+//     wg.assign(n + 1, vector<pair<ll,ll>>());
+//     parent.assign(n+1, -1); */
+// }
+
+// int main() {
+//     std::ios::sync_with_stdio(false);
+//     setIO("");
+//     std::cin.tie(nullptr);
+//     // sets precision of output of floating point numbers to x number of decimal places
+//     cout << fixed << setprecision(11);
+//     unordered_map<long long, int, custom_hash> safe_map;
+//     int N;
+//     std::cin >> N;
+//     std::vector<long long> A(N), B(N), C(N);
+//     REP (i, N) {
+//         std::cin >> A[i];
+//     }
+//     REP (i, N) {
+//         std::cin >> B[i];
+//     }
+//     REP (i, N) {
+//         std::cin >> C[i];
+//     }
+//     auto ans = solve(N, A, B, C);
+//     std::cout << ans << '\n';
+
+
+//     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+//     /* genprimes(1e5); */
+
+//     /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+//     for (int i = 0; i < n; i++) {
+//         if (!v[i])
+//             bfs(i);
+//     }
+    
+//     //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+//     wasd(
+//         //cout << "Use this for problems where you have to go up, down, left right" << endl;
+//     ) */
+
+//     return 0;
+// }

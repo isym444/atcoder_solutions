@@ -278,9 +278,8 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-const std::string YES = "YES";
-const std::string NO = "NO";
-bool solve(int n, const std::vector<int64_t> &a) {
+
+long long solve(long long K) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
@@ -294,16 +293,10 @@ int main() {
     // sets precision of output of floating point numbers to x number of decimal places
     cout << fixed << setprecision(11);
     unordered_map<long long, int, custom_hash> safe_map;
-    // failed to analyze input format
-    // TODO: edit here
-    int n;
-    std::cin >> n;
-    std::vector<long long> a(n);
-    REP (i, n) {
-        std::cin >> a[i];
-    }
-    auto ans = solve(n, a);
-    std::cout << (ans ? YES : NO) << '\n';
+    long long K;
+    std::cin >> K;
+    auto ans = solve(K);
+    std::cout << ans << '\n';
 
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/

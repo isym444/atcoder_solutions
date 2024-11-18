@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # from typing import *
 
-YES = 'YES'
-NO = 'NO'
+
 
 # def solve(n: int, a: List[int]) -> str:
 def solve(n, a):

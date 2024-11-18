@@ -278,9 +278,8 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-const std::string YES = "YES";
-const std::string NO = "NO";
-bool solve(int n, const std::vector<int64_t> &a) {
+
+char solve(int n, const std::vector<int64_t> &a) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<ll>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
@@ -303,7 +302,7 @@ int main() {
         std::cin >> a[i];
     }
     auto ans = solve(n, a);
-    std::cout << (ans ? YES : NO) << '\n';
+    std::cout << ans << '\n';
 
 
     /*/---------------------------Syntax hints once import various Snippets----------------------/*/
