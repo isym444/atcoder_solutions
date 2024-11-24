@@ -50,6 +50,8 @@ using namespace atcoder;
 #define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
 #define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
 #define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
+#define fol(from,non_incl_to) for(int l=from;l<(non_incl_to);l++)
+#define foll(non_incl_to) for(int l=0;l<(non_incl_to);l++)
 #define fa(x, dataStructure) for(auto x : dataStructure)
 #define fx(dataStructure) for(auto x : dataStructure)
 
@@ -201,6 +203,9 @@ void setIO(string name = "")
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
+// How to use the ACL modular exponentiation function?
+// e.g. to do pow(10,6)
+// mint(10).pow(6)
 
 // //uncomment this code to allow dbg / ostream to handle mint
 // std::ostream& operator<<(std::ostream& os, const mint& m) {
@@ -274,51 +279,39 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
+long long solve(long long N) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
-// because of constraint of xi<yi can do dp and guarantee we have best answer so far
-// do final dfs to find best profit
-int main(){
-    ll N,M;
-    cin >> N >> M;
-    vll A(N);
-    cin >> A;
-    vvll g(N);
-    vector<pair<ll,ll>> mm(N,pair<ll,ll>(mp(INF,-INF)));
-    foi(0,M){
-        ll x,y;
-        cin >> x >> y;
-        x--;
-        y--;
-        g[x].pb(y);
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N;
+    std::cin >> N;
+    auto ans = solve(N);
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
-    foi(0,N){
-        // iniitalize buy price to infinity as when single node, can't buy and sell at single node
-        mm[i]=mp(INF,A[i]);
-    }
-    foi(0,N){
-        fx(g[i]){
-            // sell price is fixed to current right-most/deepest node
-            // you just want to find for each node's sell price, what is cheapest you can buy upstream of that node
-            mm[x].first=min(min(A[i],mm[i].first),mm[x].first);
-        }
-    }
-    ll ans=-INF;
-    vll visited(N);
-    dbg(mm);
-    auto dfs = [&](auto dfs, ll v)->void{
-        visited[v]=1;
-        dbg(mp(mm[v].first, mm[v].second));
-        // for every node, check what is best profit
-        ans = max(ans,mm[v].second-mm[v].first);
-        fx(g[v]){
-            if(!visited[x]){
-                dfs(dfs, x);
-            }
-        }
-    };
-    foi(0,N){
-        dfs(dfs, i);
-    }
-    cout << ans << endl;
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

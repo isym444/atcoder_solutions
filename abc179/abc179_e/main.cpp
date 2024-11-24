@@ -50,6 +50,8 @@ using namespace atcoder;
 #define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
 #define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
 #define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
+#define fol(from,non_incl_to) for(int l=from;l<(non_incl_to);l++)
+#define foll(non_incl_to) for(int l=0;l<(non_incl_to);l++)
 #define fa(x, dataStructure) for(auto x : dataStructure)
 #define fx(dataStructure) for(auto x : dataStructure)
 
@@ -201,6 +203,9 @@ void setIO(string name = "")
 // e.g. modint998244353 a = modint998244353(x); // `a` now represents `x` modulo 998244353
 // using mint = modint998244353;
 // Custom operator<< for modint998244353
+// How to use the ACL modular exponentiation function?
+// e.g. to do pow(10,6)
+// mint(10).pow(6)
 
 // //uncomment this code to allow dbg / ostream to handle mint
 // std::ostream& operator<<(std::ostream& os, const mint& m) {
@@ -274,50 +279,62 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
-// because of constraint of xi<yi can do dp and guarantee we have best answer so far
-// do final dfs to find best profit
 int main(){
-    ll N,M;
-    cin >> N >> M;
-    vll A(N);
-    cin >> A;
-    vvll g(N);
-    vector<pair<ll,ll>> mm(N,pair<ll,ll>(mp(INF,-INF)));
-    foi(0,M){
-        ll x,y;
-        cin >> x >> y;
-        x--;
-        y--;
-        g[x].pb(y);
-    }
-    foi(0,N){
-        // iniitalize buy price to infinity as when single node, can't buy and sell at single node
-        mm[i]=mp(INF,A[i]);
-    }
-    foi(0,N){
-        fx(g[i]){
-            // sell price is fixed to current right-most/deepest node
-            // you just want to find for each node's sell price, what is cheapest you can buy upstream of that node
-            mm[x].first=min(min(A[i],mm[i].first),mm[x].first);
+    ll N,X,M;
+    cin >> N >> X >> M;
+    vll rems(M+8);
+    vll remset;
+    ll cur = X;
+    ll cycleStart=-1;
+    map<ll,ll> ind;
+    ll i=0;
+    while(true){
+        cur=MOD(cur,M);
+        // dbg(cur);
+        rems[cur]=1;
+        remset.pb(cur);
+        ind[cur]=i;
+        cur=cur*cur;
+        cur=MOD(cur,M);
+        // dbg(cur);
+        if(rems[cur]!=0){
+            cycleStart=cur;
+            break;
         }
+        i++;
     }
-    ll ans=-INF;
-    vll visited(N);
-    dbg(mm);
-    auto dfs = [&](auto dfs, ll v)->void{
-        visited[v]=1;
-        dbg(mp(mm[v].first, mm[v].second));
-        // for every node, check what is best profit
-        ans = max(ans,mm[v].second-mm[v].first);
-        fx(g[v]){
-            if(!visited[x]){
-                dfs(dfs, x);
-            }
+    dbg(remset);
+    ll indStart = ind[cycleStart];
+    dbg(mp(indStart, cycleStart));
+    dbg(indStart);
+    ll cycleLength = i-indStart+1;
+    dbg(cycleLength);
+    ll cycleSum=0;
+    foi(indStart,remset.size()){
+        cycleSum+=remset[i];
+    }
+    dbg(cycleSum);
+    ll preCycleLength = indStart;
+    dbg(preCycleLength);
+    ll ans = 0;
+    if(N<=preCycleLength){
+        foi(0,N){
+            ans+=remset[i];
         }
-    };
-    foi(0,N){
-        dfs(dfs, i);
+        cout << ans << endl;
+        return 0;
+    }
+    foi(0,preCycleLength){
+        ans+=remset[i];
+    }
+    dbg(ans);
+    N-=preCycleLength;
+    ll numCycles = N/cycleLength;
+    dbg(numCycles);
+    ans+=numCycles*cycleSum;
+    ll remCycle = N-(N/cycleLength)*cycleLength;
+    foi(indStart,indStart+remCycle){
+        ans+=remset[i];
     }
     cout << ans << endl;
     return 0;

@@ -1841,49 +1841,51 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-auto solve(int N, const std::vector<long long> &a, const std::vector<long long> &b, const std::vector<long long> &c, int Q, long long K, const std::vector<long long> &x, const std::vector<long long> &y) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+struct eddge{
+    ll origin,dest,weight;
+};
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N, Q;
-    long long K;
-    std::cin >> N;
-    std::vector<long long> a(N - 1), b(N - 1), c(N - 1);
-    REP (i, N - 1) {
-        std::cin >> a[i] >> b[i] >> c[i];
+int main(){
+    ll N;
+    cin >> N;
+    vector<vector<eddge>> g(N);
+    foi(0,N-1){
+        ll a,b,c;
+        cin >> a >> b >> c;
+        a--;
+        b--;
+        g[a].push_back({a,b,c});
+        g[b].push_back({b,a,c});
     }
-    std::cin >> Q;
-    std::vector<long long> x(Q), y(Q);
-    std::cin >> K;
-    REP (i, Q) {
-        std::cin >> x[i] >> y[i];
+    ll Q,K;
+    cin >> Q >> K;
+    // find shortest path from K to every other vertex
+    vll minDist(N, INF);
+    minDist[K-1]=0;
+    queue<ll> q;
+    vll visited(N);
+    q.emplace(K-1);
+    // visited[K-1]=1;
+    while(!q.empty()){
+        ll v = q.front();
+        visited[v]=1;
+        q.pop();
+        for(auto [og,des,wt]:g[v]){
+            if(visited[des]) continue;
+            minDist[des]=min(minDist[des],minDist[og]+wt);
+            q.emplace(des);
+        }
     }
-    auto ans = solve(N, a, b, c, Q, K, x, y);
-    REP (i, Q) {
-        std::cout << d[i] << '\n';
+    // dbg(g);
+    dbg(minDist);
+    foi(0,Q){
+        ll x,y;
+        cin >> x >> y;
+        x--;
+        y--;
+        ll ans = 0;
+        ans+=minDist[x]+minDist[y];
+        cout << ans << endl;
     }
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }
