@@ -1884,44 +1884,49 @@ using mint = modint998244353;
 
 const std::string YES = "Yes";
 const std::string NO = "No";
-bool solve(long long N, int M, long long H, long long K, std::string S, const std::vector<long long> &x, const std::vector<long long> &y) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long N;
-    int M;
-    long long H, K;
-    std::string S;
-    std::cin >> N >> M;
-    std::vector<long long> x(M), y(M);
-    std::cin >> H >> K >> S;
-    REP (i, M) {
-        std::cin >> x[i] >> y[i];
+int main(){
+    ll N,M,H,K;
+    cin >> N >> M >> H >> K;
+    string S;
+    cin >> S;
+    map<pair<ll,ll>,ll> m;
+    foi(0,M){
+        ll x,y;
+        cin >> x >> y;
+        m[mp(x,y)]=1;
     }
-    auto ans = solve(N, M, H, K, S, x, y);
-    std::cout << (ans ? YES : NO) << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    dbg(m);
+    pair<ll,ll> loc = mp(0,0);
+    // ll i = 0;
+    fx(S){
+        // i++;
+        if(x=='R'){
+            loc.first++;
+        }
+        if(x=='L'){
+            loc.first--;
+        }
+        if(x=='U'){
+            loc.second++;
+        }
+        if(x=='D'){
+            loc.second--;
+        }
+        dbg(mp(loc.first,loc.second));
+        H--;
+        dbg(H);
+        if(H<0){
+            cout << "No" << endl;
+            return 0;
+        }
+        if(H<K){
+            if(m[mp(loc.first,loc.second)]==1){
+                H=K;
+                m[mp(loc.first,loc.second)]=0;
+            }
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    cout << "Yes" << endl;
     return 0;
 }

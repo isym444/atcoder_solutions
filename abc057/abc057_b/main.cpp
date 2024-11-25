@@ -203,7 +203,7 @@ std::unordered_map<int, int> fact(int x) {
     return pfactors;
 }
 
-ll mod=1e9+7
+// ll mod=1e9+7
 //ll mod=1000;
 //modular exponentiation: calculates a^b mod c where a^b is a crazy big number and would usually overflow. Change mod above as needed
 ll mpow(ll base, ll exp)
@@ -748,45 +748,43 @@ void lexperm(vector<ll> vec){
 //https://csacademy.com/app/graph_editor/
 
 
-auto solve(int N, int M, const std::vector<long long> &a, const std::vector<long long> &b, const std::vector<long long> &c, const std::vector<long long> &d) {
     /* vis.assign(n+1, false);
     g.assign(n+1, vector<int>());
     wg.assign(n + 1, vector<pair<ll,ll>>());
     parent.assign(n+1, -1); */
     
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N, M;
-    std::cin >> N;
-    std::vector<long long> a(N), b(N);
-    std::cin >> M;
-    std::vector<long long> c(M), d(M);
-    REP (i, N) {
-        std::cin >> a[i] >> b[i];
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    vector<pair<ll,ll>> students;
+    vector<pair<ll,ll>> checkpoints;
+    foi(0,N){
+        ll a,b;
+        cin >> a >> b;
+        students.pb(mp(a,b));
     }
-    REP (i, M) {
-        std::cin >> c[i] >> d[i];
+    foi(0,M){
+        ll a,b;
+        cin >> a >> b;
+        checkpoints.pb(mp(a,b));
     }
-    auto ans = solve(N, M, a, b, c, d);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
+    auto calcman = [&](ll a, ll b, ll c, ll d) -> ll {
+        return(abs(a-c)+abs(b-d));
+    };
+    for(auto x:students){
+        ll checkpoint = -1;
+        ll dist = INF;
+        ll i=0;
+        for(auto y:checkpoints){
+            ll temp = calcman(x.first,x.second,y.first,y.second);
+            if(temp<dist){
+                dist=temp;
+                checkpoint=i;
+            }
+            i++;
+        }
+        cout << checkpoint+1 << endl;
     }
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
     return 0;
 }
