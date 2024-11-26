@@ -1884,45 +1884,123 @@ using mint = modint998244353;
 
 const std::string YES = "Yes";
 const std::string NO = "No";
-std::pair<auto, auto> solve(auto N, auto M, const std::vector<auto> &u, const std::vector<auto> &v, auto K, const std::vector<auto> &p, const std::vector<auto> &d) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    auto N, M, K;
-    std::cin >> N >> M;
-    std::vector<auto> u(M), v(M);
-    REP (i, M) {
-        std::cin >> u[i] >> v[i];
-    }
-    std::cin >> K;
-    std::vector<auto> p(K), d(K);
-    REP (i, K) {
-        std::cin >> p[i] >> d[i];
-    }
-    auto [Yes, S] = solve(N, M, u, v, K, p, d);
-    std::cout << Yes << ' ' << S << '\n';
 
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    vvll g(N);
+    foi(0,M){
+        ll u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        g[u].pb(v);
+        g[v].pb(u);
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    ll K;
+    cin >> K;
+    map<ll,ll> m;
+    foi(0,K){
+        ll p,d;
+        cin >> p >> d;
+        p--;
+        m[p]=d;
+    }
+
+    vll painted(N);
+
+    fx(m){
+        auto [f,s] = x;
+        dbg(x);
+        // painted[f]=1;
+        vll visited(N);
+        // vertex, dist from bfs start
+        queue<pair<ll,ll>> q;
+        q.emplace(mp(f,0));
+        while(!q.empty()){
+            auto [cur,d] = q.front();
+            // dbg(q.front());
+            q.pop();
+            if(d==m[f]) continue;
+            painted[cur]=1;
+            visited[cur]=1;
+            for(auto u:g[cur]){
+                if(visited[u]) continue;
+                q.emplace(mp(u,d+1));
+            }
+        }
+    }
+    queue<ll> q;
+    q.emplace(0);
+    vll visited(N);
+    ll checker = -1;
+    // dbg(painted);
+    // dbg(g);
+    // while(!q.empty()){
+    //     ll cur = q.front();
+    //     q.pop();
+    //     dbg(cur);
+    //     if(!painted[cur]){
+    //         checker = cur;
+    //         break;
+    //     }
+    //     visited[cur]=1;
+    //     for(auto u:g[cur]){
+    //         if(visited[u]) continue;
+    //         q.emplace(u);
+    //     }
+    // }
+    vll ans(N);
+    fx(m){
+        auto [f,s] = x;
+        // dbg(x);
+        // painted[f]=1;
+        vll visited(N);
+        // vertex, dist from bfs start
+        queue<pair<ll,ll>> q;
+        q.emplace(mp(f,0));
+        ll checker=0;
+        while(!q.empty()){
+            auto [cur,d] = q.front();
+            dbg(q.front());
+            q.pop();
+            if(d==m[f]){
+                if(!painted[cur]){
+                    checker=1;
+                    ans[cur]=1;
+                }
+                continue;
+            }
+            // painted[cur]=1;
+            visited[cur]=1;
+            for(auto u:g[cur]){
+                if(visited[u]) continue;
+                q.emplace(mp(u,d+1));
+            }
+        }
+        if(checker == 0){
+            cout << "No" << endl;
+            return 0;
+        }
+    }
+    if(K==0){
+        cout << "Yes" << endl;
+        fx(ans){
+            cout << 1;
+        }
+        return 0;
+    }
+    // if(checker == -1){
+    //     cout << "No" << endl;
+    //     return 0;
+    // }
+    dbg(M);
+    cout << "Yes" << endl;
+    // dbg(checker);
+    // ans[checker]=1;
+    fx(ans){
+        cout << x;
+    }
     return 0;
 }

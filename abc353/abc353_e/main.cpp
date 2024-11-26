@@ -1847,40 +1847,79 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-long long solve(int N, const std::vector<std::string> &S) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+using namespace std;
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+
+// Trie structure to organize strings by their prefixes
+struct Trie {
+  struct Node {
+    map<char,int> to;  // Map from character to child node (index of the child node in the vector<Node> d of the Trie.)
+    int cnt;           // Count of strings ending at this node
+    Node(): cnt(0) {}  // Initialize with 0
+  };
+  vector<Node> d;      // The Trie as a vector of nodes
+//   Trie(): d(1) {}      // Start with one root node
+    Trie() {
+        d = vector<Node>(1); // Start with one root node. Default value of Node is given by Node constructor
+    }
+
+  // Add a string to the Trie
+  void add(const string& s) {
+    int v = 0;               // Start at the root node
+    for (char c : s) {       // Traverse each character in the string
+      if (!d[v].to.count(c)) {   // If no child for `c`, create a new node
+        d[v].to[c] = d.size();   // Map `c` to the new node
+        d.push_back(Node());     // Add the new node
+      }
+      v = d[v].to[c];         // Move to the next node
+    }
+    d[v].cnt++;               // Increment count for the terminal node
+  }
+
+  ll ans;                     // Stores the total LCP sum
+  int dfs(int v) {
+    int res = d[v].cnt;       // Start with strings ending at this node
+    for (auto p : d[v].to) {  // Process all children
+      res += dfs(p.second);   // Add result of DFS on child nodes
+    }
+    if (v) ans += res * (ll)(res - 1) / 2; // Compute pair contributions
+    return res;               // Return total strings passing through this node
+  }
+
+  ll solve() {
+    ans = 0;                  // Initialize answer
+    dfs(0);                   // Start DFS from the root
+    return ans;               // Return the result
+  }
+};
+
+void traverse(int v, const vector<Trie::Node>& nodes, string prefix) {
+    // Print the current node
+    cout << "Node at '" << prefix << "': cnt = " << nodes[v].cnt << ", children = ";
+    for (auto child : nodes[v].to) {
+        cout << "'" << child.first << "' ";
+    }
+    cout << endl;
+
+    // Recursively traverse each child node
+    for (auto child : nodes[v].to) {
+        traverse(child.second, nodes, prefix + child.first);
+    }
 }
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<std::string> S(N);
-    REP (i, N) {
-        std::cin >> S[i];
-    }
-    auto ans = solve(N, S);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-    return 0;
+  int n;
+  cin >> n;                   // Read number of strings
+  Trie t;                     // Create a Trie
+  rep(i,n) {                  // Insert all strings into the Trie
+    string s;
+    cin >> s;
+    t.add(s);
+  }
+    traverse(0, t.d, "");  // Start from root node (index 0) with an empty prefix
+    dbg(t.d[0].to);
+//   dbg(t);
+  ll ans = t.solve();         // Solve using the Trie
+  cout << ans << endl;        // Print the result
+  return 0;
 }

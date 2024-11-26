@@ -273,47 +273,76 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
+const int mod = 1000000007;
+struct mint {
+  ll x; // typedef long long ll;
+  mint(ll x=0):x((x%mod+mod)%mod){}
+  mint operator-() const { return mint(-x);}
+  mint& operator+=(const mint a) {
+    if ((x += a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint& operator-=(const mint a) {
+    if ((x += mod-a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint& operator*=(const mint a) { (x *= a.x) %= mod; return *this;}
+  mint operator+(const mint a) const { return mint(*this) += a;}
+  mint operator-(const mint a) const { return mint(*this) -= a;}
+  mint operator*(const mint a) const { return mint(*this) *= a;}
+  mint pow(ll t) const {
+    if (!t) return 1;
+    mint a = pow(t>>1);
+    a *= a;
+    if (t&1) a *= *this;
+    return a;
+  }
 
+  // for prime mod
+  mint inv() const { return pow(mod-2);}
+  mint& operator/=(const mint a) { return *this *= a.inv();}
+  mint operator/(const mint a) const { return mint(*this) /= a;}
+};
+istream& operator>>(istream& is, const mint& a) { return is >> a.x;}
+ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 
-/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-constexpr long long MOD = 1000000007;
-long long solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
+string itobins(ll n) {
+    if (n == 0) return "0";
+
+    string binary = "";
+    while (n > 0) {
+        binary += (n % 2) ? '1' : '0';
+        n /= 2;
+    }
+
+    reverse(binary.begin(), binary.end()); // Reverse to get the correct order
+    return binary;
 }
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
+
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    mint ans = 0;
+    foi(0,61){
+        ll curbit = (ll)1<<i;
+        ll zero=0;
+        ll one=0;
+        fx(A){
+            // dbg(itobins(x));
+            // dbg(curbit);
+            // dbg(x&curbit);
+            if((x&curbit)) one++;
+            if((x&curbit)==0) zero++;
+        }
+        // dbg(i);
+        // dbg(mt(i, zero,one,curbit));
+        // dbg(zero*one*curbit);
+        ans+=mint(zero)*mint(one)*mint(curbit);
     }
-    auto ans = solve(N, A);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    cout << ans << endl;
     return 0;
 }
