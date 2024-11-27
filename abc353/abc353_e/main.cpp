@@ -1847,7 +1847,12 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-using namespace std;
+// long long nC2(int n) {
+//     return static_cast<long long>(n) * (n - 1) / 2;
+// }
+
+
+
 #define rep(i,n) for (int i = 0; i < (n); ++i)
 
 // Trie structure to organize strings by their prefixes
@@ -1857,7 +1862,7 @@ struct Trie {
     int cnt;           // Count of strings ending at this node
     Node(): cnt(0) {}  // Initialize with 0
   };
-  vector<Node> d;      // The Trie as a vector of nodes
+  vector<Node> d;      // The Trie as a vector of nodes (tree structure is made by which nodes point to which other nodes)
 //   Trie(): d(1) {}      // Start with one root node
     Trie() {
         d = vector<Node>(1); // Start with one root node. Default value of Node is given by Node constructor
@@ -1876,13 +1881,15 @@ struct Trie {
     d[v].cnt++;               // Increment count for the terminal node
   }
 
-  ll ans;                     // Stores the total LCP sum
+  ll ans;                     // Stores the total LCP sum for all pairs
   int dfs(int v) {
     int res = d[v].cnt;       // Start with strings ending at this node
-    for (auto p : d[v].to) {  // Process all children
+    for (auto p : d[v].to) {  // Process all children n.b. p is pair<key,value>
       res += dfs(p.second);   // Add result of DFS on child nodes
     }
-    if (v) ans += res * (ll)(res - 1) / 2; // Compute pair contributions
+    // if (v) ans += res * (ll)(res - 1) / 2; // Compute pair contributions
+    // res at this point now represents all complete strings passing through this node on the way to the root
+    if (v) ans += nC2((ll)res); // Compute pair contributions: for this length of prefix substring (up to v), add to ans number of pairs that can be made with strings passing through this node e.g. if 3 eventual complete strings pass through this node, then each of 3C2 (3) pairs contributes 1 to the ans at this length of common substring. If the overall longest common substring for all pairs is longer, then at next node, each pair will also contribute 1 extra to the answer. Thus the ans gets contribution of LONGEST common substring for each pair.
     return res;               // Return total strings passing through this node
   }
 
@@ -1916,9 +1923,8 @@ int main() {
     cin >> s;
     t.add(s);
   }
-    traverse(0, t.d, "");  // Start from root node (index 0) with an empty prefix
+    // traverse(0, t.d, "");  // Start from root node (index 0) with an empty prefix
     dbg(t.d[0].to);
-//   dbg(t);
   ll ans = t.solve();         // Solve using the Trie
   cout << ans << endl;        // Print the result
   return 0;

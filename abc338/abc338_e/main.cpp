@@ -629,39 +629,56 @@ vector<char> genAlphabet(){
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
-const std::string YES = "Yes";
-const std::string NO = "No";
-bool solve(int N, const std::vector<long long> &A, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N), B(N);
-    REP (i, N) {
-        std::cin >> A[i] >> B[i];
+int main(){
+    ll N;
+    cin >> N;
+    vector<pair<ll,ll>> A;
+    foi(0,N){
+        ll a,b;
+        cin >> a >> b;
+        if(a<=b){
+            A.pb(mp(a,b));
+            continue;
+        }
+        A.pb(mp(b,a));
     }
-    auto ans = solve(N, A, B);
-    std::cout << (ans ? YES : NO) << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    sort(A.begin(),A.end(),[](pair<ll,ll> aa, pair<ll,ll> bb){
+        return aa.first<bb.first;
+    });
+    vector<pair<ll,ll>> v(2*N + 10, mp(-1,-1));
+    vector<ll> used;
+    ll tc=0;
+    for(auto x:A){
+        auto [f,s] = x;
+        // identity, open or close
+        v[f]=mp(tc,0);
+        v[s]=mp(tc,1);
+        used.pb(f);
+        used.pb(s);
+        tc++;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    sort(used.begin(),used.end());
+    // string checker = "";
+    // cerr << A << endl;
+    deque<ll> checker;
+    for(auto y:used){
+        auto x = v[y];
+        auto [f,s] = x;
+        if(f==-1) continue;
+        if(s==0){
+            checker.pb(f);
+            // cerr << checker << endl;
+            continue;
+        }
+        if(checker.back()!=f){
+            cout << "Yes" << endl;
+            return 0;
+        }
+        checker.pop_back();
+        // cerr << checker << endl;
+    }
+    // cerr << checker << endl;
+    cout << "No" << endl;
+
     return 0;
 }

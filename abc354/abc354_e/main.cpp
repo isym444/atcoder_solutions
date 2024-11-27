@@ -1883,40 +1883,135 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 using mint = modint998244353;
 
 
-std::string solve(int N, const std::vector<long long> &A, const std::vector<long long> &B) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N), B(N);
-    REP (i, N) {
-        std::cin >> A[i] >> B[i];
-    }
-    auto ans = solve(N, A, B);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+int main(){
+    ll N;
+    cin >> N;
+    vll A(N);
+    vll B(N);
+    foi(0,N){
+        cin >> A[i] >> B[i];
     }
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    // whether dp[state] is winning 1 or losing 0, where state = number of cards left on table
+    // initially assume all states are losing
+    // at least the starting state of 0 where there are no cards on the table is losing
+    // as first player 高橋 is left with no moves to make on his turn
+    vll dp((ll)1<<N,0);
+
+    // iterate through every state starting from no cards on the table to all cards on the table in order
+    foi(0,(ll)1<<N){
+        foj(0,N){
+            fok(j+1,N){
+                // if pair of cards still on the table
+                if((i>>j&1)&&(i>>k&1)){
+                    // check if can remove the pair of cards
+                    if(A[j]==A[k] || B[j]==B[k]){
+                        // then calculate the resultant state by removing those cards
+                        auto new_state = i ^ (1<<j) ^ (1<<k);
+                        // the new state is a smaller number than i, so will already have been evaluated
+                        // so can check whether that state was a winning or losing state
+                        // if state was a losing state, then the first player to go (高橋) wins, else they lose
+                        if(!dp[new_state]){
+                            // if there was at least one pair of cards from current state that could be removed to make a winning state for 高橋
+                            // then set this current state as a winning state for 高橋
+                            dp[i]=1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // check whether the state where all the cards are on the table (i.e. starting state) is a winning state for 高橋
+    if(dp[((ll)1<<N)-1]){
+        cout << "Takahashi" << endl;
+        return 0;
+    }
+    cout << "Aoki" << endl;
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// #define rep(i,n) for (int i = 0; i < (n); ++i)
+
+// int main() {
+//     int n;  // Number of cards
+//     cin >> n;  // Read the number of cards
+    
+//     vector<int> a(n), b(n);  // Arrays to store front (a[i]) and back (b[i]) numbers of each card
+//     rep(i, n) cin >> a[i] >> b[i];  // Read the front and back numbers for each card
+
+//     int n2 = 1 << n;  // Total number of states, 2^n, since each card can be either present (1) or removed (0)
+//     vector<bool> dp(n2, false);  // DP table: dp[s] = true if the player has a winning strategy in state `s`
+
+//     // Iterate through all subsets of cards (all game states)
+//     rep(s, n2) {
+//         bool now = false;  // Assume the current player loses in this state unless proven otherwise
+
+//         // Check all pairs of cards (i, j) such that i < j
+//         for (int i = 0; i < n; i++) {
+//             for (int j = i + 1; j < n; j++) {
+//                 // Check if both cards i and j are present in the current state `s`
+//                 if ((s >> i & 1) && (s >> j & 1)) {  // (s >> i) & 1 checks if card i is available
+//                     // Check if the pair of cards (i, j) can be removed
+//                     if (a[i] == a[j] || b[i] == b[j]) {  // Same front or back value
+//                         // Create the new state by removing cards i and j
+//                         int new_state = s ^ (1 << i) ^ (1 << j);  // Flip bits i and j to 0 in the current state
+                        
+//                         // If the opponent loses in the resulting state, the current player wins
+//                         if (!dp[new_state]) {
+//                             now = true;  // Mark this state as winning for the current player
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+
+//         // Record the result for this state
+//         dp[s] = now;
+//     }
+
+//     // Check the result for the initial state where all cards are available (s = 2^n - 1)
+//     if (dp[n2 - 1]) cout << "Takahashi\n";  // Takahashi wins if the initial state is winning for the first player
+//     else cout << "Aoki\n";  // Otherwise, Aoki wins
+//     return 0;
+// }
