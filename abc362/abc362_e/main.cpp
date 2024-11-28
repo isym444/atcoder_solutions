@@ -338,50 +338,76 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
+const int mod = 1000000007;
+struct mint {
+  ll x; // typedef long long ll;
+  mint(ll x=0):x((x%mod+mod)%mod){}
+  mint operator-() const { return mint(-x);}
+  mint& operator+=(const mint a) {
+    if ((x += a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint& operator-=(const mint a) {
+    if ((x += mod-a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint& operator*=(const mint a) { (x *= a.x) %= mod; return *this;}
+  mint operator+(const mint a) const { return mint(*this) += a;}
+  mint operator-(const mint a) const { return mint(*this) -= a;}
+  mint operator*(const mint a) const { return mint(*this) *= a;}
+  mint pow(ll t) const {
+    if (!t) return 1;
+    mint a = pow(t>>1);
+    a *= a;
+    if (t&1) a *= *this;
+    return a;
+  }
+
+  // for prime mod
+  mint inv() const { return pow(mod-2);}
+  mint& operator/=(const mint a) { return *this *= a.inv();}
+  mint operator/(const mint a) const { return mint(*this) /= a;}
+};
+istream& operator>>(istream& is, const mint& a) { return is >> a.x;}
+ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
+
 
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
-constexpr long long MOD = 998244353;
-std::vector<auto> solve(int N, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
+
+// #define rep(i, n) for (int i = 0; i < (n); ++i)
+// using mint = modint998244353;
+
+map<int, mint> dp[81][81]; // DP table to store subsequences
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    REP (i, N) {
-        std::cin >> A[i];
-    }
-    auto ans = solve(N, A);
-    REP (i, (int)ans.size()) {
-        std::cout << ans[i] << ' ';
-    }
-    std::cout << '\n';
+    int n;
+    cin >> n; // Input size of the sequence
+    vector<int> a(n);
+    rep(i, n) cin >> a[i]; // Input the sequence
 
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    // Populate the DP table
     for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+        for (int ni = i + 1; ni < n; ni++) {
+            int d = a[ni] - a[i]; // Calculate the common difference
+            dp[ni][2][d] += 1; // Add new subsequences of length 2
+            for (int j = 2; j < n; j++) { // Extend subsequences
+                dp[ni][j + 1][d] += dp[i][j][d];
+            }
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
 
+    vector<mint> ans(n+1); // Store results for each k
+    ans[1] = n; // Single elements count as subsequences
+    for (int j = 2; j <= n; j++) {
+        for(int i = 0; i<n; i++){
+            for (auto [d, x] : dp[i][j]) ans[j] += x; // Sum all subsequences of length j
+        }
+    }
+
+    for (int i = 1; i <= n; i++) cout << ans[i] << ' '; // Output the results
+    cout << endl;
+    cout << 2;
     return 0;
 }
