@@ -805,33 +805,24 @@ vector<int> dy_wasd = {0,0,1,-1};
 //https://csacademy.com/app/graph_editor/
 
 
-double solve(long long N) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    std::cin >> N;
-    auto ans = solve(N);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+int main(){
+    ll N;
+    cin >> N;
+    N=100;
+    double ev = 0;
+    foi(0,N){
+        double newEv = 0;
+        foj(1,7){
+            double cur = max((double)j,ev)*((double)1.0/(double)6.0);
+            // cerr << max((double)j,ev)<< endl;
+            // cerr << ((double)1.0/(double)6.0) << endl;
+            // cerr << cur << endl;
+            newEv+=cur;
+        }
+        ev=newEv;
+        // cerr << ev << endl;
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    // cout << newEv << endl;
+    printf("%.10f\n",ev);
     return 0;
 }

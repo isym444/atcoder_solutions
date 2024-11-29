@@ -376,38 +376,49 @@ ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
 
-// #define rep(i, n) for (int i = 0; i < (n); ++i)
-// using mint = modint998244353;
 
-map<int, mint> dp[81][81]; // DP table to store subsequences
+// Declare the DP table. dp[ni][j][d] stores the number of subsequences:
+// - ending at index `ni`,
+// - of length `j`,
+// - with common difference `d`.
+map<int, mint> dp[81][81];
 
 int main() {
     int n;
-    cin >> n; // Input size of the sequence
-    vector<int> a(n);
-    rep(i, n) cin >> a[i]; // Input the sequence
+    cin >> n; // Input the size of the sequence
+    vector<int> a(n); // Input array to store the sequence
+    rep(i, n) cin >> a[i]; // Read the sequence into array `a`
 
     // Populate the DP table
-    for (int i = 0; i < n; i++) {
-        for (int ni = i + 1; ni < n; ni++) {
-            int d = a[ni] - a[i]; // Calculate the common difference
-            dp[ni][2][d] += 1; // Add new subsequences of length 2
-            for (int j = 2; j < n; j++) { // Extend subsequences
-                dp[ni][j + 1][d] += dp[i][j][d];
+    for (int i = 0; i < n; i++) {                // Loop over the first element index `i`
+        for (int ni = i + 1; ni < n; ni++) {     // Loop over the second element index `ni` (must be `ni > i`)
+            int d = a[ni] - a[i];                // Compute the common difference `d` for the pair (a[i], a[ni])
+
+            dp[ni][2][d] += 1;                   // Add a new arithmetic subsequence of length 2
+            // Explanation: This initializes the subsequence (a[i], a[ni]) with length 2 and common difference `d`.
+
+            for (int j = 2; j < n; j++) {        // Loop over possible lengths `j` of subsequences ending at `i`
+                dp[ni][j + 1][d] += dp[i][j][d]; 
+                // Extend subsequences:
+                // - `dp[i][j][d]`: Number of subsequences of length `j` ending at index `i` with common difference `d`.
+                // - `dp[ni][j + 1][d]`: Add these subsequences to length `j+1`, now ending at `ni`, maintaining the same difference `d`.
             }
         }
     }
 
-    vector<mint> ans(n+1); // Store results for each k
-    ans[1] = n; // Single elements count as subsequences
-    for (int j = 2; j <= n; j++) {
-        for(int i = 0; i<n; i++){
-            for (auto [d, x] : dp[i][j]) ans[j] += x; // Sum all subsequences of length j
+    vector<mint> ans(n + 1); // Create an array `ans` to store the results for each `k` (1 ≤ k ≤ n)
+
+    ans[1] = n; // There are `n` arithmetic subsequences of length 1 (each individual element)
+    for (int j = 2; j <= n; j++) { // Loop over all lengths `j` (2 ≤ j ≤ n)
+        rep(i, n) { // For every ending index `i`
+            for (auto [d, x] : dp[i][j]) ans[j] += x;
+            // Explanation:
+            // - `dp[i][j]`: Map of all common differences `d` and their counts `x` for subsequences of length `j` ending at `i`.
+            // - Sum all counts `x` for subsequences of length `j` ending at any index `i` and store it in `ans[j]`.
         }
     }
 
-    for (int i = 1; i <= n; i++) cout << ans[i] << ' '; // Output the results
-    cout << endl;
-    cout << 2;
-    return 0;
+    for (int i = 1; i <= n; i++) cout << ans[i] << ' '; // Output the number of subsequences for each `k` (1 ≤ k ≤ n)
+    cout << endl; // Print a newline at the end of the output
+    return 0; // End of the program
 }
