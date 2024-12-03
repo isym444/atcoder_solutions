@@ -629,40 +629,59 @@ vector<char> genAlphabet(){
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
 
-long long solve(long long N, int M, const std::vector<long long> &X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-    
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    long long N;
-    int M;
-    std::cin >> N >> M;
-    std::vector<long long> X(M);
-    REP (i, M) {
-        std::cin >> X[i];
+int main(){
+    ll N,M;
+    cin >> N >> M;
+    vector<ll> X(M);
+    cin >> X;
+    vector<ll> extra(N+3);
+    ll base=0;
+    for(int i = 0; i<M-1; i++){
+        ll a,b;
+        a = X[i];
+        b = X[i+1];
+        if(a>b) swap(a,b);
+        // dbg(mp(a,b));
+        // R = clockwise, L = anticlockwise
+        ll R = b-a;
+        ll L = N-R;
+        // if clockwise is shorter
+        if(R<=L){
+            base+=R;
+            ll ex = L-R;
+            // dbg(mp(base,ex));
+            // if delete edge after vertex extra[v] have this extra cost
+            extra[a]+=ex;
+            extra[b]-=ex;
+        }
+        if(L<R){
+            base+=L;
+            ll ex = R-L;
+            extra[0]+=ex;
+            extra[a]-=ex;
+            extra[b]+=ex;
+            extra[N+2]-=ex;
+        }
     }
-    auto ans = solve(N, M, X);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    // dbg(extra);
+    foi(0,N+2){
+        extra[i+1]+=extra[i];
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    // dbg(extra);
+    ll ans = INF;
+    foi(1,N+2){
+        ans=min(ans,base+extra[i]);
+    }
+    cout << ans << endl;
     return 0;
 }

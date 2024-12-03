@@ -694,33 +694,96 @@ ll lcs(string s, string t){
 //Graph visualizer:
 //https://csacademy.com/app/graph_editor/
 
+// UnionFind Tree (0-indexed), based on size of each disjoint set
+// find, unite, count, same: O(1)
+struct UnionFind {
+    std::vector<int> par, cou;
+    UnionFind(int N = 0) : par(N), cou(N, 1) { iota(par.begin(), par.end(), 0); }
+    int find(int x) { return (par[x] == x) ? x : (par[x] = find(par[x])); }
+    bool unite(int x, int y) {
+        x = find(x), y = find(y);
+        if (x == y) return false;
+        if (cou[x] < cou[y]) std::swap(x, y);
+        par[y] = x, cou[x] += cou[y];
+        return true;
+    }
+    int count(int x) { return cou[find(x)]; }
+    bool same(int x, int y) { return find(x) == find(y); }
+};
 
-auto solve(long long N, long long M, int E, const std::vector<long long> &U, const std::vector<long long> &V, int Q, const std::vector<long long> &X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<int>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+
+#ifdef isym444_LOCAL
+const string COLOR_RESET = "\033[0m", BRIGHT_GREEN = "\033[1;32m", BRIGHT_RED = "\033[1;31m", BRIGHT_CYAN = "\033[1;36m", NORMAL_CROSSED = "\033[0;9;37m", RED_BACKGROUND = "\033[1;41m", NORMAL_FAINT = "\033[0;2m";
+#define dbg(x) std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << COLOR_RESET << std::endl
+#define dbgif(cond, x) ((cond) ? std::cerr << BRIGHT_CYAN << #x << COLOR_RESET << " = " << (x) << NORMAL_FAINT << " (L" << __LINE__ << ") " << __FILE__ << COLOR_RESET << std::endl : std::cerr)
+#else
+#define dbg(x) ((void)0)
+#define dbgif(cond, x) ((void)0)
+#endif
+
+
 
 int main() {
     std::ios::sync_with_stdio(false);
     setIO("");
     std::cin.tie(nullptr);
-    long long N, M;
-    int E, Q;
-    std::cin >> N >> M >> E;
-    std::vector<long long> U(E), V(E);
-    REP (i, E) {
-        std::cin >> U[i] >> V[i];
+    ll N,M,E;
+    cin >> N >> M >> E;
+    vector<pair<ll,ll>> edges;
+    vector<ll> removed(E,0);
+    foi(0,E){
+        ll u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        edges.pb(mp(u,v));
     }
-    std::cin >> Q;
-    std::vector<long long> X(Q);
-    REP (i, Q) {
-        std::cin >> X[i];
+
+    ll Q;
+    cin >> Q;
+
+    vector<ll> qInOrder;
+
+    foi(0,Q){
+        ll x;
+        cin >> x;
+        x--;
+        qInOrder.pb(x);
+        removed[x]=1;
     }
-    auto ans = solve(N, M, E, U, V, Q, X);
-    REP (i, Q) {
-        std::cout << a[i] << '\n';
+
+    UnionFind uf(N+1);
+
+    foi(0,E){
+        if(!removed[i]){
+            auto [u,v] = edges[i];
+            u=min(u,N);
+            v=min(v,N);
+            if(u>=N&&v>=N) continue;
+            uf.unite(u,v);
+        }
+    }
+
+    vector<ll> ans(Q);
+
+    dbg(removed);
+    dbg(edges);
+    dbg(uf.par);
+    for(int i = Q-1; i>=0; i--){
+        ll cur = qInOrder[i];
+        dbg(cur);
+        auto [u,v] = edges[cur];
+        ans[i]=uf.count(N)-1;
+        dbg(mp(u,v));
+        u=min(u,N);
+        v=min(v,N);
+        dbg(mp(u,v));
+        if(u>=N&&v>=N) continue;
+        uf.unite(u,v);
+    }
+
+    for(auto x:ans){
+        cout << x << endl;
     }
 
     /* genprimes(1e5); */
