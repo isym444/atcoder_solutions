@@ -294,28 +294,35 @@ long long repeatDigit(int digit, int x) {
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
+long long ipow(long long base, int exp) {
+    long long result = 1;
+    while (exp > 0) {
+        if (exp & 1) {
+            result *= base;
+        }
+        exp >>= 1;
+        base *= base;
+    }
+    return result;
+}
 
 int main(){
     ll N;
     cin >> N;
     string S;
     cin >> S;
+    vll carry(N+3);
     ll ans=0;
-    for(int i = N-1; i>=0; i--){
-        ll temp = S[i]-'0';
-        // dbg(temp);
-        // foi(0,N-i-1){
-        //     ll t2 = temp<<1;
-        //     temp+=t2;
-        // }
-        // ll result = 0;
-        // for (int i = 0; i < N-i-1; ++i) {
-        //     result = (result << 3) + (result << 1) + temp;
-        // }
-        // temp=result;
-        temp = repeatDigit(temp,N-i);
-        // dbg(temp);
-        ans+=temp*(i+1);
+    auto gsum = [&](ll a, ll n)->ll{
+        ll r = 10;
+        return (a*(ipow(r,n)-1)/(r-1));
+    };
+    foi(0,S.length()){
+        ll cur = S[i]-'0';
+        ll torem = N-(i+1);
+        ll temp = gsum(cur,N-i);
+        dbg(mt(N-torem,temp));
+        ans+=(N-torem)*(temp);
     }
     cout << ans << endl;
     return 0;
