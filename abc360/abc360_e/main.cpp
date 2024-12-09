@@ -318,7 +318,6 @@ ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 
 
 
-
 int main(){
   ll N,K;
   cin >> N >> K;
@@ -326,14 +325,16 @@ int main(){
   // mint t = mint(2)/pow(N,2)*(N-1);
   mint t = mint(2)/(N*N)*(N-1);
   foi(0,K){
-    x=x*(1-t)+(mint(1)-x)/(N-1)*t;
+    x=x*(mint(1)-t)+(mint(1)-x)/(N-1)*t;
+    // x=x*(mint(1)-t)+(mint(1)-x)*mint(1)/(N-1)*t;
   }
   mint av = 0;
   foi(2,N+1){
-    av+=i;
+    av+=mint(i);
   }
   av/=(N-1);
-  mint ans = x*1 + (x-1)*av;
+  mint ans = x*1 + (mint(1)-x)*av;
+  // mint ans = x + (mint(1)-x)*(mint(2+N)/2);
   cout << ans << endl;
   return 0;
 }
