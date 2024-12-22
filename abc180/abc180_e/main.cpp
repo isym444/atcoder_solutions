@@ -1847,40 +1847,60 @@ vector<int> dy_wasd = {0,0,1,-1};
 using mint = modint998244353;
 
 
-long long solve(int N, const std::vector<long long> &X, const std::vector<long long> &Y, const std::vector<long long> &Z) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    std::cin >> N;
-    std::vector<long long> X(N), Y(N), Z(N);
-    REP (i, N) {
-        std::cin >> X[i] >> Y[i] >> Z[i];
+int main(){
+    ll N;
+    cin >> N;
+    vector<vector<ll>> d(N,vector<ll>(N));
+    vll X(N);
+    vll Y(N);
+    vll Z(N);
+    foi(0,N){
+        cin >> X[i] >> Y[i] >> Z[i];
     }
-    auto ans = solve(N, X, Y, Z);
-    std::cout << ans << '\n';
-
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    auto dcalc = [&](ll c1, ll c2)->ll{
+        return(abs(X[c2]-X[c1])+abs(Y[c2]-Y[c1])+max((ll)0,Z[c2]-Z[c1]));
+    };
+    foi(0,N){
+        foj(0,N){
+            if(i==j) continue;
+            d[i][j]=dcalc(i,j);
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    dbg(d);
+    // [state of which cities visited][city at which travel ends (0-indexed)] = cost
+    vector<vector<ll>> dp((1<<N),vll(N,INF));
+    // [initialize with visited starting city][travel ends at starting city] = 0 cost
+    dp[1<<0][0]=0;
+    // travel from all already visited cities to every other not-yet-visited city
+    // foi(0,N){
+    //     foj(0,N){
+    //         fok(0,1<<N){
+    //             // if
+    //             if(dp[k][i]!=INF){
+    //                 dp[k|1<<j][j]=min(dp[k|1<<j][j],dp[k][i]+d[i][j]);
+    //             }
+    //         }
+    //     }
+    // }
+
+    foi(1,N){
+        // if(i&1) continue;
+        // dp[1<<i|1][i] = d[0][i];
+        dp[1<<i][i] = d[0][i];
+    }
+    foi(0,1<<N){
+        foj(0,N){
+            // if city j has not already been visited then continue
+            if(((1<<j)&i)==0) continue;
+            fok(0,N){
+                // visit city k from city j (i.e. city j was last city to be visited in trip) next unless it already has been visited
+                if(((1<<k)&i)==1) continue;
+                dp[i|(1<<k)][k]=min(dp[i|(1<<k)][k],dp[i][j]+d[j][k]);
+            }
+        }
+    }
+    dbg(dp);
+    // visit all cities and end up back at city 0
+    cout << dp[(1<<N)-1][0] << endl;
     return 0;
 }
