@@ -262,7 +262,6 @@ template <class T> std::vector<T> sort_unique(std::vector<T> vec) { sort(vec.beg
 //index of the first occurrence of x. If x is not present in the vector, it returns the index where x can be inserted while keeping the vector sorted
 template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
 //index immediately after the last occurrence of x. If x is not present, like the lower bound, it returns the index where x can be inserted to maintain order
-template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
 
 /*/---------------------------Useful Graph Visualizer----------------------/*/
 //https://csacademy.com/app/graph_editor/
@@ -270,43 +269,51 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-
+// template <class T> int indlb(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::lower_bound(v.begin(), v.end(), x)); }
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
+template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
 
-long long solve(std::string s, std::string t) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
+int main(){
     std::ios::sync_with_stdio(false);
-    setIO("");
     std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    std::string s, t;
-    std::cin >> s >> t;
-    auto ans = solve(s, t);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    string S,T;
+    cin >> S >> T;
+    unordered_map<char,vll> m;
+    // set<ll> ss;
+    // set<char> ss;
+    unordered_map<char,ll> ss;
+    fx(S) ss[x]=1;
+    dbg(ss);
+    fx(T){
+        if(!ss.count(x)){
+            cout << -1 << endl;
+            return 0;
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    ll i = 0;
+    fx(S){
+        m[x].pb(i);
+        i++;
+    }
+    dbg(m);
+    dbg(indlb(m['e'],(ll)6));
+    ll count = 0;
+    ll cur = -1;
+    fx(T){
+        vll& cv = m[x];
+        auto temp = indub(cv,cur);
+        if(temp==cv.size()){
+            // cur=-1;
+            count++;
+            auto temp = 0;
+            cur=cv[temp];
+            continue;
+        }
+        cur=cv[temp];
+    }
+    dbg(count);
+    dbg(cur);
+    cout << count*(S.size())+(cur+1) << endl;
     return 0;
 }
