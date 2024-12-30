@@ -294,7 +294,7 @@ int main(){
     cin >> K;
     string S,T;
     cin >> S >> T;
-    if(abs(S.length()-T.length())>1){
+    if(abs((int)S.length()-(int)T.length())>1){
         cout << "No" << endl;
         return 0;
     }
@@ -312,6 +312,30 @@ int main(){
             return 0;
         }
     }
-    vector<char> sv
+    // vector<char> sv
+    // Else LCS == min(S.length,T.length)
+    ll si, ti;
+    si=0;
+    ti=0;
+    ll lcs=0;
+    while(si<S.length() && ti<T.length()){
+        if(S[si]==T[ti]){
+            lcs++;
+            si++;
+            ti++;
+        }else{
+            if(S.length()>T.length()){
+                si++;
+            }else{
+                ti++;
+            }
+        }
+    }
+    dbg(lcs);
+    if(lcs==min(S.length(),T.length())){
+        cout << "Yes" << endl;
+        return 0;
+    }
+    cout << "No" << endl;
     return 0;
 }
