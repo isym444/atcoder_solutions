@@ -283,33 +283,9 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
 int main(){
-    ll N,M;
-    cin >> N >> M;
-    vector<tuple<ll,ll,char>> ijc(M);
-    foi(0,M){
-        ll a,b;
-        char c;
-        cin >> a >> b >> c;
-        ijc[i]=mt(a,b,c);
-    }
-    sort(all(ijc),[](tuple<ll,ll,char> ta, tuple<ll,ll,char> tb){
-        return get<0>(ta)<get<0>(tb);
-    });
-    dbg(get<0>(ijc[0]));
-    ll lim=INF;
-    fx(ijc){
-        auto [i,j,c]=x;
-        if(c=='B'){
-            if(j>=lim){
-                cout << "No" << endl;
-                return 0;
-            }
-        }else{
-            lim=j;
-        }
-    }
-    cout << "Yes" << endl;
+    string S;
+    cin >> S;
+    cout << S[0] << "UPC" << endl;
     return 0;
 }

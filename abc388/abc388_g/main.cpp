@@ -283,33 +283,50 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
+auto solve(int a, const std::vector<long long> &b, int c, const std::vector<long long> &d, const std::vector<long long> &e) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
 
-int main(){
-    ll N,M;
-    cin >> N >> M;
-    vector<tuple<ll,ll,char>> ijc(M);
-    foi(0,M){
-        ll a,b;
-        char c;
-        cin >> a >> b >> c;
-        ijc[i]=mt(a,b,c);
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    int a, c;
+    std::cin >> a;
+    std::vector<long long> b(a);
+    REP (i, a) {
+        std::cin >> b[i];
     }
-    sort(all(ijc),[](tuple<ll,ll,char> ta, tuple<ll,ll,char> tb){
-        return get<0>(ta)<get<0>(tb);
-    });
-    dbg(get<0>(ijc[0]));
-    ll lim=INF;
-    fx(ijc){
-        auto [i,j,c]=x;
-        if(c=='B'){
-            if(j>=lim){
-                cout << "No" << endl;
-                return 0;
-            }
-        }else{
-            lim=j;
-        }
+    std::cin >> c;
+    std::vector<long long> d(c), e(c);
+    REP (i, c) {
+        std::cin >> d[i] >> e[i];
     }
-    cout << "Yes" << endl;
+    auto ans = solve(a, b, c, d, e);
+    REP (i, c) {
+        std::cout << f[i] << '\n';
+    }
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
+    }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }

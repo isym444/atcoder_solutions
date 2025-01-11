@@ -285,31 +285,66 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 int main(){
-    ll N,M;
-    cin >> N >> M;
-    vector<tuple<ll,ll,char>> ijc(M);
-    foi(0,M){
-        ll a,b;
-        char c;
-        cin >> a >> b >> c;
-        ijc[i]=mt(a,b,c);
-    }
-    sort(all(ijc),[](tuple<ll,ll,char> ta, tuple<ll,ll,char> tb){
-        return get<0>(ta)<get<0>(tb);
-    });
-    dbg(get<0>(ijc[0]));
-    ll lim=INF;
-    fx(ijc){
-        auto [i,j,c]=x;
-        if(c=='B'){
-            if(j>=lim){
-                cout << "No" << endl;
-                return 0;
-            }
-        }else{
-            lim=j;
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;    
+    ll ans = 0;
+    // vll used(N);
+    ll i = 0, j = (N + 1) / 2;
+
+    while (i < N/2 && j < N) {
+        if (A[j] >= (ll)2 * A[i]) {
+            ans++;
+            i++;
+            j++;
+        } else {
+            j++;
         }
     }
-    cout << "Yes" << endl;
+    cout << ans << endl;
     return 0;
 }
+// int main(){
+//     ll N;
+//     cin >> N;
+//     vll A(N);
+//     cin >> A;
+//     map<ll,ll> m;
+//     fx(A){
+//         m[x]++;
+//     }
+//     dbg(m);
+//     map<ll,ll> ogm = m;
+//     ll ans = 0;
+//     vll used(N);
+//     foi(0,N){
+//         if(used[i]) continue;
+//         ll cur = A[i];
+//         auto it = m.lower_bound(cur*2);
+//         ll ui=0;
+//         ui=indlb(A,cur*2);
+//         if(it!=m.end() && it->second>0){
+//             ans++;
+//             // DEBUG
+//             ui+=ogm[A[ui]]-m[A[ui]];
+//             used[ui]=1;
+//             it->second-=1;
+//         }else{
+//             while(it!=m.end() && it->second<=0){
+//                 ui+=ogm[it->first];
+//                 it++;
+//             }
+//             if(it!=m.end()){
+//                 ans++;
+//                 // DEBUG
+//                 ui+=ogm[A[ui]]-m[A[ui]];
+//                 used[ui]=1;
+//                 it->second-=1;
+//             }
+//         }
+//     }
+//     dbg(m);
+//     cout << ans << endl;
+//     return 0;
+// }

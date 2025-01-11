@@ -280,36 +280,46 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
+// Lazy seg tree usage:
+//Initialization:
+ll op(long f,long x){return f+x;}       // Defines the operation for the segment tree (sum operation).
+ll e(){return 0L;}                      // Defines the identity element for the segment tree (0 for sum, 0 for xor, 0 for GCD, 1 for LCM, 1 for multiplication, INF for min, -INF for max).
+
+
+// //Point query:
+// seg.get(b);              // Get the current number at index `b`.
+
+// //Range query:
+// seg.prod(l, r);         // Returns the sum (or the result of the op function) of all elements in the range [l, r), i.e., from index l to index r-1.
+
+// //Point set with specific value:
+// seg.set(b, (ll)0);                   // Set the number of balls in box `b` to 0.
+
+// //Range update with op function
+// seg.apply(0, N, x);             // Update with `x` across all indexes using op function to update each index N.B. if op is addition, then this will add x to current value at each index in range
+
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
 int main(){
-    ll N,M;
-    cin >> N >> M;
-    vector<tuple<ll,ll,char>> ijc(M);
-    foi(0,M){
-        ll a,b;
-        char c;
-        cin >> a >> b >> c;
-        ijc[i]=mt(a,b,c);
+    ll N;
+    cin >> N;
+    vector<ll>A(N);                     // Create a vector to hold the initial value at each element of segment tree.
+
+    atcoder::lazy_segtree<ll,op,e,ll,op,op,e>seg(A); // Initialize a lazy segment tree with the array A.
+    foi(0,N){
+        ll t;
+        cin >> t;
+        seg.set(i,t);
     }
-    sort(all(ijc),[](tuple<ll,ll,char> ta, tuple<ll,ll,char> tb){
-        return get<0>(ta)<get<0>(tb);
-    });
-    dbg(get<0>(ijc[0]));
-    ll lim=INF;
-    fx(ijc){
-        auto [i,j,c]=x;
-        if(c=='B'){
-            if(j>=lim){
-                cout << "No" << endl;
-                return 0;
-            }
-        }else{
-            lim=j;
-        }
+    foi(0,N-1){
+        ll cur = seg.get(i);
+        ll end = min(N,i+cur+1);
+        seg.apply(i+1,end,1);
+        seg.set(i,cur-(end-(i+1)));
     }
-    cout << "Yes" << endl;
+    foi(0,N){
+        cout << seg.get(i) << " ";
+    }
     return 0;
 }
