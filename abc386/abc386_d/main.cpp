@@ -295,8 +295,11 @@ int main(){
         ijc[i]=mt(a,b,c);
     }
     sort(all(ijc),[](tuple<ll,ll,char> ta, tuple<ll,ll,char> tb){
-        return get<0>(ta)<get<0>(tb);
+        return tie(get<0>(ta),get<1>(ta)) < tie(get<0>(tb),get<1>(tb));
     });
+    // within a particular row, all the white squares must be to the right of all the black squares
+        // sort by j == sort by colour&j
+    // if so, set limit to left-most white square
     dbg(get<0>(ijc[0]));
     ll lim=INF;
     fx(ijc){
