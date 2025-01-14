@@ -1883,36 +1883,78 @@ vector<pair<int, int>> generateSquarePoints(int x, int y, int dx, int dy) {
 using mint = modint998244353;
 
 
-long long solve(long long A, long long B, long long C, long long D) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+int main(){
+    ll A,B,C,D;
+    cin >> A >> B >> C >> D;
+    A+=(ll)1e9;
+    B+=(ll)1e9;
+    C+=(ll)1e9;
+    D+=(ll)1e9;
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long A, B, C, D;
-    std::cin >> A >> B >> C >> D;
-    auto ans = solve(A, B, C, D);
-    std::cout << ans << '\n';
+    dbg(mt(A,B,C,D));
 
-    /* genprimes(1e5); */
+    long long ans = 0;
 
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
+    auto calc = [&](ll x, ll y)->long long{
+        long long tans = 0;
+
+        // vertical extra
+        ll verex = MOD(y,2);
+
+        // horizontal extra
+        ll horex = MOD(x,4);
+
+        // blue
+        ll hor = x-horex;
+        ll ver = y-verex;
+        tans+=(hor*ver);
+
+        if(verex){
+            tans+=hor;
+        }
+        
+        if(horex){
+            if(horex==1){
+                tans+=ver*3/2;
+                if(verex){
+                    tans+=2;
+                }
+            }
+            if(horex==2){
+                tans+=(ver*2)*3/2;
+                if(verex){
+                    tans+=3;
+                }
+            }
+            if(horex==3){
+                // tans+=(ver)*3/2;
+                // tans+=(ver)*3/2;
+                // tans+=(ver)*1/2;
+                tans+=(ver*3)*7/6;
+                if(verex){
+                    tans+=3;
+                }
+            }
+        }
+        dbg(tans);
+        return tans;
+    };
+
+    // green
+    ans += calc(C,D);
+
+    // blue
+    ans -= calc(A,D);
+
+    // orange
+    ans -= calc(C,B);
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+    // red
+    ans+= calc(A,B);
+    // dbg(ans);
+    // ll finans = (ll)ans;
+
+    cout << ans << endl;
+
     return 0;
 }
