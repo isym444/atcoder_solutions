@@ -50,11 +50,14 @@ using namespace atcoder;
 #define fojj(non_incl_to) for(int j=0;j<(non_incl_to);j++)
 #define fok(from,non_incl_to) for(int k=from;k<(non_incl_to);k++)
 #define fokk(non_incl_to) for(int k=0;k<(non_incl_to);k++)
+#define fol(from,non_incl_to) for(int l=from;l<(non_incl_to);l++)
+#define foll(non_incl_to) for(int l=0;l<(non_incl_to);l++)
 #define fa(x, dataStructure) for(auto x : dataStructure)
 #define fx(dataStructure) for(auto x : dataStructure)
 
 /*/---------------------------Abbreviations----------------------/*/
-#define ll long long
+// #define ll long long
+#define ll __int128
 #define sz(x) (int)(x).size()
 #define fi first
 #define sec second
@@ -67,6 +70,7 @@ using namespace atcoder;
 #define mp make_pair
 #define mt make_tuple
 #define pb push_back
+#define nyan ios::sync_with_stdio(false);cin.tie(nullptr);cout<<fixed<<setprecision(15);
 ll INF=LLONG_MAX;
 
 /*/---------------------------Data Structures----------------------/*/
@@ -75,8 +79,8 @@ typedef pair<ll, ll> pl;
 typedef list<ll> dll;
 using pll = pair<ll,ll>;
 using pi = pair<int,int>;
-typedef vector<long long> vll;
-typedef std::vector<std::vector<long long>> vvll;
+typedef vector<ll> vll;
+typedef std::vector<std::vector<ll>> vvll;
 
 template<typename T> using vc = vector<T>;
 template<typename T> using vc = vector<T>;
@@ -147,37 +151,39 @@ struct custom_hash {
 };
 
 /*/---------------------------IO(Debugging)----------------------/*/
-template<class T> istream& operator >> (istream &is, vector<T>& V) {
-    for(auto &e : V)
-        is >> e;
-    return is;
+
+// __int128 I/O:
+inline istream &operator>>(istream &is, __int128 &v) {
+    string s; is >> s; v = 0; bool neg = (!s.empty() && s[0] == '-');
+    for (int i = neg; i < (int)s.size(); i++) v = v * 10 + (s[i] - '0');
+    if (neg) v = -v; return is;
 }
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec);
-template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr);
-template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec);
-template <class OStream, class T, class U> OStream &operator<<(OStream &os, const pair<T, U> &pa);
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec);
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec);
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec);
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec);
-template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa);
-template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp);
-template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp);
-template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl);
+inline ostream &operator<<(ostream &os, __int128 v) {
+    if (v == 0) return os << "0";
+    bool neg = (v < 0); if (neg) { os << '-'; v = -v; }
+    string s; while (v > 0) { s.push_back(char('0' + int(v % 10))); v /= 10; }
+    reverse(s.begin(), s.end()); return os << s;
+}
 
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::vector<T> &vec) { os << '['; for (auto v : vec) os << v << ','; os << ']'; return os; }
-template <class OStream, class T, size_t sz> OStream &operator<<(OStream &os, const std::array<T, sz> &arr) { os << '['; for (auto v : arr) os << v << ','; os << ']'; return os; }
-template <class... T> std::istream &operator>>(std::istream &is, std::tuple<T...> &tpl) { std::apply([&is](auto &&... args) { ((is >> args), ...);}, tpl); return is; }
-template <class OStream, class... T> OStream &operator<<(OStream &os, const std::tuple<T...> &tpl) { os << '('; std::apply([&os](auto &&... args) { ((os << args << ','), ...);}, tpl); return os << ')'; }
-template <class OStream, class T, class TH> OStream &operator<<(OStream &os, const std::unordered_set<T, TH> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::deque<T> &vec) { os << "deq["; for (auto v : vec) os << v << ','; os << ']'; return os; }
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::set<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
-template <class OStream, class T> OStream &operator<<(OStream &os, const std::unordered_multiset<T> &vec) { os << '{'; for (auto v : vec) os << v << ','; os << '}'; return os; }
-template <class OStream, class T, class U> OStream &operator<<(OStream &os, const std::pair<T, U> &pa) { return os << '(' << pa.first << ',' << pa.second << ')'; }
-template <class OStream, class TK, class TV> OStream &operator<<(OStream &os, const std::map<TK, TV> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
-template <class OStream, class TK, class TV, class TH> OStream &operator<<(OStream &os, const std::unordered_map<TK, TV, TH> &mp) { os << '{'; for (auto v : mp) os << v.first << "=>" << v.second << ','; os << '}'; return os; }
+// Vector reading:
+template<class T> inline istream &operator>>(istream &is, vector<T> &V) { for (auto &e : V) is >> e; return is; }
 
+// Container printing:
+template<class OStream,class T> inline OStream &operator<<(OStream &os,const vector<T> &vec){os<<'[';for(auto &v:vec)os<<v<<',';os<<']';return os;}
+template<class OStream,class T,size_t sz> inline OStream &operator<<(OStream &os,const array<T,sz> &arr){os<<'[';for(auto &v:arr)os<<v<<',';os<<']';return os;}
+template<class OStream,class T,class TH> inline OStream &operator<<(OStream &os,const unordered_set<T,TH>& st){os<<'{';for(auto &v:st)os<<v<<',';os<<'}';return os;}
+template<class OStream,class T> inline OStream &operator<<(OStream &os,const deque<T> &dq){os<<"deq[";for(auto &v:dq)os<<v<<',';os<<']';return os;}
+template<class OStream,class T> inline OStream &operator<<(OStream &os,const set<T> &st){os<<'{';for(auto &v:st)os<<v<<',';os<<'}';return os;}
+template<class OStream,class T> inline OStream &operator<<(OStream &os,const multiset<T> &st){os<<'{';for(auto &v:st)os<<v<<',';os<<'}';return os;}
+template<class OStream,class T> inline OStream &operator<<(OStream &os,const unordered_multiset<T> &st){os<<'{';for(auto &v:st)os<<v<<',';os<<'}';return os;}
+template<class OStream,class T,class U> inline OStream &operator<<(OStream &os,const pair<T,U> &pa){return os<<'('<<pa.first<<','<<pa.second<<')';}
+template<class OStream,class TK,class TV> inline OStream &operator<<(OStream &os,const map<TK,TV> &mp){os<<'{';for(auto &m:mp)os<<m.first<<"=>"<<m.second<<',';os<<'}';return os;}
+template<class OStream,class TK,class TV,class TH> inline OStream &operator<<(OStream &os,const unordered_map<TK,TV,TH> &mp){os<<'{';for(auto &m:mp)os<<m.first<<"=>"<<m.second<<',';os<<'}';return os;}
+template<class OStream,class T,size_t rows,size_t cols> inline OStream &operator<<(OStream &os,T (&arr)[rows][cols]){os<<'[';for(size_t i=0;i<rows;i++){if(i>0)os<<',';os<<'[';for(size_t j=0;j<cols;j++){if(j>0)os<<',';os<<arr[i][j];}os<<']';}os<<']';return os;}
+
+// Tuple printing/reading:
+template<class... T> inline istream &operator>>(istream &is, tuple<T...> &tpl){ std::apply([&is](auto &&... args){ ((is >> args), ...); }, tpl); return is; }
+template<class OStream,class... T> inline OStream &operator<<(OStream &os,const tuple<T...> &tpl){os<<'(';std::apply([&os](auto &&... args){((os<<args<<','),...);},tpl);return os<<')';}
 
 void setIO(string name = "")
 { // name is nonempty for USACO file I/O
@@ -274,68 +280,44 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
 
-int main(){
-    ll N,K,Q;
-    cin >> N >> K >> Q;
-    multiset<ll> front;
-    multiset<ll> back;
-    foi(0,K) front.emplace(0);
-    foi(0,N-K) back.emplace(0);
-    vll A(N,0);
-    ll sum = 0;
-    cerr << Q << endl;
-    cerr << front.size() << " " << back.size() << endl;
-    foi(0,Q){
-        ll x,y;
-        cin >> x >> y;
-        x--;
-        // if y>smallest in front -> ADD to front, remove smallest from front, add to back & update sum
-        // if y<=smallest in front -> ADD to back
-        // if A[x] in front -> REMOVE from front, transfer largest from back to front & update sum
-        // if A[x] in back -> REMOVE from back
-        // output sum
-        ll fd=0;
-        ll sd=0;
-        if(front.find(A[x])!=front.end()){
-            // front.erase(front.find(A[x]));
-            // front.emplace(*back.rbegin());
-            // sum+=*back.rbegin();
-            // back.erase(prev(back.rbegin().base()));
 
-            // // fix 1 too many in front
-            // ll newsmallest = *front.begin();
-            // sum-=newsmallest;
-            // front.erase(front.begin());
-            // back.emplace(newsmallest);
-            // sd=1;
-            sum-=A[x];
-            front.erase(front.find(A[x]));
-            sd=1;
-        }
-        if(sd==0){
-            back.erase(back.find(A[x]));
-        }
-        if(y>*front.begin()){
-            front.emplace(y);
-            sum+=y;
-            ll newsmallest = *front.begin();
-            sum-=newsmallest;
-            front.erase(front.begin());
-            back.emplace(newsmallest);
-            fd=1;
-        }
-        if(fd==0){
-            back.emplace(y);
-        }
-        while(front.size()<K){
-            front.emplace(*back.rbegin());
-            sum+=*back.rbegin();
-            back.erase(prev(back.rbegin().base()));
-        }
-        A[x]=y;
-        dbg(front);
-        cerr << front.size() << " " << back.size() << endl;
-        cout << sum << endl;
+/*/---------------------------OJ tools automatic I/O parsing----------------------/*/
+constexpr long long MOD = 998244353;
+auto solve(long long N, long long P) {
+    /* vis.assign(n+1, false);
+    g.assign(n+1, vector<ll>());
+    wg.assign(n + 1, vector<pair<ll,ll>>());
+    parent.assign(n+1, -1); */
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    setIO("");
+    std::cin.tie(nullptr);
+    // sets precision of output of floating point numbers to x number of decimal places
+    cout << fixed << setprecision(11);
+    unordered_map<long long, int, custom_hash> safe_map;
+    long long N, P;
+    std::cin >> N >> P;
+    auto ans = solve(N, P);
+    // failed to analyze output format
+    // TODO: edit here
+    std::cout << ans << '\n';
+
+
+    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
+    /* genprimes(1e5); */
+
+    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
+    for (int i = 0; i < n; i++) {
+        if (!v[i])
+            bfs(i);
     }
+    
+    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
+    wasd(
+        //cout << "Use this for problems where you have to go up, down, left right" << endl;
+    ) */
+
     return 0;
 }
