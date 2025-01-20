@@ -287,18 +287,19 @@ int main(){
     ll R;
     cin >> R;
     ll count = 0;
-    foi(-(R+1),(R+1)){
-        ll mmin=-(ll)(R+1);
-        ll mmax=(ll)R+1;
+    ll mmin=-(ll)(R+0.5);
+    ll mmax=(ll)R+0.6;
+    ll R2 = R * R; // Precompute R^2 to avoid repetitive computation
+    foi(mmin,mmax){
         ll l=0; ll r=mmax;
         ll ans = -1;
         while(l<=r){
             ll m = midpoint(l,r);
             ll checker=0;
-            if(hypot((double)i+0.5,(double)m+0.5)>(double)R) checker=1;
-            if(hypot((double)i+0.5,(double)m-0.5)>(double)R) checker=1;
-            if(hypot((double)i-0.5,(double)m+0.5)>(double)R) checker=1;
-            if(hypot((double)i-0.5,(double)m-0.5)>(double)R) checker=1;
+            if ((i + 0.5) * (i + 0.5) + (m + 0.5) * (m + 0.5) > R2) checker = 1;
+            if ((i + 0.5) * (i + 0.5) + (m - 0.5) * (m - 0.5) > R2) checker = 1;
+            if ((i - 0.5) * (i - 0.5) + (m + 0.5) * (m + 0.5) > R2) checker = 1;
+            if ((i - 0.5) * (i - 0.5) + (m - 0.5) * (m - 0.5) > R2) checker = 1;
             if(checker==0){
                 ans=max(ans,m);
                 l=m+1;
@@ -307,15 +308,15 @@ int main(){
                 r=m-1;
             }
         }
-        l=mmin; r=0;
+        l=mmin; r=0.6;
         ll ans2 = 0;
         while(l<=r){
             ll m = midpoint(l,r);
             ll checker=0;
-            if(hypot((double)i+0.5,(double)m+0.5)>(double)R) checker=1;
-            if(hypot((double)i+0.5,(double)m-0.5)>(double)R) checker=1;
-            if(hypot((double)i-0.5,(double)m+0.5)>(double)R) checker=1;
-            if(hypot((double)i-0.5,(double)m-0.5)>(double)R) checker=1;
+            if ((i + 0.5) * (i + 0.5) + (m + 0.5) * (m + 0.5) > R2) checker = 1;
+            if ((i + 0.5) * (i + 0.5) + (m - 0.5) * (m - 0.5) > R2) checker = 1;
+            if ((i - 0.5) * (i - 0.5) + (m + 0.5) * (m + 0.5) > R2) checker = 1;
+            if ((i - 0.5) * (i - 0.5) + (m - 0.5) * (m - 0.5) > R2) checker = 1;
             if(checker==0){
                 ans2=min(ans2,m);
                 r=m-1;
