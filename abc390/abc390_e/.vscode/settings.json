@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "tuple": "cpp"
-    }
+        "tuple": "cpp",
+        "ostream": "cpp"
+    },
+    "cph.general.saveLocation": ""
 }
