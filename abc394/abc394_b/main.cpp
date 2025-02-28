@@ -283,23 +283,20 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
-
 int main(){
-    ll N,M;
-    cin >> N >> M;
-    set<pair<ll,ll>> edges;
-    ll ans = 0;
-    foi(0,M){
-        ll a,b;
-        cin >> a >> b;
-        a--;
-        b--;
-        if(edges.count({a,b}) or edges.count({b,a}) or a==b){
-            ans++;
-        }
-        edges.insert({a,b});
+    ll N;
+    cin >> N;
+    vector<pair<int,string>> v(N);
+    foi(0,N){
+        string t;
+        cin >> t;
+        v[i]=mp(t.length(),t);
     }
-    cout << ans << endl;
+    sort(all(v),[](auto a, auto b){
+        return a.fi<b.fi;
+    });
+    for(auto i:v){
+        cout<<i.se;
+    }
     return 0;
 }
