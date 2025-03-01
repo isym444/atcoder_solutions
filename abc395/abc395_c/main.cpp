@@ -56,8 +56,8 @@ using namespace atcoder;
 #define fx(dataStructure) for(auto &x : dataStructure)
 
 /*/---------------------------Abbreviations----------------------/*/
-// #define ll long long
-#define ll __int128
+#define ll long long
+// #define ll __int128
 #define sz(x) (int)(x).size()
 #define fi first
 #define sec second
@@ -279,25 +279,34 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 //h INSERT CODE SNIPPETS HERE
 /*/---------------------------INSERT CODE SNIPPETS HERE----------------------/*/
 
-
+// template <class T> int indub(const std::vector<T> &v, const T &x) { return std::distance(v.begin(), std::upper_bound(v.begin(), v.end(), x)); }
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-
 int main(){
-    string S;
-    cin >> S;
-    int l,r;
-    l=S.size()-2;
-    r=S.size()-1;
-    while(l>=0){
-        if(S[l]=='W' && S[r]=='A'){
-            S[l]='A';
-            S[r]='C';
-        }
-        l--;
-        r--;
+    ll N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    map<ll,vector<ll>> mmp;
+    foi(0,N){
+        mmp[A[i]].pb(i);
     }
-    cout << S << endl;
+    ll ans = INF;
+    foi(0,N){
+        ll cur = A[i];
+        ll temp = indub(mmp[cur],(ll)i);
+        if(temp==mmp[cur].size()){
+            continue;
+        }
+        ll size = mmp[cur][temp]-i+1;
+        // dbg(mt(i,temp, size));
+        ans = min(ans,size);
+    }
+    if(ans==INF){
+        cout << -1 << endl;
+        return 0;
+    }
+    cout << ans << endl;
     return 0;
 }

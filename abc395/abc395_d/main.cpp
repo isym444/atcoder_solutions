@@ -285,19 +285,39 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 int main(){
-    string S;
-    cin >> S;
-    int l,r;
-    l=S.size()-2;
-    r=S.size()-1;
-    while(l>=0){
-        if(S[l]=='W' && S[r]=='A'){
-            S[l]='A';
-            S[r]='C';
-        }
-        l--;
-        r--;
+    ll N,Q;
+    cin >> N >> Q;
+    // map<ll,ll> pn;
+    dsu dd(N*2);
+    // map<set<ll>,ll> spn;
+    foi(0,N){
+        dd.merge(i,i+N);
     }
-    cout << S << endl;
+    foi(0,Q){
+        ll type;
+        cin >> type;
+        if(type==1){
+            ll a,b;
+            cin >> a >> b;
+            a--;b--;
+            a+=N;
+            // how to find which nest a belongs to? can't just search for the number less than N in connected component right?
+            continue;
+        }
+        if(type==2){
+            ll a,b;
+            cin >> a >> b;
+            a--;b--;
+
+            continue;
+        }
+        if(type==3){
+            ll a;
+            cin >> a;
+            a--;
+
+            continue;
+        }
+    }
     return 0;
 }

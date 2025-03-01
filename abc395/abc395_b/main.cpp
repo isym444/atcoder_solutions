@@ -285,19 +285,28 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 int main(){
-    string S;
-    cin >> S;
-    int l,r;
-    l=S.size()-2;
-    r=S.size()-1;
-    while(l>=0){
-        if(S[l]=='W' && S[r]=='A'){
-            S[l]='A';
-            S[r]='C';
+    int N;
+    cin >> N;
+    vector<vector<char>> G(N, vector<char>(N));
+    foi(1,N+1){
+        int j=N+1-i;
+        if(i<=j){
+            fok(i,j+1){
+                for(int l=i;l<j+1;l++){
+                    if(i%2==1){
+                        G[k-1][l-1]='#';
+                        continue;
+                    }
+                    G[k-1][l-1]='.';
+                }
+            }
         }
-        l--;
-        r--;
     }
-    cout << S << endl;
+    foi(0,N){
+        foj(0,N){
+            cout<<G[i][j];
+        }
+        cout<<endl;
+    }
     return 0;
 }

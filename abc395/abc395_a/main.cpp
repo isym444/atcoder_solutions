@@ -285,19 +285,28 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 
 int main(){
-    string S;
-    cin >> S;
-    int l,r;
-    l=S.size()-2;
-    r=S.size()-1;
-    while(l>=0){
-        if(S[l]=='W' && S[r]=='A'){
-            S[l]='A';
-            S[r]='C';
-        }
-        l--;
-        r--;
+    int N;
+    cin >> N;
+    vll A(N);
+    cin >> A;
+    
+    vll B(N);
+    B=A;
+    sort(all(A));
+    dbg(A);
+    dbg(B);
+    if(A!=B){
+        cout << "No" << endl;
+        return 0;
     }
-    cout << S << endl;
+    int cur=A[0];
+    foi(1,N){
+        if(A[i]==cur){
+            cout << "No" << endl;
+            return 0;
+        }
+        cur=A[i];
+    }
+    cout << "Yes" << endl;
     return 0;
 }
