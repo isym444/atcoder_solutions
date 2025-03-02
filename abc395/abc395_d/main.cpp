@@ -288,10 +288,18 @@ int main(){
     ll N,Q;
     cin >> N >> Q;
     // map<ll,ll> pn;
-    dsu dd(N*2);
     // map<set<ll>,ll> spn;
+
+    // pigeon to bag
+    map<ll,ll> pb;
+    // bag to nest
+    map<ll,ll> bn;
+    // nest to bag
+    map<ll,ll> nb;
     foi(0,N){
-        dd.merge(i,i+N);
+        pb[i]=i;
+        bn[i]=i;
+        nb[i]=i;
     }
     foi(0,Q){
         ll type;
@@ -300,22 +308,25 @@ int main(){
             ll a,b;
             cin >> a >> b;
             a--;b--;
-            a+=N;
-            // how to find which nest a belongs to? can't just search for the number less than N in connected component right?
+            pb[a]=nb[b];
             continue;
         }
         if(type==2){
             ll a,b;
             cin >> a >> b;
             a--;b--;
-
+            auto temp = nb[a];
+            nb[a]=nb[b];
+            nb[b]=temp;
+            bn[nb[a]]=a;
+            bn[nb[b]]=b;
             continue;
         }
         if(type==3){
             ll a;
             cin >> a;
             a--;
-
+            cout << bn[pb[a]]+1 << endl;
             continue;
         }
     }

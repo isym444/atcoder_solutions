@@ -283,46 +283,84 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-long long solve(long long N, int M, long long X, const std::vector<long long> &u, const std::vector<long long> &v) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
-
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    long long N;
-    int M;
-    long long X;
-    std::cin >> N >> M;
-    std::vector<long long> u(M), v(M);
-    std::cin >> X;
-    REP (i, M) {
-        std::cin >> u[i] >> v[i];
-    }
-    auto ans = solve(N, M, X, u, v);
-    std::cout << ans << '\n';
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
+// ll dijkstra(const vector<vector<pair<ll,ll>>>& G, ll source, ll target) {
+//     ll n = G.size();
+//     vector<ll> dist(n, LLONG_MAX);  // Distance array initialized to infinity
     
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
+//     // Priority queue storing pairs of (distance, vertex)
+//     // Using min heap based on distance
+//     priority_queue<pair<ll,ll>, 
+//     vector<pair<ll,ll>>, 
+//     greater<pair<ll,ll>>> pq;
+    
+//     // Initialize source distance
+//     dist[source] = 0;
+//     pq.push({0, source});
+    
+//     while (!pq.empty()) {
+//         ll d = pq.top().first;   // Current shortest distance
+//         ll v = pq.top().second;  // Current vertex
+//         pq.pop();
+        
+//         // Skip if we've found a better path already
+//         if (d > dist[v]) continue;
+        
+//         // If we reached target, we can return the distance
+//         if (v == target) return d;
+        
+//         // Process all neighbors
+//         for (auto& [to, weight] : G[v]) {
+//             ll new_dist = dist[v] + weight;
+            
+//             // If we found a shorter path
+//             if (new_dist < dist[to]) {
+//                 dist[to] = new_dist;
+//                 pq.push({new_dist, to});
+//             }
+//         }
+//     }
+    
+//     return dist[target];  // Return shortest distance to target
+// }
+
+int main(){
+    ll N,M,X;
+    cin >> N >> M >> X;
+    vector<vector<pair<ll,ll>>> G(2*N);
+    foi(0,N){
+        G[i].pb({i+N,X});
+        G[i+N].pb({i,X});
+    }
+    foi(0,M){
+        ll U,V;
+        cin >> U >> V;
+        U--;V--;
+        G[U].pb({V,1});
+        G[V+N].pb({U+N,1});
+    }
+    //Dijkstra for shortest path between node 0 and node N-1
+    vector<ll> dist(2*N, INF);  // Distances array
+    priority_queue<pair<ll,ll>, vector<pair<ll,ll>>, greater<pair<ll,ll>>> pq;
+    dist[0] = 0;
+    pq.push({0, 0}); // {distance, node}
+
+    while(!pq.empty()) {
+        auto [d, v] = pq.top();
+        pq.pop();
+        
+        if(d > dist[v]) continue;  // Skip if we found better path
+        
+        // Process neighbors
+        for(auto [to, weight] : G[v]) {
+            ll new_dist = dist[v] + weight;
+            if(new_dist < dist[to]) {
+                dist[to] = new_dist;
+                pq.push({new_dist, to});
+            }
+        }
+    }
+
+    cout << min(dist[N-1],dist[N*2-1]) << "\n";
 
     return 0;
 }
