@@ -283,47 +283,141 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-auto solve(int N, long long K, const std::vector<long long> &A) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N;
-    long long K;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    std::cin >> K;
-    REP (i, N) {
-        std::cin >> A[i];
+int main(){
+    nyan;
+    ll N,K;
+    cin >> N >> K;
+    vll A(N);
+    cin >> A;
+    vll ogA(N);
+    ogA = A;
+    // sort array
+    sort(all(A));
+    ll maxnum=-1;
+    fx(A){
+        maxnum=max(maxnum,x);
     }
-    auto ans = solve(N, K, A);
-    REP (i, N) {
-        std::cout << ans[i] << '\n';
+    // find count of each number in array
+    // map<ll,ll> cnt;
+    vll cnt(maxnum+3);
+    vll num_multiples(maxnum+3);
+    fx(A){
+        cnt[x]++;
     }
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
+    // for each number up to max number in array, find number of multiples of that number in the array
+    // Can't just be each number in the array, have to include multiples of numbers not in array like 1 if not in array
+    // map<ll,ll> num_multiples;
+    // fx(A){
+    //     ll temp = x+x;
+    //     while(temp<=maxnum){
+    //         num_multiples[x]+=cnt[temp];
+    //         temp+=x;
+    //     }
+    // }
+    foi(1,maxnum+1){
+        ll temp = i;
+        while(temp<=maxnum){
+            num_multiples[i]+=cnt[temp];
+            temp+=i;
+        }
     }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
+    // for each number in the array, if the number of multiples of that number is greater than or equal to K, then that number is the answer for all multiples of that number
+    vll ans(maxnum+3);
+    foi(1,maxnum+1){
+        if(num_multiples[i]>=K){
+            for(ll j=i;j<=maxnum;j+=i){
+                ans[j]=i;
+            }
+        }
+    }
+    // dbg(num_multiples);
+    // dbg(ans);
+    fx(ogA){
+        cout << ans[x] << endl;
+    }
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// int N,K;
+// int A[1212120];
+// // int cnt[1<<20],ans[1<<20];
+// int main()
+// {
+// 	ios::sync_with_stdio(false);
+// 	cin.tie(nullptr);
+// 	cin>>N>>K;
+//     vector<int> cnt(16),ans(16);
+// 	for(int i=0;i<N;i++)
+// 	{
+// 		cin>>A[i];
+// 		cnt[A[i]]++;
+// 	}
+//     dbg(cnt);
+//     // dbg(ans);
+// 	for(int i=1;i<16;i++)
+// 	{
+// 		for(int j=i+i;j<16;j+=i)cnt[i]+=cnt[j];
+// 		if(cnt[i]>=K)
+// 		{
+//             // no need to check for max because we are going in ascending order
+// 			for(int j=i;j<16;j+=i)ans[j]=i;
+// 		}
+// 	}
+//     // cnt[i] becomes the number of multiples of i in the array
+//     // if cnt[i] >= K, then we can use i as the answer for all multiples of i
+//     // so we set ans[j] = i for all j that are multiples of i
+//     // this way, we can find the answer for all numbers in O(N) time
+//     dbg(cnt);
+//     dbg(ans);
+// 	for(int i=0;i<N;i++)cout<<ans[A[i]]<<"\n";
+//     cout << "test" << endl;
+// }
