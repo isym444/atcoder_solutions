@@ -283,50 +283,35 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-auto solve(int N, int Q, const std::vector<long long> &A, const std::vector<long long> &R, const std::vector<long long> &X) {
-    /* vis.assign(n+1, false);
-    g.assign(n+1, vector<ll>());
-    wg.assign(n + 1, vector<pair<ll,ll>>());
-    parent.assign(n+1, -1); */
-}
+// const ll SZZ = (ll)2e5+5;
+const ll SZZ = 10;
 
-int main() {
-    std::ios::sync_with_stdio(false);
-    setIO("");
-    std::cin.tie(nullptr);
-    // sets precision of output of floating point numbers to x number of decimal places
-    cout << fixed << setprecision(11);
-    unordered_map<long long, int, custom_hash> safe_map;
-    int N, Q;
-    std::cin >> N;
-    std::vector<long long> A(N);
-    std::cin >> Q;
-    std::vector<long long> R(Q), X(Q);
-    REP (i, N) {
-        std::cin >> A[i];
+int main(){
+    int N,Q;
+    cin >> N >> Q;
+    vll A(N);
+    vector<vector<pll>> OQ(SZZ);
+    cin >> A;
+    foi(0,Q){
+        ll R,X;
+        cin >> R >> X;
+        R--;
+        OQ[R].pb({X,i});
     }
-    REP (i, Q) {
-        std::cin >> R[i] >> X[i];
+    vll dp(N+5,INF);
+    foi(0,N){
+        auto temp = indlb(dp,A[i]);
+        dp[temp] = A[i];
+        dbg(dp);
     }
-    auto ans = solve(N, Q, A, R, X);
-    REP (i, Q) {
-        std::cout << a[i] << '\n';
+    // fx(OQ){
+    foi(0,10){
+        auto x=OQ[i];
+        dbg(i);
+        for(auto y:x){
+            dbg(y);
+        }
+        dbg(" ");
     }
-
-
-    /*/---------------------------Syntax hints once import various Snippets----------------------/*/
-    /* genprimes(1e5); */
-
-    /* //run the bfs and output order of traversed nodes (for loop is only used for non-connected graphs)
-    for (int i = 0; i < n; i++) {
-        if (!v[i])
-            bfs(i);
-    }
-    
-    //Use for problems where you have to go up,down,left,right. Do x+i & y+j and i&j will test all 4 directions. Do x+i+1 & y+j+1 if 0 indexed
-    wasd(
-        //cout << "Use this for problems where you have to go up, down, left right" << endl;
-    ) */
-
     return 0;
 }
