@@ -283,8 +283,8 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 /*/---------------------------OJ tools automatic I/O parsing----------------------/*/
 
-// const ll SZZ = (ll)2e5+5;
-const ll SZZ = 10;
+const ll SZZ = (ll)2e5+5;
+// const ll SZZ = 10;
 
 int main(){
     int N,Q;
@@ -299,19 +299,28 @@ int main(){
         OQ[R].pb({X,i});
     }
     vll dp(N+5,INF);
+    vll ans(Q);
     foi(0,N){
         auto temp = indlb(dp,A[i]);
         dp[temp] = A[i];
-        dbg(dp);
+        // dbg(dp);
+        fx(OQ[i]){
+            auto [ff,ss] = x;
+            auto t = indub(dp,ff);
+            ans[ss] = t;
+        }
     }
     // fx(OQ){
-    foi(0,10){
-        auto x=OQ[i];
-        dbg(i);
-        for(auto y:x){
-            dbg(y);
-        }
-        dbg(" ");
+    // foi(0,10){
+    //     auto x=OQ[i];
+    //     dbg(i);
+    //     for(auto y:x){
+    //         dbg(y);
+    //     }
+    //     dbg(" ");
+    // }
+    fx(ans){
+        cout << x << endl;
     }
     return 0;
 }
