@@ -286,6 +286,10 @@ template <class T> int indub(const std::vector<T> &v, const T &x) { return std::
 
 int main(){
     auto test = z_algorithm("abacaba");
+    auto sa = suffix_array("banana");
+    dbg(sa);
+    auto test2 = lcp_array("banana",sa);
+    dbg(test2);
     // dbg(test);
     string S;
     cin >> S;
